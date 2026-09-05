@@ -6,7 +6,7 @@
 export const FYP_INFO = {
   title: "RAAAH — Intelligent Crowd Management and Smart Tourism Platform for Northern Pakistan",
   shortTitle: "RAAAH Smart Tourism Platform",
-  tagline: "Preserving Heritage, Ensuring Safety, & Optimizing Tourist Experience through Real-Time AI Analytics",
+  tagline: "Preserving Heritage, Ensuring Safety, & Optimizing Tourist Experience through Real-Time GIS Analytics",
   academicYear: "2026",
   institution: "National University of Computer and Emerging Sciences (FAST-NUCES)",
   campus: "Chiniot-Faisalabad Campus, Pakistan",
@@ -22,28 +22,48 @@ export const FYP_INFO = {
     {
       name: "Abdur Rafay Baig",
       rollNo: "23F-3046",
-      role: "Lead Full-Stack & UI/UX Engineer",
+      role: "Project Lead & Full-Stack Architect",
       email: "23f3046@nu.edu.pk",
-      bio: "Core architect of the RAAAH Next.js web application and interactive crowd visualization dashboard. Specializing in real-time web applications, modern frontend architecture, and user-centric GIS design.",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop",
+      initials: "AR",
+      color: "from-amber-500 to-amber-700",
+      bio: "Primary architect & lead developer responsible for end-to-end system design, full-stack Next.js web application architecture, interactive GIS crowd mapping, real-time telemetry, authority dashboards, and core UI design system.",
+      responsibilities: [
+        "End-to-End Full-Stack Next.js Architecture",
+        "Interactive GIS Crowd Density & Telemetry Map",
+        "Alpine Editorial UI/UX Design System & Layouts",
+        "Business Hotel & Authority Analytics Portals",
+        "System Integration & Production Deployment"
+      ],
       isLead: true
     },
     {
       name: "M Ammar Ahmad",
       rollNo: "23P-3071",
-      role: "AI & Density Analytics Engineer",
+      role: "UI & Crowd Analytics Engineer",
       email: "23p3071@nu.edu.pk",
-      bio: "Focuses on predictive crowd algorithms, satellite/sensor density estimation models, and hazard detection pipelines for Northern Pakistan mountain corridors.",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop",
+      initials: "AA",
+      color: "from-[#041627] to-[#003120]",
+      bio: "Contributed to UI design components, predictive crowd density estimation interfaces, and regional analytics visualization models for Northern Pakistan mountain corridors.",
+      responsibilities: [
+        "UI Component Styling & Layout Assistance",
+        "Predictive Crowd Density Visual Models",
+        "Destination Capacity Benchmark Metrics"
+      ],
       isLead: false
     },
     {
       name: "Faiza Ali",
       rollNo: "23F-0739",
-      role: "Data Systems & Safety Integration Lead",
+      role: "UI & Safety Systems Engineer",
       email: "23f0739@nu.edu.pk",
-      bio: "Responsible for disaster alert propagation system, emergency helpline service integration, and government authority portal workflows.",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop",
+      initials: "FA",
+      color: "from-emerald-700 to-teal-900",
+      bio: "Contributed to UI layout implementation, travel safety hazard notification interfaces, emergency helpline integration, and crowdsourced reporting workflows.",
+      responsibilities: [
+        "UI Layout & Component Integration",
+        "Hazard Alert & Safety Advisory Interfaces",
+        "24/7 Helpline Directory Integration"
+      ],
       isLead: false
     }
   ],
