@@ -12,6 +12,7 @@ export const ROUTES = {
   DESTINATION_DETAIL: (id) => `/destinations/${id}`,
   CROWD_MAP: '/crowd-map',
   SAFETY: '/safety',
+  MY_TRIPS: '/my-trips',
   ACCOMMODATIONS: '/accommodations',
   CULTURE: '/culture',
   ABOUT_US: '/about',
@@ -22,13 +23,11 @@ export const ROUTES = {
   ANALYTICS_DASHBOARD: '/analytics-dashboard',
 };
 
-// Navigation links for tourist navbar
+// Simplified navigation links for tourist navbar (Section 45)
 export const TOURIST_NAV_LINKS = [
-  { label: 'Home', href: ROUTES.HOME },
+  { label: 'Explore', href: ROUTES.HOME },
   { label: 'Destinations', href: ROUTES.DESTINATIONS },
-  { label: 'Live Crowd Map', href: ROUTES.CROWD_MAP },
-  { label: 'Safety & Alerts', href: ROUTES.SAFETY },
-  { label: 'Accommodations', href: ROUTES.ACCOMMODATIONS },
-  { label: 'Culture', href: ROUTES.CULTURE },
-  { label: 'About Us', href: ROUTES.ABOUT_US },
+  { label: 'Safety', href: ROUTES.SAFETY },
+  { label: 'About', href: ROUTES.ABOUT_US },
 ];
+

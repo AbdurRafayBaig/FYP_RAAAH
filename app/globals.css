@@ -1,47 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 @import "tailwindcss";
 
 :root {
-  --font-sans: 'Plus Jakarta Sans', 'Inter', sans-serif;
-  
-  --bg-main: #F9FAFB;
-  --bg-card: #FFFFFF;
-  --text-dark: #111827;
-  --text-muted: #4B5563;
-  --primary-emerald: #047857;
-  --primary-dark: #064E3B;
-  --accent-amber: #D97706;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Manrope', 'Inter', sans-serif;
+
+  /* RAAAH Natural Color System (Section 42) */
+  --color-primary: #164A41;
+  --color-secondary: #2F6B5B;
+  --color-accent: #D9B77A;
+  --color-bg: #F7F8F5;
+  --color-surface: #FFFFFF;
+  --color-text-main: #17211F;
+  --color-text-muted: #66736F;
+
+  /* Safety & Crowd Color Hierarchy */
+  --safety-low: #2E7D5B;
+  --safety-moderate: #C68A19;
+  --safety-high: #D65A4A;
+  --safety-critical: #A83232;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-main);
-  color: var(--text-dark);
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
 }
 
-.font-serif-editorial {
-  font-family: var(--font-sans);
-  font-weight: 800;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }
 
-/* Crisp Clean Card Shadows */
-.clean-card {
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+/* 0% AI UI - Clean Human Travel Card System */
+.raah-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.clean-card-hover {
+.raah-card-hover {
   transition: all 0.2s ease-in-out;
 }
 
-.clean-card-hover:hover {
+.raah-card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 20px -4px rgba(22, 74, 65, 0.08);
   border-color: #CBD5E1;
 }
 
@@ -66,18 +74,18 @@ body {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-/* Custom Scrollbars */
+/* Clean Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #F3F4F6;
+  background: #F7F8F5;
 }
 ::-webkit-scrollbar-thumb {
-  background: #9CA3AF;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #6B7280;
+  background: #94A3B8;
 }

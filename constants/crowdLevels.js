@@ -10,26 +10,31 @@ export const CROWD_LEVELS = {
   CRITICAL: 'Critical',
 };
 
-// Colors matching the Stitch "Alpine Editorial" design system
+// Human-friendly crowd status colors matching RAAAH design system (Section 42)
 export const CROWD_COLORS = {
   [CROWD_LEVELS.LOW]: {
-    bg: '#ECFDF5',
-    text: '#059669',
-    label: 'Normal visitor level',
+    bg: '#EBF5F0',
+    border: '#B6E0CF',
+    text: '#2E7D5B',
+    label: 'Quiet right now. A good time to visit.',
   },
   [CROWD_LEVELS.MODERATE]: {
-    bg: '#EFF6FF',
-    text: '#2563EB',
-    label: 'Visitor level approaching capacity',
+    bg: '#FEF8EC',
+    border: '#F4DFB4',
+    text: '#C68A19',
+    label: 'Moderate visitor levels.',
   },
   [CROWD_LEVELS.HIGH]: {
-    bg: '#FFF7ED',
-    text: '#EA580C',
-    label: 'Visitor level has reached configured threshold',
+    bg: '#FDF2F0',
+    border: '#F6C4BD',
+    text: '#D65A4A',
+    label: 'Busy. Visitor levels reaching capacity.',
   },
   [CROWD_LEVELS.CRITICAL]: {
-    bg: '#FEF2F2',
-    text: '#DC2626',
-    label: 'Visitor level exceeds capacity',
+    bg: '#FBF0F0',
+    border: '#F1B5B5',
+    text: '#A83232',
+    label: 'Visitor levels currently above capacity.',
   },
 };
+

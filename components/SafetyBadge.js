@@ -1,31 +1,24 @@
-// ==========================================
-// SAFETY BADGE COMPONENT
-// Renders safety status (Low Risk, Elevated Risk, High Risk)
-// ==========================================
+import { RISK_COLORS } from '@/constants/riskLevels';
 
-export default function SafetyBadge({ status, icon = "shield" }) {
-  let bg = "bg-emerald-50 text-emerald-800 border-emerald-300";
+export default function SafetyBadge({ status = 'Low Risk', icon = 'shield' }) {
+  let normStatus = status || 'Low Risk';
+  if (normStatus === 'Safe') normStatus = 'Low Risk';
+  if (normStatus === 'Caution') normStatus = 'Elevated Risk';
+  if (normStatus === 'Danger' || normStatus === 'Severe') normStatus = 'High Risk';
 
-  switch ((status || '').toLowerCase()) {
-    case 'low risk':
-    case 'safe':
-      bg = "bg-emerald-50 text-emerald-800 border-emerald-300";
-      break;
-    case 'elevated risk':
-    case 'caution':
-      bg = "bg-amber-50 text-amber-900 border-amber-300";
-      break;
-    case 'high risk':
-    case 'danger':
-    case 'severe':
-      bg = "bg-red-50 text-red-800 border-red-300";
-      break;
-  }
+  const config = RISK_COLORS[normStatus] || RISK_COLORS['Low Risk'];
 
   return (
-    <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-md border text-xs font-semibold ${bg}`}>
+    <span 
+      className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md border text-xs font-semibold"
+      style={{
+        backgroundColor: config.bg,
+        borderColor: config.border,
+        color: config.text,
+      }}
+    >
       <span className="material-symbols-outlined text-sm">{icon}</span>
-      <span>{status || 'Low Risk'}</span>
+      <span>{normStatus}</span>
     </span>
   );
 }

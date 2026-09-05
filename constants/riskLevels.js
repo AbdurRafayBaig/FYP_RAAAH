@@ -11,18 +11,22 @@ export const RISK_LEVELS = {
 
 export const RISK_COLORS = {
   [RISK_LEVELS.LOW]: {
-    bg: '#ECFDF5',
-    text: '#059669',
+    bg: '#EBF5F0',
+    border: '#B6E0CF',
+    text: '#2E7D5B',
   },
   [RISK_LEVELS.ELEVATED]: {
-    bg: '#FFF7ED',
-    text: '#EA580C',
+    bg: '#FEF8EC',
+    border: '#F4DFB4',
+    text: '#C68A19',
   },
   [RISK_LEVELS.HIGH]: {
-    bg: '#FEF2F2',
-    text: '#DC2626',
+    bg: '#FDF2F0',
+    border: '#F6C4BD',
+    text: '#D65A4A',
   },
 };
+
 
 // ================================
 // HAZARD CATEGORIES

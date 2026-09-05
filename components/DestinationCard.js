@@ -10,73 +10,61 @@ export default function DestinationCard({ destination }) {
     region,
     tagline,
     crowdLevel,
-    crowdScore,
     safetyStatus,
     weather,
-    image,
-    accommodationsAvailable,
-    liveVisitors
+    image
   } = destination;
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-xs hover:shadow-lg hover:border-gray-300 transition-all duration-300 flex flex-col h-full">
-      {/* Image Header */}
-      <div className="relative h-56 w-full overflow-hidden bg-gray-100">
+    <div className="raah-card raah-card-hover overflow-hidden flex flex-col h-full">
+      {/* Destination Image */}
+      <div className="relative h-48 w-full overflow-hidden bg-stone-100">
         <Image
           src={image}
           alt={name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-
-        {/* Status Badges Overlay */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-          <CrowdBadge level={crowdLevel} score={crowdScore} size="sm" />
-          <div className="bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-gray-900 flex items-center space-x-1 shadow-xs border border-gray-200">
-            <span className="material-symbols-outlined text-amber-500 text-sm">{weather.icon}</span>
-            <span>{weather.temp}</span>
-          </div>
-        </div>
-
-        {/* Title Overlay */}
-        <div className="absolute bottom-3 left-4 right-4 text-white">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-emerald-300">
-            {region}
-          </span>
-          <h3 className="text-xl font-extrabold tracking-tight text-white leading-tight">
-            {name}
-          </h3>
+        
+        {/* Weather overlay */}
+        <div className="absolute top-3 right-3 bg-white/95 px-2.5 py-1 rounded-full text-xs font-medium text-[#17211F] flex items-center space-x-1 shadow-2xs border border-stone-200">
+          <span className="material-symbols-outlined text-amber-600 text-sm">{weather?.icon || 'wb_sunny'}</span>
+          <span>{weather?.temp || '18°C'}</span>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-        <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
-          {tagline}
-        </p>
+      {/* Destination Content */}
+      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+        <div>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-[#66736F] uppercase tracking-wide">
+              {region}
+            </span>
+          </div>
+          <h3 className="text-lg font-bold text-[#17211F] mt-0.5 leading-tight">
+            {name}
+          </h3>
+          {tagline && (
+            <p className="text-xs text-[#66736F] line-clamp-2 mt-1 leading-relaxed">
+              {tagline}
+            </p>
+          )}
+        </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100 text-xs">
-          <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100">
-            <span className="text-[10px] text-gray-500 uppercase font-semibold block">Live Visitors</span>
-            <span className="font-extrabold text-gray-900 text-sm font-mono">{liveVisitors.toLocaleString()}</span>
-          </div>
-          <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100">
-            <span className="text-[10px] text-gray-500 uppercase font-semibold block">Available Lodges</span>
-            <span className="font-extrabold text-emerald-700 text-sm font-mono">{accommodationsAvailable} Open</span>
-          </div>
+        {/* Status Indicators */}
+        <div className="flex items-center justify-between pt-2 border-t border-stone-100 text-xs">
+          <CrowdBadge level={crowdLevel} size="sm" />
+          <SafetyBadge status={safetyStatus} />
         </div>
 
         {/* Action Button */}
-        <div className="flex items-center justify-between pt-1">
-          <SafetyBadge status={safetyStatus} />
+        <div className="pt-1">
           <Link
             href={`/destinations/${id}`}
-            className="inline-flex items-center space-x-1 text-xs font-bold text-emerald-700 hover:text-emerald-900 transition-colors"
+            className="w-full inline-flex items-center justify-center space-x-1 py-2 px-3 rounded-lg bg-[#F7F8F5] hover:bg-[#164A41] hover:text-white border border-stone-200 text-xs font-semibold text-[#164A41] transition-colors"
           >
-            <span>View Guide</span>
-            <span className="material-symbols-outlined text-base">arrow_forward</span>
+            <span>View Destination</span>
+            <span className="material-symbols-outlined text-sm">arrow_forward</span>
           </Link>
         </div>
       </div>
