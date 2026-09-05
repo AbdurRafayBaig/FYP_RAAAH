@@ -9,57 +9,57 @@ import { useState, useMemo } from 'react';
 export default function DestinationsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('All');
-  const [densityFilter, setDensityFilter] = useState('All');
+  const [crowdFilter, setCrowdFilter] = useState('All');
 
   const regions = ['All', 'Gilgit-Baltistan', 'Khyber Pakhtunkhwa', 'Punjab'];
-  const densityLevels = ['All', 'Low', 'Moderate', 'High', 'Critical'];
+  const crowdLevels = ['All', 'Low', 'Moderate', 'High', 'Critical'];
 
   const filteredDestinations = useMemo(() => {
     return DESTINATIONS.filter((item) => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             item.region.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            item.highlights.some(h => h.toLowerCase().includes(searchQuery.toLowerCase()));
+                            item.highlights?.some(h => h.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchesRegion = selectedRegion === 'All' || item.region.includes(selectedRegion);
-      const matchesDensity = densityFilter === 'All' || item.crowdLevel.toLowerCase() === densityFilter.toLowerCase();
+      const matchesCrowd = crowdFilter === 'All' || item.crowdLevel.toLowerCase() === crowdFilter.toLowerCase();
       
-      return matchesSearch && matchesRegion && matchesDensity;
+      return matchesSearch && matchesRegion && matchesCrowd;
     });
-  }, [searchQuery, selectedRegion, densityFilter]);
+  }, [searchQuery, selectedRegion, crowdFilter]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F8]">
+    <div className="min-h-screen flex flex-col bg-[#F7F8F5]">
       <Navbar />
 
-      <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
+      <main className="flex-1 py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
         
         {/* Page Title & Intro */}
-        <div className="space-y-3">
-          <span className="text-xs font-bold tracking-widest uppercase text-[#0051D5]">
-            Real-Time Northern Corridor Explorer
+        <div className="space-y-2">
+          <span className="text-xs font-semibold text-[#2F6B5B] uppercase tracking-wider block">
+            Explore Northern Pakistan
           </span>
-          <h1 className="font-serif-editorial text-4xl sm:text-5xl font-bold text-[#041627]">
-            Northern Pakistan Destinations
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#17211F]">
+            Travel Destinations
           </h1>
-          <p className="text-sm text-[#575A60] max-w-2xl">
-            Compare live crowd density, weather conditions, and available eco-lodges across Hunza, Skardu, Naran, Swat, and Murree.
+          <p className="text-xs sm:text-sm text-[#66736F] max-w-2xl leading-relaxed">
+            Discover destinations across Gilgit-Baltistan, KP, and Punjab. Check current crowd levels, weather, and safety conditions before travelling.
           </p>
         </div>
 
         {/* Filter Controls Bar */}
-        <div className="bg-white p-6 rounded-2xl border border-[#E5E3DC] shadow-sm space-y-4">
+        <div className="bg-white p-5 rounded-xl border border-stone-200 shadow-2xs space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
             
             {/* Search Input */}
             <div className="md:col-span-6 relative">
-              <span className="material-symbols-outlined absolute left-3 top-3 text-slate-400 text-xl">
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-stone-400 text-xl">
                 search
               </span>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by destination name, fort, lake, or peak..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E5E3DC] text-sm text-[#1A1C1C] focus:outline-none focus:border-[#041627] bg-[#FAF9F8]"
+                placeholder="Search by destination, valley, lake, or fort..."
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-stone-200 text-xs text-[#17211F] focus:outline-none focus:border-[#164A41] bg-[#F7F8F5]"
               />
             </div>
 
@@ -68,7 +68,7 @@ export default function DestinationsPage() {
               <select
                 value={selectedRegion}
                 onChange={(e) => setSelectedRegion(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-[#E5E3DC] text-xs font-semibold text-[#1A1C1C] bg-[#FAF9F8] focus:outline-none"
+                className="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs font-medium text-[#17211F] bg-[#F7F8F5] focus:outline-none"
               >
                 {regions.map((reg) => (
                   <option key={reg} value={reg}>Region: {reg}</option>
@@ -76,30 +76,30 @@ export default function DestinationsPage() {
               </select>
             </div>
 
-            {/* Density Level Filter */}
+            {/* Crowd Filter */}
             <div className="md:col-span-3">
               <select
-                value={densityFilter}
-                onChange={(e) => setDensityFilter(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-[#E5E3DC] text-xs font-semibold text-[#1A1C1C] bg-[#FAF9F8] focus:outline-none"
+                value={crowdFilter}
+                onChange={(e) => setCrowdFilter(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs font-medium text-[#17211F] bg-[#F7F8F5] focus:outline-none"
               >
-                {densityLevels.map((lvl) => (
-                  <option key={lvl} value={lvl}>Density: {lvl}</option>
+                {crowdLevels.map((lvl) => (
+                  <option key={lvl} value={lvl}>Crowd Level: {lvl}</option>
                 ))}
               </select>
             </div>
 
           </div>
 
-          {/* Quick Active Filter Pills */}
-          <div className="flex items-center justify-between text-xs pt-2 border-t border-[#F0EEE9] text-[#575A60]">
+          {/* Active Filter Summary */}
+          <div className="flex items-center justify-between text-xs pt-2 border-t border-stone-100 text-[#66736F]">
             <span>Showing <strong>{filteredDestinations.length}</strong> of {DESTINATIONS.length} destinations</span>
-            {(searchQuery || selectedRegion !== 'All' || densityFilter !== 'All') && (
+            {(searchQuery || selectedRegion !== 'All' || crowdFilter !== 'All') && (
               <button
-                onClick={() => { setSearchQuery(''); setSelectedRegion('All'); setDensityFilter('All'); }}
-                className="text-red-700 font-semibold hover:underline"
+                onClick={() => { setSearchQuery(''); setSelectedRegion('All'); setCrowdFilter('All'); }}
+                className="text-[#164A41] font-semibold hover:underline"
               >
-                Reset Filters
+                Clear Filters
               </button>
             )}
           </div>
@@ -113,10 +113,10 @@ export default function DestinationsPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white rounded-2xl border border-[#E5E3DC] space-y-3">
-            <span className="material-symbols-outlined text-4xl text-slate-400">search_off</span>
-            <h3 className="font-serif-editorial text-xl font-bold text-[#041627]">No Destinations Found</h3>
-            <p className="text-xs text-[#575A60]">Try adjusting your search criteria or density filters.</p>
+          <div className="text-center py-16 bg-white rounded-xl border border-stone-200 space-y-3">
+            <span className="material-symbols-outlined text-4xl text-stone-400">search_off</span>
+            <h3 className="text-lg font-bold text-[#17211F]">No Destinations Found</h3>
+            <p className="text-xs text-[#66736F]">Try searching with a different term or clearing your filters.</p>
           </div>
         )}
 
