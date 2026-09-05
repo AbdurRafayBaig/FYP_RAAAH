@@ -1,6 +1,6 @@
 // ==========================================
 // ALERT CARD COMPONENT
-// Travel Safety & Disaster Hazard Alert Card matching Stitch design
+// Clean, trustworthy safety alert card (Section 9)
 // ==========================================
 
 export default function AlertCard({ alert }) {
@@ -18,53 +18,65 @@ export default function AlertCard({ alert }) {
     icon
   } = alert;
 
-  let borderColor = "border-amber-300 bg-amber-50/40";
-  let badgeBg = "bg-amber-100 text-amber-900 border-amber-300";
+  let borderColor = 'border-[#F4DFB4]';
+  let badgeBg = '#FEF8EC';
+  let badgeText = '#C68A19';
+  let badgeBorder = '#F4DFB4';
 
-  if (severity.toLowerCase().includes("high")) {
-    borderColor = "border-red-300 bg-red-50/40";
-    badgeBg = "bg-red-100 text-red-900 border-red-300";
-  } else if (severity.toLowerCase().includes("low")) {
-    borderColor = "border-blue-300 bg-blue-50/40";
-    badgeBg = "bg-blue-100 text-blue-900 border-blue-300";
+  if (severity.toLowerCase().includes('high')) {
+    borderColor = 'border-[#F6C4BD]';
+    badgeBg = '#FDF2F0';
+    badgeText = '#D65A4A';
+    badgeBorder = '#F6C4BD';
+  } else if (severity.toLowerCase().includes('low')) {
+    borderColor = 'border-[#B6E0CF]';
+    badgeBg = '#EBF5F0';
+    badgeText = '#2E7D5B';
+    badgeBorder = '#B6E0CF';
   }
 
   return (
-    <div className={`p-6 rounded-2xl border-2 ${borderColor} bg-white shadow-sm space-y-4`}>
-      <div className="flex items-start justify-between">
+    <div className={`p-5 rounded-xl border ${borderColor} bg-white shadow-2xs space-y-4`}>
+      <div className="flex items-start justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${badgeBg}`}>
-            <span className="material-symbols-outlined text-xl">{icon || 'warning'}</span>
+          <div 
+            className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+            style={{ backgroundColor: badgeBg, color: badgeText }}
+          >
+            <span className="material-symbols-outlined text-lg">{icon || 'warning'}</span>
           </div>
           <div>
-            <span className="text-xs font-semibold text-[#575A60] uppercase tracking-wider">
-              {category} • {region}
+            <span className="text-[11px] font-semibold text-[#66736F] uppercase tracking-wider">
+              {category} · {region}
             </span>
-            <h3 className="font-serif-editorial text-xl font-bold text-[#041627]">
+            <h3 className="text-base font-bold text-[#17211F]">
               {title}
             </h3>
           </div>
         </div>
 
-        <div className="text-right">
-          <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${badgeBg}`}>
+        <div className="text-right shrink-0">
+          <span 
+            className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border"
+            style={{ backgroundColor: badgeBg, color: badgeText, borderColor: badgeBorder }}
+          >
             {severity}
           </span>
-          <span className="block text-[11px] text-[#575A60] mt-1">{timestamp}</span>
+          <span className="block text-[11px] text-[#66736F] mt-1">{timestamp}</span>
         </div>
       </div>
 
-      {/* Affected Routes & Status */}
-      <div className="bg-[#FAF9F8] p-4 rounded-xl border border-[#E5E3DC] space-y-2">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-semibold text-slate-700">Status:</span>
-          <span className="font-bold text-amber-700">{status}</span>
+      {/* Status & Affected Routes */}
+      <div className="bg-[#F7F8F5] p-3 rounded-lg border border-stone-200 space-y-2 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-[#66736F]">Status:</span>
+          <span className="font-bold" style={{ color: badgeText }}>{status}</span>
         </div>
-        <div className="flex items-start space-x-2 text-xs">
-          <span className="font-semibold text-slate-700 shrink-0">Affected Corridors:</span>
+        <div className="flex items-start space-x-2">
+          <span className="font-semibold text-[#66736F] shrink-0">Affected Routes:</span>
           <div className="flex flex-wrap gap-1">
             {affectedRoutes.map((route, i) => (
-              <span key={i} className="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-mono">
+              <span key={i} className="bg-white px-2 py-0.5 rounded border border-stone-200 text-[#17211F] text-[11px]">
                 {route}
               </span>
             ))}
@@ -72,24 +84,24 @@ export default function AlertCard({ alert }) {
         </div>
       </div>
 
-      {/* Recommended Tourist Action */}
-      <div className="text-xs text-slate-800 bg-amber-50/70 p-3 rounded-lg border border-amber-200/80 flex items-start space-x-2">
-        <span className="material-symbols-outlined text-amber-700 text-base shrink-0">info</span>
+      {/* Travel Guidance */}
+      <div className="text-xs bg-[#FEF8EC] p-3 rounded-lg border border-[#F4DFB4] flex items-start space-x-2">
+        <span className="material-symbols-outlined text-[#C68A19] text-sm shrink-0 mt-0.5">info</span>
         <div>
-          <strong className="text-amber-900 block font-semibold mb-0.5">RAAAH Safety Guidance:</strong>
-          <p className="leading-relaxed text-amber-950">{recommendedAction}</p>
+          <strong className="text-[#17211F] block font-semibold mb-0.5">Travel Guidance:</strong>
+          <p className="leading-relaxed text-[#17211F]">{recommendedAction}</p>
         </div>
       </div>
 
-      {/* Authority & Call Action */}
-      <div className="pt-2 flex items-center justify-between border-t border-[#F0EEE9] text-xs text-slate-600">
-        <span>Issued by: <strong>{authority}</strong></span>
+      {/* Source & Contact */}
+      <div className="pt-2 flex items-center justify-between border-t border-stone-100 text-xs text-[#66736F]">
+        <span>Source: <strong className="text-[#17211F]">{authority}</strong></span>
         <a
           href={`tel:${contactNumber}`}
-          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold shadow-xs transition-colors"
+          className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-[#D65A4A] hover:bg-[#A83232] text-white font-semibold transition-colors"
         >
           <span className="material-symbols-outlined text-sm">call</span>
-          <span>Call Helpline ({contactNumber})</span>
+          <span>Call {contactNumber}</span>
         </a>
       </div>
     </div>

@@ -2,39 +2,38 @@
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { DESTINATIONS } from '@/data/destinations';
+import { HAZARD_TYPES } from '@/constants/riskLevels';
 import { useState } from 'react';
 
 export default function ReportHazardPage() {
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F8]">
+    <div className="min-h-screen flex flex-col bg-[#F7F8F5]">
       <Navbar />
 
-      <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto space-y-8">
+      <main className="flex-1 py-10 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto space-y-8">
         
-        <div className="space-y-3 text-center">
-          <span className="text-xs font-bold tracking-widest uppercase text-red-700">
-            Crowdsourced Safety Intelligence
-          </span>
-          <h1 className="font-serif-editorial text-3xl sm:text-4xl font-bold text-[#041627]">
-            Report a Road Hazard or Landslide
+        <div className="space-y-2 text-center">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#17211F]">
+            Report a Hazard
           </h1>
-          <p className="text-xs sm:text-sm text-[#575A60]">
-            Report road blockages, flash floods, or traffic gridlocks. Submissions are verified by RAAAH operations team & forwarded to Rescue 1122 and NHA.
+          <p className="text-xs sm:text-sm text-[#66736F]">
+            Help keep other travellers informed about road conditions and safety risks.
           </p>
         </div>
 
         {submitted ? (
-          <div className="bg-emerald-50 p-8 rounded-3xl border border-emerald-200 text-center space-y-4">
-            <span className="material-symbols-outlined text-5xl text-emerald-600">check_circle</span>
-            <h2 className="font-serif-editorial text-2xl font-bold text-emerald-950">Report Submitted Successfully</h2>
-            <p className="text-xs text-emerald-800">
-              Thank you for keeping Northern travelers safe. Your hazard report has been routed to GBDMA control room.
+          <div className="bg-[#EBF5F0] p-8 rounded-xl border border-[#B6E0CF] text-center space-y-4">
+            <span className="material-symbols-outlined text-5xl text-[#2E7D5B]">check_circle</span>
+            <h2 className="text-xl font-bold text-[#164A41]">Report Submitted</h2>
+            <p className="text-xs text-[#17211F] max-w-sm mx-auto leading-relaxed">
+              Thank you. Your report will be reviewed before appearing as verified safety information.
             </p>
             <button
               onClick={() => setSubmitted(false)}
-              className="px-6 py-2.5 rounded-xl bg-emerald-800 text-white font-semibold text-xs"
+              className="px-5 py-2 rounded-lg bg-[#164A41] text-white font-semibold text-xs hover:bg-[#2F6B5B] transition-colors"
             >
               Submit Another Report
             </button>
@@ -42,53 +41,67 @@ export default function ReportHazardPage() {
         ) : (
           <form 
             onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
-            className="bg-white p-8 rounded-3xl border border-[#E5E3DC] shadow-sm space-y-6"
+            className="bg-white p-6 sm:p-8 rounded-xl border border-stone-200 shadow-2xs space-y-5"
           >
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1 uppercase">Hazard Category</label>
-              <select className="w-full px-3 py-2.5 rounded-xl border border-[#E5E3DC] text-xs font-semibold text-[#1A1C1C] bg-[#FAF9F8]">
-                <option>Landslide Blockage</option>
-                <option>Traffic Gridlock</option>
-                <option>Flash Flood / Glacial Melt</option>
-                <option>Heavy Snowfall / Black Ice</option>
-                <option>Bridge Damage</option>
+              <label className="block text-xs font-semibold text-[#17211F] mb-1.5">Destination *</label>
+              <select className="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs text-[#17211F] bg-[#F7F8F5] focus:outline-none focus:border-[#164A41]">
+                <option value="">Select a destination</option>
+                {DESTINATIONS.map((d) => (
+                  <option key={d.id} value={d.id}>{d.name} — {d.region}</option>
+                ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1 uppercase">Corridor / Location</label>
+              <label className="block text-xs font-semibold text-[#17211F] mb-1.5">What did you observe? *</label>
+              <select className="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs text-[#17211F] bg-[#F7F8F5] focus:outline-none focus:border-[#164A41]">
+                {HAZARD_TYPES.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#17211F] mb-1.5">Where did it happen?</label>
               <input 
                 type="text" 
-                required
-                placeholder="e.g. Karakoram Highway near Aliabad, or Babusar Top KM 14"
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E5E3DC] text-xs text-[#1A1C1C] bg-[#FAF9F8]"
+                placeholder="e.g. Karakoram Highway near Aliabad, KM 14"
+                className="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs text-[#17211F] bg-[#F7F8F5] focus:outline-none focus:border-[#164A41]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1 uppercase">Detailed Description</label>
+              <label className="block text-xs font-semibold text-[#17211F] mb-1.5">Describe the situation</label>
               <textarea 
                 rows="4"
-                required
-                placeholder="Provide details on road passability, estimated delay, or emergency assistance needed..."
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E5E3DC] text-xs text-[#1A1C1C] bg-[#FAF9F8]"
+                placeholder="Provide any details that could help other travellers..."
+                className="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs text-[#17211F] bg-[#F7F8F5] focus:outline-none focus:border-[#164A41]"
               ></textarea>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1 uppercase">Contact Phone Number (Optional)</label>
+              <label className="block text-xs font-semibold text-[#17211F] mb-1.5">When did you notice it?</label>
               <input 
-                type="tel" 
-                placeholder="0300-XXXXXXX"
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E5E3DC] text-xs text-[#1A1C1C] bg-[#FAF9F8]"
+                type="datetime-local"
+                className="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs text-[#17211F] bg-[#F7F8F5] focus:outline-none focus:border-[#164A41]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#17211F] mb-1.5">Photo (optional)</label>
+              <input 
+                type="file"
+                accept="image/*"
+                className="w-full text-xs text-[#66736F] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-stone-200 file:text-xs file:font-semibold file:bg-[#F7F8F5] file:text-[#164A41] hover:file:bg-stone-100"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-red-700 hover:bg-red-800 text-white font-semibold text-xs shadow-md transition-colors"
+              className="w-full py-2.5 rounded-lg bg-[#D65A4A] hover:bg-[#A83232] text-white font-semibold text-xs shadow-2xs transition-colors"
             >
-              Submit Hazard Advisory
+              Submit Report
             </button>
           </form>
         )}
