@@ -13,99 +13,89 @@ export default function Home() {
   const activeAlerts = SAFETY_ALERTS.slice(0, 2);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F7F6]">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
       <main className="flex-1">
         
         {/* ========================================== */}
-        {/* HERO SECTION - Luxury Alpine Dark Emerald & Bronze */}
+        {/* HERO SECTION - Fresh, Light, High-Contrast */}
         {/* ========================================== */}
-        <section className="relative bg-[#05100C] text-white py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
-          {/* Background Mesh Overlay & Ambient Glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#05100C] via-[#0D241C] to-[#040C09] opacity-95"></div>
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay"
-            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?q=80&w=1800&auto=format&fit=crop')` }}
-          ></div>
-          <div className="absolute top-1/4 right-10 w-96 h-96 bg-[#D4A373]/10 rounded-full blur-3xl pointer-events-none"></div>
-
-          <div className="relative z-20 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <section className="bg-gradient-to-b from-emerald-900 to-emerald-950 text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
             
-            {/* Hero Text */}
-            <div className="lg:col-span-7 space-y-7">
-              <div className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-[#D4A373]/40 text-[#D4A373] text-xs font-semibold uppercase tracking-wider backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-[#D4A373] animate-pulse"></span>
-                <span>Northern Pakistan Real-Time GIS Telemetry</span>
+            {/* Hero Text & Search */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-800/80 border border-emerald-600/50 text-emerald-200 text-xs font-semibold uppercase tracking-wide">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Northern Pakistan Smart Tourism Platform</span>
               </div>
 
-              <h1 className="font-serif-editorial text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-white">
-                Explore Northern Pakistan <span className="italic text-[#D4A373] font-normal">Uncrowded</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-white">
+                Plan Your Northern Trip <br className="hidden sm:inline" />
+                <span className="text-amber-400">Without Traffic & Crowds</span>
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed font-light">
-                RAAAH monitors live tourist density, highway bottlenecks, and mountain hazards across Hunza, Naran, Skardu, Swat, and Murree. Travel smarter with AI-assisted density forecasting.
+              <p className="text-base sm:text-lg text-emerald-100 max-w-2xl leading-relaxed font-normal">
+                Check real-time tourist density, highway land-slides, and hotel vacancies across Hunza, Naran, Skardu, Swat, and Murree.
               </p>
 
-              {/* Glassmorphic Search Bar */}
-              <div className="glass-card-dark p-2.5 rounded-2xl shadow-2xl max-w-2xl">
+              {/* Simple Search Input */}
+              <div className="bg-white p-2 rounded-2xl shadow-xl max-w-2xl border border-gray-200">
                 <form action="/destinations" className="flex flex-col sm:flex-row gap-2">
-                  <div className="relative flex-1 flex items-center px-4 py-1">
-                    <span className="material-symbols-outlined text-[#D4A373] text-2xl mr-3">search</span>
+                  <div className="relative flex-1 flex items-center px-3 py-1">
+                    <span className="material-symbols-outlined text-gray-400 text-2xl mr-2">search</span>
                     <input
                       type="text"
                       name="search"
-                      placeholder="Search destination (e.g. Hunza Valley, Saif-ul-Malook, Skardu)..."
-                      className="w-full bg-transparent border-none text-white placeholder-slate-400 text-sm focus:outline-none"
+                      placeholder="Where do you want to travel? (e.g. Hunza, Naran, Skardu)..."
+                      className="w-full bg-transparent border-none text-gray-900 placeholder-gray-500 text-sm font-medium focus:outline-none"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-[#D4A373] to-[#E8B931] hover:from-[#E8B931] hover:to-[#D4A373] text-black font-bold text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-amber-500/20 flex items-center justify-center space-x-2 shrink-0"
+                    className="px-6 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2 shrink-0"
                   >
-                    <span>Check Live Density</span>
+                    <span>Check Density</span>
                     <span className="material-symbols-outlined text-base">arrow_forward</span>
                   </button>
                 </form>
               </div>
 
-              {/* Stats Counter Bar */}
-              <div className="pt-6 grid grid-cols-3 gap-6 border-t border-white/10 text-xs">
+              {/* Stats Counters */}
+              <div className="pt-4 grid grid-cols-3 gap-4 border-t border-emerald-800/80 text-xs">
                 <div>
-                  <span className="block text-3xl font-bold text-[#D4A373] font-mono">31,700+</span>
-                  <span className="text-slate-400 uppercase tracking-widest text-[10px] font-semibold">Active Tourists</span>
+                  <span className="block text-2xl font-black text-amber-400 font-mono">31,700+</span>
+                  <span className="text-emerald-200 uppercase tracking-wide text-[10px] font-semibold">Active Tourists</span>
                 </div>
                 <div>
-                  <span className="block text-3xl font-bold text-emerald-400 font-mono">5 Regions</span>
-                  <span className="text-slate-400 uppercase tracking-widest text-[10px] font-semibold">GIS Monitored</span>
+                  <span className="block text-2xl font-black text-emerald-300 font-mono">5 Regions</span>
+                  <span className="text-emerald-200 uppercase tracking-wide text-[10px] font-semibold">Live Monitored</span>
                 </div>
                 <div>
-                  <span className="block text-3xl font-bold text-red-400 font-mono">2 Active</span>
-                  <span className="text-slate-400 uppercase tracking-widest text-[10px] font-semibold">Road Hazards</span>
+                  <span className="block text-2xl font-black text-red-300 font-mono">2 Advisories</span>
+                  <span className="text-emerald-200 uppercase tracking-wide text-[10px] font-semibold">Road Hazards</span>
                 </div>
               </div>
             </div>
 
-            {/* Right Live Density Widget */}
+            {/* Live Telemetry Card */}
             <div className="lg:col-span-5 hidden lg:block">
-              <div className="glass-card-dark p-7 rounded-3xl space-y-6 shadow-2xl text-white">
-                <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                  <span className="text-xs uppercase tracking-widest text-[#D4A373] font-bold flex items-center space-x-2">
-                    <span className="material-symbols-outlined text-lg">radar</span>
-                    <span>Live Region Telemetry</span>
+              <div className="bg-white text-gray-900 p-6 rounded-3xl space-y-5 shadow-2xl border border-gray-200">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                  <span className="text-xs uppercase tracking-wider text-emerald-800 font-bold flex items-center space-x-2">
+                    <span className="material-symbols-outlined text-lg">sensors</span>
+                    <span>Live Crowd Summary</span>
                   </span>
-                  <span className="text-[10px] text-emerald-400 font-mono flex items-center space-x-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span>LIVE</span>
-                  </span>
+                  <span className="text-[11px] text-gray-500 font-medium">Updated 1m ago</span>
                 </div>
 
-                <div className="space-y-3.5">
+                <div className="space-y-3">
                   {DESTINATIONS.slice(0, 3).map((item) => (
-                    <div key={item.id} className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                    <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
                       <div>
-                        <h4 className="text-sm font-semibold text-white">{item.name}</h4>
-                        <span className="text-[11px] text-slate-400">{item.liveVisitors.toLocaleString()} tourists on site</span>
+                        <h4 className="text-sm font-bold text-gray-900">{item.name}</h4>
+                        <span className="text-xs text-gray-600">{item.liveVisitors.toLocaleString()} tourists on site</span>
                       </div>
                       <CrowdBadge level={item.crowdLevel} score={item.crowdScore} size="sm" />
                     </div>
@@ -114,9 +104,9 @@ export default function Home() {
 
                 <Link
                   href="/crowd-map"
-                  className="block w-full text-center py-3 rounded-xl bg-white text-[#05100C] font-bold text-xs hover:bg-[#D4A373] transition-colors shadow-md uppercase tracking-wider"
+                  className="block w-full text-center py-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs transition-colors shadow-md uppercase tracking-wider"
                 >
-                  Inspect Live GIS Heatmap →
+                  Open Live GIS Crowd Map →
                 </Link>
               </div>
             </div>
@@ -125,48 +115,48 @@ export default function Home() {
         </section>
 
         {/* ========================================== */}
-        {/* ROAD HAZARD ADVISORY BANNER */}
+        {/* HAZARD WARNING BANNER */}
         {/* ========================================== */}
-        <section className="bg-red-950/90 text-red-100 py-4 px-4 sm:px-6 lg:px-8 border-y border-red-800/50">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center space-x-3 text-xs sm:text-sm">
-              <span className="material-symbols-outlined text-red-400 text-2xl shrink-0">warning</span>
+        <section className="bg-red-50 text-red-900 py-3.5 px-4 sm:px-6 lg:px-8 border-y border-red-200">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="flex items-center space-x-2.5">
+              <span className="material-symbols-outlined text-red-700 text-xl shrink-0">warning</span>
               <div>
-                <strong className="font-bold text-red-200 uppercase tracking-wide mr-2">Disaster Alert:</strong> Landslide blockage reported on Karakoram Highway (Aliabad to Passu Bypass). NHA clearance in progress.
+                <strong className="font-bold uppercase tracking-wide text-red-800 mr-2">Road Warning:</strong> Landslide blockage reported on KKH (Aliabad to Passu Bypass). NHA clearance in progress.
               </div>
             </div>
             <Link
               href="/safety"
-              className="shrink-0 px-4 py-1.5 rounded-lg bg-red-800 hover:bg-red-700 text-white text-xs font-bold transition-colors uppercase tracking-wider shadow-xs"
+              className="shrink-0 px-3.5 py-1.5 rounded-lg bg-red-700 hover:bg-red-800 text-white text-xs font-bold transition-colors shadow-2xs"
             >
-              View Advisories
+              Safety Advisories
             </Link>
           </div>
         </section>
 
         {/* ========================================== */}
-        {/* FEATURED DESTINATIONS CATALOG */}
+        {/* DESTINATION GRID */}
         {/* ========================================== */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E2E8E4] pb-6">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-6">
             <div>
-              <span className="text-xs font-bold tracking-widest text-[#164E3D] uppercase block mb-1">
-                Real-Time Corridor Telemetry
+              <span className="text-xs font-bold tracking-wider text-emerald-800 uppercase block mb-1">
+                Real-Time Corridor Status
               </span>
-              <h2 className="font-serif-editorial text-3xl sm:text-4xl font-bold text-[#0C1814]">
-                Top Northern Pakistan Destinations
+              <h2 className="text-3xl font-black text-gray-900 tracking-tight">
+                Top Northern Destinations
               </h2>
             </div>
             <Link
               href="/destinations"
-              className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-[#164E3D] hover:text-black transition-colors"
+              className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 hover:text-emerald-950 transition-colors"
             >
-              <span>Explore All Destinations ({DESTINATIONS.length})</span>
+              <span>View All ({DESTINATIONS.length})</span>
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredDestinations.map((dest) => (
               <DestinationCard key={dest.id} destination={dest} />
             ))}
@@ -174,56 +164,50 @@ export default function Home() {
         </section>
 
         {/* ========================================== */}
-        {/* ARCHITECTURE & FEATURES SHOWCASE */}
+        {/* HOW IT WORKS */}
         {/* ========================================== */}
-        <section className="bg-white py-20 px-4 sm:px-6 lg:px-8 border-t border-[#E2E8E4]">
-          <div className="max-w-7xl mx-auto space-y-14">
-            <div className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="text-xs font-bold tracking-widest uppercase text-[#164E3D]">
-                Data-Driven Smart Tourism Platform
+        <section className="bg-white py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-200">
+          <div className="max-w-7xl mx-auto space-y-12">
+            <div className="text-center max-w-3xl mx-auto space-y-2">
+              <span className="text-xs font-bold tracking-wider uppercase text-emerald-800">
+                User-Friendly Smart Tourism
               </span>
-              <h2 className="font-serif-editorial text-3xl sm:text-4xl font-bold text-[#0C1814]">
-                Engineered for Northern Pakistan Corridors
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+                How RAAAH Helps You Travel Safely
               </h2>
-              <p className="text-xs sm:text-sm text-[#52635D] leading-relaxed">
-                Combining live satellite telemetry, toll-plaza density sensors, crowdsourced driver reports, and emergency helpline services to preserve Northern ecosystems.
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                Clear, real-time metrics designed to keep your family trip safe, convenient, and un-crowded.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="p-8 rounded-3xl bg-[#F5F7F6] border border-[#E2E8E4] space-y-4 hover:border-[#164E3D] transition-all">
-                <div className="w-12 h-12 rounded-2xl bg-[#0D241C] text-[#D4A373] flex items-center justify-center font-bold text-xl shadow-md">
+              <div className="p-6 rounded-2xl bg-gray-50 border border-gray-200 space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
                   <span className="material-symbols-outlined text-2xl">sensors</span>
                 </div>
-                <h3 className="font-serif-editorial text-2xl font-bold text-[#0C1814]">
-                  1. Live Crowd Density Tracking
-                </h3>
-                <p className="text-xs text-[#52635D] leading-relaxed">
-                  Real-time density indicators classify tourist hot-spots into Low, Moderate, High, or Critical capacity levels before you arrive.
+                <h3 className="text-lg font-bold text-gray-900">1. Live Density Badges</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Know before you travel if a spot is Low, Moderate, High, or Overcrowded.
                 </p>
               </div>
 
-              <div className="p-8 rounded-3xl bg-[#F5F7F6] border border-[#E2E8E4] space-y-4 hover:border-[#164E3D] transition-all">
-                <div className="w-12 h-12 rounded-2xl bg-[#0D241C] text-[#D4A373] flex items-center justify-center font-bold text-xl shadow-md">
+              <div className="p-6 rounded-2xl bg-gray-50 border border-gray-200 space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
                   <span className="material-symbols-outlined text-2xl">alt_route</span>
                 </div>
-                <h3 className="font-serif-editorial text-2xl font-bold text-[#0C1814]">
-                  2. Smart Route & Hour Guidance
-                </h3>
-                <p className="text-xs text-[#52635D] leading-relaxed">
-                  Avoid traffic bottlenecks at Babu Sar Pass or Murree Expressway with AI recommendations for off-peak visiting hours.
+                <h3 className="text-lg font-bold text-gray-900">2. Best Visit Hours</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Avoid 2-hour traffic jams at Babu Sar Pass with recommended off-peak visiting windows.
                 </p>
               </div>
 
-              <div className="p-8 rounded-3xl bg-[#F5F7F6] border border-[#E2E8E4] space-y-4 hover:border-[#164E3D] transition-all">
-                <div className="w-12 h-12 rounded-2xl bg-[#0D241C] text-[#D4A373] flex items-center justify-center font-bold text-xl shadow-md">
+              <div className="p-6 rounded-2xl bg-gray-50 border border-gray-200 space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-red-100 text-red-800 flex items-center justify-center font-bold">
                   <span className="material-symbols-outlined text-2xl">shield</span>
                 </div>
-                <h3 className="font-serif-editorial text-2xl font-bold text-[#0C1814]">
-                  3. Emergency & Disaster Alerts
-                </h3>
-                <p className="text-xs text-[#52635D] leading-relaxed">
-                  Instant road blockage notifications linked directly to Rescue 1122 and District Disaster Authorities across Gilgit-Baltistan & KP.
+                <h3 className="text-lg font-bold text-gray-900">3. Emergency Rescue</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Instant road alerts linked directly to Rescue 1122 and District Authorities.
                 </p>
               </div>
             </div>
@@ -231,16 +215,16 @@ export default function Home() {
         </section>
 
         {/* ========================================== */}
-        {/* ACTIVE HAZARD ALERTS SHOWCASE */}
+        {/* ACTIVE HAZARD ALERTS */}
         {/* ========================================== */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold tracking-widest text-red-700 uppercase block mb-1">
-                Road Hazards & Advisory Log
+              <span className="text-xs font-bold tracking-wider text-red-700 uppercase block mb-1">
+                Disaster & Hazard Notices
               </span>
-              <h2 className="font-serif-editorial text-3xl font-bold text-[#0C1814]">
-                Current Disaster Advisories
+              <h2 className="text-2xl font-black text-gray-900">
+                Active Road Advisories
               </h2>
             </div>
             <Link
@@ -251,7 +235,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {activeAlerts.map((alert) => (
               <AlertCard key={alert.id} alert={alert} />
             ))}
@@ -259,24 +243,24 @@ export default function Home() {
         </section>
 
         {/* ========================================== */}
-        {/* FAST-NUCES ACADEMIC BANNER */}
+        {/* FYP ACADEMIC BANNER */}
         {/* ========================================== */}
-        <section className="bg-[#05100C] text-white py-14 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="space-y-2.5">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#D4A373]">
-                FAST-NUCES Final Year Project Defense • 2026
+        <section className="bg-emerald-950 text-white py-12 px-4 sm:px-6 lg:px-8 border-t border-emerald-900">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                FAST-NUCES Final Year Project 2026
               </span>
-              <h3 className="font-serif-editorial text-2xl sm:text-3xl font-bold text-white">
+              <h3 className="text-2xl font-extrabold text-white">
                 {FYP_INFO.title}
               </h3>
-              <p className="text-xs text-slate-300 max-w-3xl">
-                Supervised by <strong>{FYP_INFO.supervisor.name}</strong> • Lead Architect: <strong>Abdur Rafay Baig (23F-3046)</strong> • M Ammar Ahmad (23P-3071) • Faiza Ali (23F-0739).
+              <p className="text-xs text-emerald-200">
+                Supervised by {FYP_INFO.supervisor.name} • FYP Team: Abdur Rafay Baig (23F-3046), M Ammar Ahmad (23P-3071), Faiza Ali (23F-0739).
               </p>
             </div>
             <Link
               href="/about"
-              className="px-7 py-3.5 rounded-xl bg-[#D4A373] hover:bg-[#E8B931] text-black font-bold text-xs uppercase tracking-wider shrink-0 transition-colors shadow-lg"
+              className="px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs uppercase tracking-wider shrink-0 transition-colors shadow-md"
             >
               Meet Team & Documentation →
             </Link>
