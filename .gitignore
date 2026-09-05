@@ -1,0 +1,28 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+/build
+
+# debug logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# env files (strict protection for confidential files)
+.env
+.env*.local
+*.env
+
+# OS / IDE / Tools
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.jetro/
+.tempmediaStorage/
+scratch/
