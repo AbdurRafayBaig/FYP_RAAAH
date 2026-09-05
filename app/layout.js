@@ -1,9 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "RAAAH — Intelligent Crowd Management & Smart Tourism Platform",
-  description: "Official Smart Tourism and Crowd Management Platform for Northern Pakistan (Hunza, Naran, Skardu, Swat, Murree). Real-time density tracking, hazard alerts, AI route recommendations, and verified accommodations.",
-  keywords: ["RAAAH", "Northern Pakistan Tourism", "Crowd Management", "Smart Tourism", "Hunza Valley", "Skardu", "Swat", "Travel Safety Pakistan"],
+  title: "RAAAH — Explore Northern Pakistan with Confidence",
+  description: "Check crowd levels, weather and safety conditions before travelling across Northern Pakistan. Discover destinations in Hunza, Skardu, Naran, Swat and Murree.",
+  keywords: ["RAAAH", "Northern Pakistan Tourism", "Travel Safety", "Hunza Valley", "Skardu", "Crowd Levels", "Weather Conditions"],
 };
 
 export default function RootLayout({ children }) {
@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/logo.png" type="image/png" />
       </head>
-      <body className="min-h-screen bg-[#FAF9F8] text-[#1A1C1C] antialiased flex flex-col">
+      <body className="min-h-screen bg-[#F7F8F5] text-[#17211F] antialiased flex flex-col">
         {children}
       </body>
     </html>
