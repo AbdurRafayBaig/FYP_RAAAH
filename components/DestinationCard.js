@@ -19,57 +19,57 @@ export default function DestinationCard({ destination }) {
   } = destination;
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden border border-[#E5E3DC] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+    <div className="group bg-white rounded-3xl overflow-hidden border border-[#E2E8E4] shadow-xs hover:shadow-2xl transition-all duration-500 flex flex-col h-full hover:-translate-y-1.5">
       {/* Image Container */}
-      <div className="relative h-56 w-full overflow-hidden bg-slate-100">
+      <div className="relative h-60 w-full overflow-hidden bg-slate-900">
         <Image
           src={image}
           alt={name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover group-hover:scale-108 transition-transform duration-700 opacity-95"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#05100C] via-[#05100C]/30 to-transparent"></div>
 
         {/* Top Badges Overlay */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between">
           <CrowdBadge level={crowdLevel} score={crowdScore} size="sm" />
-          <div className="bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-slate-800 flex items-center space-x-1 shadow-sm">
-            <span className="material-symbols-outlined text-amber-500 text-sm">{weather.icon}</span>
+          <div className="bg-[#05100C]/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-white flex items-center space-x-1 border border-white/10 shadow-sm">
+            <span className="material-symbols-outlined text-amber-400 text-sm">{weather.icon}</span>
             <span>{weather.temp}</span>
           </div>
         </div>
 
         {/* Bottom Image Title */}
-        <div className="absolute bottom-3 left-4 right-4 text-white">
-          <span className="text-[11px] font-bold tracking-widest uppercase text-amber-300">
+        <div className="absolute bottom-3.5 left-4 right-4 text-white">
+          <span className="text-[10px] font-bold tracking-widest uppercase text-[#D4A373]">
             {region}
           </span>
-          <h3 className="font-serif-editorial text-2xl font-bold tracking-wide group-hover:text-amber-200 transition-colors">
+          <h3 className="font-serif-editorial text-2xl font-bold tracking-wide group-hover:text-[#D4A373] transition-colors">
             {name}
           </h3>
         </div>
       </div>
 
       {/* Card Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-        <p className="text-xs text-[#575A60] line-clamp-2 leading-relaxed">
+      <div className="p-6 flex-1 flex flex-col justify-between space-y-5">
+        <p className="text-xs text-[#52635D] line-clamp-2 leading-relaxed font-light">
           {tagline}
         </p>
 
         {/* Live Visitor & Hotel Stats */}
-        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#F0EEE9] text-xs">
-          <div className="flex items-center space-x-1.5 text-slate-700">
-            <span className="material-symbols-outlined text-blue-600 text-base">groups</span>
+        <div className="grid grid-cols-2 gap-2 pt-3 border-t border-[#F0EEE9] text-xs">
+          <div className="flex items-center space-x-2 text-slate-800">
+            <span className="material-symbols-outlined text-[#164E3D] text-lg">groups</span>
             <div>
-              <span className="block font-bold text-slate-900">{liveVisitors.toLocaleString()}</span>
-              <span className="text-[10px] text-slate-500 uppercase">Live Tourists</span>
+              <span className="block font-bold font-mono text-slate-900">{liveVisitors.toLocaleString()}</span>
+              <span className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Tourists</span>
             </div>
           </div>
-          <div className="flex items-center space-x-1.5 text-slate-700">
-            <span className="material-symbols-outlined text-emerald-600 text-base">hotel</span>
+          <div className="flex items-center space-x-2 text-slate-800">
+            <span className="material-symbols-outlined text-[#D4A373] text-lg">hotel</span>
             <div>
-              <span className="block font-bold text-slate-900">{accommodationsAvailable} Open</span>
-              <span className="text-[10px] text-slate-500 uppercase">Lodges</span>
+              <span className="block font-bold font-mono text-slate-900">{accommodationsAvailable} Open</span>
+              <span className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Eco Lodges</span>
             </div>
           </div>
         </div>
@@ -79,9 +79,9 @@ export default function DestinationCard({ destination }) {
           <SafetyBadge status={safetyStatus} />
           <Link
             href={`/destinations/${id}`}
-            className="inline-flex items-center space-x-1 text-xs font-semibold text-[#041627] hover:text-[#0051D5] transition-colors"
+            className="inline-flex items-center space-x-1 text-xs font-bold uppercase tracking-wider text-[#0D241C] hover:text-[#D4A373] transition-colors"
           >
-            <span>Explore Guide</span>
+            <span>Explore</span>
             <span className="material-symbols-outlined text-base">arrow_forward</span>
           </Link>
         </div>

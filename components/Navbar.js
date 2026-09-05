@@ -14,21 +14,21 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Home', href: ROUTES.HOME },
     { name: 'Destinations', href: ROUTES.DESTINATIONS },
-    { name: 'Live Crowd Map', href: ROUTES.CROWD_MAP, badge: 'LIVE' },
-    { name: 'Safety & Hazards', href: ROUTES.SAFETY, badge: 'Alerts' },
+    { name: 'Live Crowd Map', href: ROUTES.CROWD_MAP },
+    { name: 'Safety Advisories', href: ROUTES.SAFETY },
     { name: 'Accommodations', href: ROUTES.ACCOMMODATIONS },
-    { name: 'Heritage & Culture', href: ROUTES.CULTURE },
-    { name: 'About Us', href: ROUTES.ABOUT_US },
+    { name: 'Culture & Heritage', href: ROUTES.CULTURE },
+    { name: 'About FYP Team', href: ROUTES.ABOUT_US },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FAF9F8]/95 backdrop-blur-md border-b border-[#E5E3DC]">
+    <header className="sticky top-0 z-50 bg-[#05100C]/90 backdrop-blur-xl border-b border-white/10 text-white transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* Logo & Brand Title */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative w-11 h-11 rounded-lg overflow-hidden border border-[#D5D3C8] bg-white p-1 shadow-sm transition-transform group-hover:scale-105">
+          {/* Logo & Brand Emblem */}
+          <Link href="/" className="flex items-center space-x-3.5 group">
+            <div className="relative w-11 h-11 rounded-xl overflow-hidden border border-white/20 bg-white p-1.5 shadow-md transition-transform group-hover:scale-105">
               <Image 
                 src="/logo.png" 
                 alt="RAAAH Logo" 
@@ -38,68 +38,53 @@ export default function Navbar() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif-editorial text-2xl font-bold tracking-tight text-[#041627]">
+              <span className="font-serif-editorial text-2xl font-bold tracking-wider text-white group-hover:text-[#D4A373] transition-colors">
                 RAAAH
               </span>
-              <span className="text-[10px] tracking-widest uppercase text-[#575A60] font-medium -mt-1">
+              <span className="text-[9px] tracking-widest uppercase text-[#A3B18A] font-semibold -mt-1">
                 Smart Tourism Northern PK
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2">
+          <nav className="hidden lg:flex items-center space-x-1 bg-white/5 p-1.5 rounded-full border border-white/10 backdrop-blur-md">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1.5 ${
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'bg-[#041627] text-white shadow-sm'
-                      : 'text-[#1A1C1C] hover:bg-[#EAE8E0] hover:text-[#041627]'
+                      ? 'bg-[#D4A373] text-black shadow-md font-bold'
+                      : 'text-slate-200 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  <span>{link.name}</span>
-                  {link.badge && (
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
-                      isActive ? 'bg-amber-400 text-black' : 'bg-red-100 text-red-700 border border-red-200'
-                    }`}>
-                      {link.badge}
-                    </span>
-                  )}
+                  {link.name}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Action Buttons */}
+          {/* Clean Action CTAs */}
           <div className="hidden lg:flex items-center space-x-3">
-            {/* Emergency Hotline Button */}
+            {/* Emergency Hotline Pill */}
             <a
               href="tel:1122"
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-red-700 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
-              title="24/7 Disaster & Emergency Rescue Helpline"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-red-300 bg-red-950/60 border border-red-500/30 hover:bg-red-900/60 transition-colors"
+              title="24/7 Rescue & Disaster Helpline"
             >
-              <span className="material-symbols-outlined text-sm">call</span>
-              <span>Help 1122</span>
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+              <span>Rescue 1122</span>
             </a>
 
-            {/* Business / Authority Portal Link */}
+            {/* Portal Sign In Link */}
             <Link
               href={ROUTES.ADMIN_DASHBOARD}
-              className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#041627] bg-[#EAE8E0] border border-[#D5D3C8] hover:bg-[#DFDDD3] transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-black bg-[#D4A373] hover:bg-[#E8B931] transition-all shadow-md hover:shadow-amber-500/20"
             >
-              Portal Login
-            </Link>
-
-            {/* Tourist Register / Profile */}
-            <Link
-              href={ROUTES.LOGIN}
-              className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-[#041627] hover:bg-[#003120] shadow-sm transition-colors"
-            >
-              Tourist Sign In
+              Portal Access →
             </Link>
           </div>
 
@@ -107,13 +92,13 @@ export default function Navbar() {
           <div className="flex lg:hidden items-center space-x-2">
             <a
               href="tel:1122"
-              className="p-2 rounded-full text-red-700 bg-red-50 border border-red-200"
+              className="p-2 rounded-full text-red-300 bg-red-950/80 border border-red-500/30"
             >
               <span className="material-symbols-outlined text-lg">call</span>
             </a>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-lg text-[#1A1C1C] hover:bg-[#EAE8E0] focus:outline-none"
+              className="p-2.5 rounded-xl text-white hover:bg-white/10 focus:outline-none"
               aria-label="Toggle menu"
             >
               <span className="material-symbols-outlined text-2xl">
@@ -126,7 +111,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-[#E5E3DC] bg-[#FAF9F8] px-4 pt-2 pb-6 space-y-2 animate-fadeIn">
+        <div className="lg:hidden border-b border-white/10 bg-[#05100C] px-4 pt-2 pb-6 space-y-2 animate-fadeIn">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -134,35 +119,28 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block px-4 py-2.5 rounded-lg text-base font-medium ${
+                className={`block px-4 py-2.5 rounded-xl text-sm font-semibold ${
                   isActive
-                    ? 'bg-[#041627] text-white font-semibold'
-                    : 'text-[#1A1C1C] hover:bg-[#EAE8E0]'
+                    ? 'bg-[#D4A373] text-black font-bold'
+                    : 'text-slate-200 hover:bg-white/10'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span>{link.name}</span>
-                  {link.badge && (
-                    <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-bold">
-                      {link.badge}
-                    </span>
-                  )}
-                </div>
+                {link.name}
               </Link>
             );
           })}
-          <div className="pt-4 border-t border-[#E5E3DC] grid grid-cols-2 gap-3">
+          <div className="pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
             <Link
               href={ROUTES.ADMIN_DASHBOARD}
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center px-4 py-2.5 rounded-lg text-sm font-semibold text-[#041627] bg-[#EAE8E0] border border-[#D5D3C8]"
+              className="w-full text-center px-4 py-2.5 rounded-xl text-xs font-bold text-black bg-[#D4A373]"
             >
-              Portal Login
+              Portal Access
             </Link>
             <Link
               href={ROUTES.LOGIN}
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#041627]"
+              className="w-full text-center px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 border border-white/20"
             >
               Sign In
             </Link>
