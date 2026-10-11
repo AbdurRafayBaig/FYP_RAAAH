@@ -1,0 +1,10 @@
+# Build context of the Web Server image (Dockerfile in this folder)
+node_modules
+.next
+
+# Not part of the web app
+_archive
+*.md
+
+# Configuration is passed as build arguments, never copied
+.env*

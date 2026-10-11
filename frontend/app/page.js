@@ -1,0 +1,156 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import Icon from '@/components/ui/Icon';
+import { PHOTOS } from '@/data/photos';
+import { ROUTES } from '@/constants/routes';
+import { sizedImage } from '@/lib/format';
+import HomeCta from './HomeCta';
+
+const PLACES = [
+  { name: 'Hunza Valley', region: 'Hunza', photo: PHOTOS.baltit },
+  { name: 'Attabad Lake', region: 'Gojal, Hunza', photo: PHOTOS.attabad },
+  { name: 'Fairy Meadows', region: 'Diamer', photo: PHOTOS.fairyMeadows },
+  { name: 'Shigar Valley', region: 'Shigar', photo: PHOTOS.shigar },
+  { name: 'Naltar Valley', region: 'Gilgit', photo: PHOTOS.naltar },
+];
+
+const STEPS = [
+  {
+    title: 'Crowd from check-ins',
+    text: "Travellers check in when they arrive. Active check-ins are counted against each destination's capacity and shown as Low, Moderate, High or Critical. No one's location is ever displayed.",
+  },
+  {
+    title: 'Verified hazards and weather',
+    text: 'Local observers report landslides, floods and road blocks. A report reaches the public only after an administrator verifies it. Weather comes with the time it was last updated.',
+  },
+  {
+    title: 'A quieter alternative',
+    text: 'When your destination is crowded or unsafe, RAAAH ranks other places by your interests, crowd, safety, weather and distance. You can still choose to go.',
+  },
+];
+
+export default function Home() {
+  const hero = PHOTOS.hunza;
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      {/* Hero */}
+      <section className="relative flex min-h-[86vh] flex-col bg-ink text-white">
+        <Image src={hero.src} alt={hero.place} fill priority sizes="100vw" className="object-cover opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/40" />
+        <Navbar overlay />
+
+        <div className="page relative mt-auto pb-14 pt-32">
+          <h1 className="max-w-3xl text-[44px] leading-[1.05] sm:text-[64px]">
+            Know the crowd, the weather and the road before you go north.
+          </h1>
+          <p className="mt-5 max-w-xl text-[17px] text-white/85">
+            RAAAH estimates how busy each destination is from traveller check-ins, shows verified hazard reports and
+            the latest weather, and suggests a quieter place when yours is full.
+          </p>
+
+          <form action={ROUTES.DESTINATIONS} className="mt-8 flex max-w-xl border-b border-white/60 focus-within:border-white">
+            <label htmlFor="hero-search" className="sr-only">Search destinations</label>
+            <input
+              id="hero-search"
+              name="search"
+              placeholder="Hunza, Skardu, Fairy Meadows…"
+              className="h-12 flex-1 bg-transparent text-[17px] text-white placeholder:text-white/55 focus:outline-none"
+            />
+            <button type="submit" className="flex items-center gap-2 text-[15px] font-medium">
+              Search <Icon name="arrow" />
+            </button>
+          </form>
+        </div>
+
+        <p className="page relative pb-4 text-right text-[11px] text-white/55">
+          {hero.place}. Photo: {hero.author}, {hero.licence}
+        </p>
+      </section>
+
+      <main className="flex-1">
+        {/* Why */}
+        <section className="page grid gap-10 border-b border-rule py-20 md:grid-cols-[1.3fr_1fr]">
+          <p className="font-display text-[28px] leading-snug sm:text-[34px]">
+            In January 2022, twenty-three people died in Murree when thousands of cars drove up into a snowstorm.
+            No one on the road knew how full the town already was, or what the weather was about to do.
+          </p>
+          <div className="space-y-4 self-end text-[16px] text-ink-2">
+            <p>
+              RAAAH is our attempt to put that information in front of travellers before they leave home. We are
+              starting with Gilgit-Baltistan, where the roads are long, the signal is weak and a single landslide
+              can close a valley for days.
+            </p>
+            <p>
+              It does not stop anyone from travelling. It tells you what is happening, and what else is nearby.
+            </p>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="page border-b border-rule py-16">
+          <h2 className="mb-10 text-[30px]">How it works</h2>
+          <ol className="grid gap-10 md:grid-cols-3 md:gap-0">
+            {STEPS.map((step, i) => (
+              <li key={step.title} className="md:border-l md:border-rule md:px-8 md:first:border-l-0 md:first:pl-0">
+                <span className="data text-muted">0{i + 1}</span>
+                <h3 className="mt-2 text-[21px]">{step.title}</h3>
+                <p className="mt-3 text-[15px] text-ink-2">{step.text}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* Places */}
+        <section className="page border-b border-rule py-16">
+          <div className="mb-8 flex items-end justify-between gap-6">
+            <h2 className="text-[30px]">Places on RAAAH</h2>
+            <Link href={ROUTES.DESTINATIONS} className="flex items-center gap-1.5 text-[14px] text-ink-2 hover:text-ink">
+              Current conditions <Icon name="arrow" size={16} />
+            </Link>
+          </div>
+          <div className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+            {PLACES.map((p, i) => (
+              <Link
+                key={p.name}
+                href={`${ROUTES.DESTINATIONS}?search=${encodeURIComponent(p.name.split(' ')[0])}`}
+                className={`group flex flex-col ${i === 0 ? 'sm:col-span-2 lg:row-span-2' : ''}`}
+              >
+                <div className={`relative overflow-hidden bg-rule ${i === 0 ? 'aspect-[4/3] lg:aspect-auto lg:flex-1' : 'aspect-[4/3]'}`}>
+                  <Image
+                    src={i === 0 ? p.photo.src : sizedImage(p.photo.src, 960)}
+                    alt={p.photo.place}
+                    fill
+                    sizes={i === 0 ? '(max-width: 1024px) 100vw, 50vw' : '(max-width: 640px) 100vw, 25vw'}
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                </div>
+                <p className={`mt-3 font-display ${i === 0 ? 'text-[24px]' : 'text-[19px]'}`}>{p.name}</p>
+                <p className="meta">{p.region}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Responsible travel */}
+        <section className="page grid gap-10 border-b border-rule py-16 md:grid-cols-[1fr_1.6fr]">
+          <h2 className="text-[30px]">Travelling responsibly</h2>
+          <ul className="divide-y divide-rule border-y border-rule text-[16px] text-ink-2">
+            <li className="py-4">Ask before photographing people, and always before photographing women.</li>
+            <li className="py-4">Carry your rubbish back down. Most valleys have no waste collection.</li>
+            <li className="py-4">Stay in locally run guest houses and hire guides from the village.</li>
+            <li className="py-4">
+              More in <Link href={ROUTES.CULTURE} className="link">culture and etiquette</Link>.
+            </li>
+          </ul>
+        </section>
+
+        <HomeCta />
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

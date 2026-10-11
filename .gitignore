@@ -1,12 +1,21 @@
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.*
 
-# next.js
-/.next/
-/out/
-/build
+# frontend (Next.js)
+frontend/.next/
+frontend/out/
+frontend/build/
+next-env.d.ts
+
+# backend
+backend/.pgdata/
+
+# ai-engine
+.venv/
+__pycache__/
+.pytest_cache/
 
 # debug logs
 *.log
@@ -18,11 +27,23 @@ yarn-debug.log*
 .env*.local
 *.env
 
-# OS / IDE / Tools
+# OS / IDE
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-.jetro/
 .tempmediaStorage/
 scratch/
+
+# local AI-tool configuration (generated per machine, not part of the project)
+.jetro/
+.agents/
+.cursor/
+.mcp.json
+.windsurfrules
+AGENT.md
+/CLAUDE.md
+.github/copilot-instructions.md
+
+# local backups
+*.zip

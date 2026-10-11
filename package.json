@@ -1,23 +1,20 @@
 {
-  "name": "raah-frontend",
+  "name": "raaah",
   "version": "0.1.0",
   "private": true,
+  "description": "RAAAH - Intelligent Crowd Management and Smart Tourism Platform for Northern Pakistan",
   "scripts": {
-    "dev": "next dev --webpack",
-    "build": "next build --webpack",
-    "start": "next start",
-    "lint": "eslint"
+    "setup": "npm --prefix frontend install && npm --prefix backend install && pip install -r ai-engine/requirements-dev.txt",
+    "dev": "node scripts/dev.mjs",
+    "web": "npm --prefix frontend run dev",
+    "db": "npm --prefix backend run db:local",
+    "api": "npm --prefix backend run dev",
+    "ai": "cd ai-engine && python -m uvicorn app.main:app --port 8000 --reload",
+    "test": "npm --prefix backend test && cd ai-engine && python -m pytest -q",
+    "lint": "npm --prefix frontend run lint",
+    "build": "npm --prefix frontend run build"
   },
-  "dependencies": {
-    "@next/swc-win32-x64-msvc": "16.3.4",
-    "next": "16.3.4",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.4",
-    "tailwindcss": "^4"
+  "engines": {
+    "node": ">=22"
   }
 }

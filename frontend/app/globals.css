@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap');
+@import "tailwindcss";
+@source not "../_archive";
+
+/* ------------------------------------------------------------------
+   RAAAH design tokens
+   Warm paper, ink type, one blue for links, and four condition
+   colours that are only ever used to mean crowd or risk.
+   ------------------------------------------------------------------ */
+@theme {
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-display: 'Newsreader', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --color-paper: #f4f1ea;
+  --color-surface: #fbfaf7;
+  --color-ink: #1c1b18;
+  --color-ink-2: #45423b;
+  --color-muted: #7a756b;
+  --color-rule: #ddd7ca;
+  --color-accent: #2b4c6f;
+
+  --color-low: #4f7a55;
+  --color-moderate: #b07d24;
+  --color-high: #c05a2c;
+  --color-critical: #9e2f25;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+::selection {
+  background: #d9cfb6;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .page {
+    @apply mx-auto w-full max-w-[1200px] px-5 sm:px-8;
+  }
+
+  .btn {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-[3px] px-4 text-[14px] font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-ink text-paper hover:bg-ink-2;
+  }
+  .btn-secondary {
+    @apply border border-ink/70 text-ink hover:bg-ink hover:text-paper;
+  }
+  .btn-quiet {
+    @apply text-ink-2 hover:text-ink hover:bg-ink/5;
+  }
+
+  .link {
+    @apply text-accent underline decoration-accent/30 underline-offset-4 hover:decoration-accent;
+  }
+
+  .label {
+    @apply mb-1.5 block text-[13px] font-medium text-ink-2;
+  }
+  .field {
+    @apply h-11 w-full rounded-[3px] border border-rule bg-surface px-3 text-[15px] text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none;
+  }
+  .field-error {
+    @apply border-critical;
+  }
+
+  .meta {
+    @apply text-[13px] text-muted;
+  }
+  .data {
+    @apply font-mono text-[13px] tabular-nums;
+  }
+}
