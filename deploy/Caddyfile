@@ -1,0 +1,15 @@
+# HTTPS for the browser (SRS 3.3.3). With a real domain name Caddy obtains and renews the certificate
+# by itself; with "localhost" it uses its own local certificate (the browser shows a warning once).
+{$SITE_ADDRESS:localhost} {
+	encode zstd gzip
+
+	# Application Server - REST API
+	handle /api/* {
+		reverse_proxy api:5000
+	}
+
+	# Web Server - Next.js
+	handle {
+		reverse_proxy web:3000
+	}
+}

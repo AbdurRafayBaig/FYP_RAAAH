@@ -1,0 +1,116 @@
+# RAAAH application hosting environment - one service per node of the Deployment Diagram (SRS Fig. 45).
+#
+#   cd deploy
+#   copy .env.example .env      (then fill it in)
+#   docker compose up -d --build
+#
+# Only the HTTPS proxy is reachable from outside; the AI server, database and cache stay on the internal network.
+
+name: raaah
+
+services:
+  # <<database server>> PostgreSQL + PostGIS - artifact "RAAAH Database"
+  db:
+    image: postgis/postgis:17-3.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: raaah
+      POSTGRES_USER: raaah
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in deploy/.env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U raaah -d raaah"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # <<cache server>> Redis - artifact "Crowd and Status Cache" (SRS 3.3.7)
+  cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # Logged-out sessions are kept here until they expire, so they must survive a restart
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - cache-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # <<server>> AI Server (Python + Scikit-learn) - artifact "Recommendation Engine"
+  ai:
+    build: ../ai-engine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # <<server>> Application Server (Node.js + Express.js) - artifact "REST API"
+  api:
+    build: ../backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+      ai:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      DATABASE_URL: postgres://raaah:${POSTGRES_PASSWORD}@db:5432/raaah
+      REDIS_URL: redis://cache:6379
+      AI_ENGINE_URL: http://ai:8000
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in deploy/.env}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      CORS_ORIGIN: https://${SITE_ADDRESS:-localhost}
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY:-}
+      WEATHER_REFRESH_MINUTES: ${WEATHER_REFRESH_MINUTES:-10}
+      CHECKIN_AUTO_CLOSE_HOURS: ${CHECKIN_AUTO_CLOSE_HOURS:-6}
+      CROWD_REFRESH_SECONDS: ${CROWD_REFRESH_SECONDS:-60}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # <<server>> Web Server (Next.js) - artifact "RAAAH Frontend"
+  web:
+    build:
+      context: ../frontend
+      args:
+        NEXT_PUBLIC_API_URL: /api
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+        NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID: ${GOOGLE_MAPS_MAP_ID:-}
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+
+  # HTTPS entry point for the browser: "/" goes to the Web Server, "/api" to the Application Server (SRS 3.3.3)
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - web
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  db-data:
+  cache-data:
+  caddy-data:
+  caddy-config:
