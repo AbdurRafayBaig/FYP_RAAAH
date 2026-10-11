@@ -1,0 +1,35 @@
+import 'dotenv/config';
+
+const num = (value, fallback) => {
+  const n = Number(value);
+  return Number.isFinite(n) && value !== '' && value !== undefined ? n : fallback;
+};
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+export const config = {
+  isProduction,
+  isTest: process.env.NODE_ENV === 'test',
+  port: num(process.env.PORT, 5000),
+  // One or more web client addresses, separated by commas
+  corsOrigins: (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',').map((o) => o.trim().replace(/\/$/, '')).filter(Boolean),
+  databaseUrl: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5433/raaah',
+  redisUrl: process.env.REDIS_URL || '',
+  jwtSecret: process.env.JWT_SECRET || 'raaah-dev-secret-change-me',
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',
+  aiEngineUrl: process.env.AI_ENGINE_URL || 'http://localhost:8000',
+  openWeatherApiKey: process.env.OPENWEATHER_API_KEY || '',
+  weatherRefreshMinutes: num(process.env.WEATHER_REFRESH_MINUTES, 10),
+  checkinAutoCloseHours: num(process.env.CHECKIN_AUTO_CLOSE_HOURS, 6),
+  crowdRefreshSeconds: num(process.env.CROWD_REFRESH_SECONDS, 60),
+};
+
+const PLACEHOLDER_SECRETS = ['change-this-to-a-long-random-string', 'raaah-dev-secret-change-me'];
+
+if (!process.env.JWT_SECRET || PLACEHOLDER_SECRETS.includes(process.env.JWT_SECRET)) {
+  // SRS 3.3.3 - a deployed server must never sign sessions with a known secret
+  if (isProduction) {
+    throw new Error('[config] JWT_SECRET must be set to a long random value when NODE_ENV=production.');
+  }
+  console.warn('[config] JWT_SECRET is missing or still the placeholder. Set a long random value in .env before deployment.');
+}
