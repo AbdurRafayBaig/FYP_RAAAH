@@ -4,6 +4,11 @@ import * as authService from './authService.js';
 
 export const authRoutes = Router();
 
+// POST /api/auth/register   (UC-01)
+authRoutes.post('/register', async (req, res) => {
+  res.status(201).json(await authService.register(req.body || {}));
+});
+
 // POST /api/auth/login
 authRoutes.post('/login', async (req, res) => {
   const { token, user } = await authService.login(req.body || {});

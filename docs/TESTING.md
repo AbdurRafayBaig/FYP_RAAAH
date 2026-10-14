@@ -1,6 +1,6 @@
 # RAAAH — Testing
 
-Covers the use cases implemented in this phase: UC-02 Login, UC-03 Manage Profile and Preferences,
+Covers the use cases implemented in this phase: UC-01 Register Account, UC-02 Login, UC-03 Manage Profile and Preferences,
 UC-04 Explore Destinations, UC-06 Check In at Destination and UC-09 Get Alternative Destination
 Recommendations. Every test is named after the flow of the expanded use case it checks (SRS Section 7).
 
@@ -46,19 +46,18 @@ and production data cannot be wiped by a test run.
 The same commands run on every push in GitHub Actions (`.github/workflows/ci.yml`), there against
 PostgreSQL with PostGIS.
 
-## Result of the last run (11 October 2026)
+## Result of the last run (14 October 2026)
 
 | Suite | Tests | Passed | Failed |
 |---|---|---|---|
 | Backend unit | 34 | 34 | 0 |
-| Backend integration | 99 | 99 | 0 |
+| Backend integration | 114 | 114 | 0 |
 | AI engine | 14 | 14 | 0 |
 | ESLint | — | clean | — |
 | Production build | — | succeeded | — |
 
-Backend coverage: 94.1 % of lines, 90.8 % of branches. The lines not covered are the Redis client
-(the tests use the in-memory cache), the process start-up code and the account-creation queries of
-UC-01, which is not part of this phase.
+Backend coverage: 94.8 % of lines, 91.1 % of branches. The lines not covered are the Redis client
+(the tests use the in-memory cache) and the process start-up code.
 
 Not run in this environment: the PostGIS branch of the area check (the local database has no
 PostGIS; the haversine branch was tested) and the Docker images (Docker is not installed on the
@@ -74,6 +73,14 @@ development machine). Both run in CI and on the server.
 | `%` and `_` in the search box matched every destination. | TC-04-07 | `destinationRepository.listActive` |
 
 ## Traceability: use case flows to test cases
+
+### UC-01 Register Account — `backend/tests/integration/uc01-register.test.js`
+
+| Flow / requirement | Test cases |
+|---|---|
+| Normal flow 3–6: account created, unique Tourist ID (FR-01.02), preferences stored, tourist signed in | TC-01-01 – TC-01-04 |
+| Alt 4a: email already registered, tourist asked to sign in | TC-01-05 |
+| Alt 4b: missing or invalid information, fields highlighted, nothing saved | TC-01-06, TC-01-07 |
 
 ### UC-02 Login — `backend/tests/integration/uc02-login.test.js`
 

@@ -20,7 +20,7 @@ frontend/
   lib/api.js              API Client
   context/, constants/    session state, routes, roles, crowd and risk levels
 backend/src/
-  modules/auth            Authentication and Profile Service (UC-02)
+  modules/auth            Authentication and Profile Service (UC-01, UC-02)
   modules/profile         Authentication and Profile Service (UC-03)
   modules/destinations    Destination Information Service (UC-04) + OpenWeatherMap
   modules/crowd           Crowd Monitoring Service (UC-06)
@@ -85,6 +85,7 @@ coordinates shown on its page (e.g. Hunza Valley 36.3236, 74.6660).
 
 | Use case | Requirements | Where |
 |---|---|---|
+| UC-01 Register Account | FR-01.01, FR-01.02, FR-01.04 | `backend/src/modules/auth`, `frontend/app/register` |
 | UC-02 Login | FR-01.03, SRS 3.3.3 (hashed passwords, server-side RBAC) | `backend/src/modules/auth`, `backend/src/middleware/auth.js`, `frontend/app/login`, `frontend/components/RequireAuth.js` |
 | UC-03 Manage Profile and Preferences | FR-01.02, FR-01.04, FR-01.05, FR-01.07 | `backend/src/modules/profile`, `frontend/app/profile` |
 | UC-04 Explore Destinations | FR-02.01–FR-02.06, FR-03.06, FR-06.03, SRS 3.3.5 | `backend/src/modules/destinations`, `frontend/app/destinations` |
@@ -112,7 +113,7 @@ destinations stay eligible with a 10% lower score (FR-04.03). Every result is st
 `destination_interests` table (FR-05.03) and `weather_info` table (WeatherInfo in the Domain Model).
 
 ### Not yet implemented (next phase)
-UC-01 Register and UC-10 Report Hazard (forms only, they say so), UC-05, UC-07 explicit Check Out
+UC-10 Report Hazard (form only, it says so), UC-05, UC-07 explicit Check Out
 button, UC-08, UC-11 – UC-17. The dashboard shows live crowd and risk totals; the rest of UC-17 follows.
 
 ### Interface
@@ -124,7 +125,7 @@ live in `frontend/components/ui`. Earlier prototype pages that showed invented d
 
 ## Tests
 ```bash
-npm test                  # backend (133 tests, needs `npm run db` or `npm run dev` running) + AI engine (14 tests)
+npm test                  # backend (148 tests, needs `npm run db` or `npm run dev` running) + AI engine (14 tests)
 npm run lint              # web client
 npm run build             # web client, production build
 ```

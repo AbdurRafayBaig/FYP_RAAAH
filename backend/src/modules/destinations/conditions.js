@@ -11,7 +11,8 @@ export function assessConditions({ crowdLevel, riskStatus, weather, accessInfo, 
   const unsafe = riskStatus !== 'Low Risk' || hazards.length > 0;
   if (riskStatus !== 'Low Risk') reasons.push(`Safety status is ${riskStatus}.`);
   if (hazards.length > 0) {
-    reasons.push(`${hazards.length} verified hazard report(s): ${[...new Set(hazards.map((h) => h.hazardType))].join(', ')}.`);
+    const types = [...new Set(hazards.map((h) => h.hazardType))].join(', ');
+    reasons.push(`${hazards.length} verified hazard ${hazards.length === 1 ? 'report' : 'reports'}: ${types}.`);
   }
 
   const accessStatus = accessInfo?.status || 'Open';

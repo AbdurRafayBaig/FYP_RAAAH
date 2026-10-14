@@ -7,7 +7,7 @@ const commons = (path, file, width = 1920) =>
 export const PHOTOS = {
   hunza: { src: commons('d/dc', 'Hunza_Valley_HDR.jpg'), place: 'Karimabad, Hunza Valley', author: 'FaizanAhmad', licence: 'CC BY-SA 3.0' },
   attabad: { src: commons('5/52', 'Attabad.jpg', 1280), place: 'Attabad Lake', author: 'Peracha1', licence: 'CC BY-SA 4.0' },
-  passu: { src: commons('e/e5', 'Pasu_cones.jpg', 1280), place: 'Passu Cones', author: 'Mehrunisa Reimoo', licence: 'CC BY-SA 4.0' },
+  passu: { src: commons('e/e5', 'Pasu_cones.jpg'), place: 'Passu Cones', author: 'Mehrunisa Reimoo', licence: 'CC BY-SA 4.0' },
   khunjerab: { src: commons('0/0a', 'China_Border%2C_Pakistan.jpg', 1280), place: 'Khunjerab Pass', author: 'Nain Malik', licence: 'CC BY-SA 4.0' },
   skardu: { src: commons('f/f8', 'Unexpected_Snow_in_Katpana_Skardu.jpg', 1280), place: 'Katpana, Skardu', author: 'Rgyalchan', licence: 'CC BY-SA 4.0' },
   shangrila: { src: commons('5/5b', 'Shangrila%2C_Lower_Kachura_Lake.jpg', 1280), place: 'Lower Kachura Lake', author: 'Hasanijaz', licence: 'CC BY-SA 4.0' },

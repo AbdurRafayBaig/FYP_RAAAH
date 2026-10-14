@@ -61,6 +61,9 @@ async function request(method, path, body) {
 }
 
 export const api = {
+  // UC-01 Register Account
+  register: (details) => request('POST', '/auth/register', details),
+
   // UC-02 Login
   login: (email, password) => request('POST', '/auth/login', { email, password }),
   logout: () => request('POST', '/auth/logout'),

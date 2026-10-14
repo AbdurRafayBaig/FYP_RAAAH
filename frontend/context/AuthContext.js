@@ -45,6 +45,14 @@ export function AuthProvider({ children }) {
     return user;
   }, []);
 
+  // UC-01: the new tourist is signed in straight away
+  const register = useCallback(async (details) => {
+    const { token, user, message } = await api.register(details);
+    setToken(token);
+    setUser(user);
+    return { user, message };
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await api.logout();
@@ -55,8 +63,8 @@ export function AuthProvider({ children }) {
   }, [clearSession]);
 
   const value = useMemo(
-    () => ({ user, loading, login, logout, setUser }),
-    [user, loading, login, logout],
+    () => ({ user, loading, login, register, logout, setUser }),
+    [user, loading, login, register, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

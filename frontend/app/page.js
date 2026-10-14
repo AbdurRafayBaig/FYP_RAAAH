@@ -71,81 +71,84 @@ export default function Home() {
       </section>
 
       <main className="flex-1">
-        {/* Why */}
-        <section className="page grid gap-10 border-b border-rule py-20 md:grid-cols-[1.3fr_1fr]">
-          <p className="font-display text-[28px] leading-snug sm:text-[34px]">
-            In January 2022, twenty-three people died in Murree when thousands of cars drove up into a snowstorm.
-            No one on the road knew how full the town already was, or what the weather was about to do.
-          </p>
-          <div className="space-y-4 self-end text-[16px] text-ink-2">
-            <p>
-              RAAAH is our attempt to put that information in front of travellers before they leave home. We are
-              starting with Gilgit-Baltistan, where the roads are long, the signal is weak and a single landslide
-              can close a valley for days.
+        {/* Section rules line up with the text, not with the page padding */}
+        <div className="page">
+          {/* Why */}
+          <section className="grid gap-10 border-b border-rule py-20 md:grid-cols-[1.3fr_1fr]">
+            <p className="font-display text-[28px] leading-snug sm:text-[34px]">
+              In January 2022, twenty-three people died in Murree when thousands of cars drove up into a snowstorm.
+              No one on the road knew how full the town already was, or what the weather was about to do.
             </p>
-            <p>
-              It does not stop anyone from travelling. It tells you what is happening, and what else is nearby.
-            </p>
-          </div>
-        </section>
+            <div className="space-y-4 self-end text-[16px] text-ink-2">
+              <p>
+                RAAAH is our attempt to put that information in front of travellers before they leave home. We are
+                starting with Gilgit-Baltistan, where the roads are long, the signal is weak and a single landslide
+                can close a valley for days.
+              </p>
+              <p>
+                It does not stop anyone from travelling. It tells you what is happening, and what else is nearby.
+              </p>
+            </div>
+          </section>
 
-        {/* How it works */}
-        <section className="page border-b border-rule py-16">
-          <h2 className="mb-10 text-[30px]">How it works</h2>
-          <ol className="grid gap-10 md:grid-cols-3 md:gap-0">
-            {STEPS.map((step, i) => (
-              <li key={step.title} className="md:border-l md:border-rule md:px-8 md:first:border-l-0 md:first:pl-0">
-                <span className="data text-muted">0{i + 1}</span>
-                <h3 className="mt-2 text-[21px]">{step.title}</h3>
-                <p className="mt-3 text-[15px] text-ink-2">{step.text}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
+          {/* How it works */}
+          <section className="border-b border-rule py-16">
+            <h2 className="mb-10 text-[30px]">How it works</h2>
+            <ol className="grid gap-10 md:grid-cols-3 md:gap-0">
+              {STEPS.map((step, i) => (
+                <li key={step.title} className="md:border-l md:border-rule md:px-8 md:first:border-l-0 md:first:pl-0">
+                  <span className="data text-muted">0{i + 1}</span>
+                  <h3 className="mt-2 text-[21px]">{step.title}</h3>
+                  <p className="mt-3 text-[15px] text-ink-2">{step.text}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
 
-        {/* Places */}
-        <section className="page border-b border-rule py-16">
-          <div className="mb-8 flex items-end justify-between gap-6">
-            <h2 className="text-[30px]">Places on RAAAH</h2>
-            <Link href={ROUTES.DESTINATIONS} className="flex items-center gap-1.5 text-[14px] text-ink-2 hover:text-ink">
-              Current conditions <Icon name="arrow" size={16} />
-            </Link>
-          </div>
-          <div className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-            {PLACES.map((p, i) => (
-              <Link
-                key={p.name}
-                href={`${ROUTES.DESTINATIONS}?search=${encodeURIComponent(p.name.split(' ')[0])}`}
-                className={`group flex flex-col ${i === 0 ? 'sm:col-span-2 lg:row-span-2' : ''}`}
-              >
-                <div className={`relative overflow-hidden bg-rule ${i === 0 ? 'aspect-[4/3] lg:aspect-auto lg:flex-1' : 'aspect-[4/3]'}`}>
-                  <Image
-                    src={i === 0 ? p.photo.src : sizedImage(p.photo.src, 960)}
-                    alt={p.photo.place}
-                    fill
-                    sizes={i === 0 ? '(max-width: 1024px) 100vw, 50vw' : '(max-width: 640px) 100vw, 25vw'}
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                </div>
-                <p className={`mt-3 font-display ${i === 0 ? 'text-[24px]' : 'text-[19px]'}`}>{p.name}</p>
-                <p className="meta">{p.region}</p>
+          {/* Places */}
+          <section className="border-b border-rule py-16">
+            <div className="mb-8 flex items-end justify-between gap-6">
+              <h2 className="text-[30px]">Places on RAAAH</h2>
+              <Link href={ROUTES.DESTINATIONS} className="flex items-center gap-1.5 text-[14px] text-ink-2 hover:text-ink">
+                Current conditions <Icon name="arrow" size={16} />
               </Link>
-            ))}
-          </div>
-        </section>
+            </div>
+            <div className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+              {PLACES.map((p, i) => (
+                <Link
+                  key={p.name}
+                  href={`${ROUTES.DESTINATIONS}?search=${encodeURIComponent(p.name.split(' ')[0])}`}
+                  className={`group flex flex-col ${i === 0 ? 'sm:col-span-2 lg:row-span-2' : ''}`}
+                >
+                  <div className={`relative overflow-hidden bg-rule ${i === 0 ? 'aspect-[4/3] lg:aspect-auto lg:flex-1' : 'aspect-[4/3]'}`}>
+                    <Image
+                      src={i === 0 ? p.photo.src : sizedImage(p.photo.src, 960)}
+                      alt={p.photo.place}
+                      fill
+                      sizes={i === 0 ? '(max-width: 1024px) 100vw, 50vw' : '(max-width: 640px) 100vw, 25vw'}
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  </div>
+                  <p className={`mt-3 font-display ${i === 0 ? 'text-[24px]' : 'text-[19px]'}`}>{p.name}</p>
+                  <p className="meta">{p.region}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
 
-        {/* Responsible travel */}
-        <section className="page grid gap-10 border-b border-rule py-16 md:grid-cols-[1fr_1.6fr]">
-          <h2 className="text-[30px]">Travelling responsibly</h2>
-          <ul className="divide-y divide-rule border-y border-rule text-[16px] text-ink-2">
-            <li className="py-4">Ask before photographing people, and always before photographing women.</li>
-            <li className="py-4">Carry your rubbish back down. Most valleys have no waste collection.</li>
-            <li className="py-4">Stay in locally run guest houses and hire guides from the village.</li>
-            <li className="py-4">
-              More in <Link href={ROUTES.CULTURE} className="link">culture and etiquette</Link>.
-            </li>
-          </ul>
-        </section>
+          {/* Responsible travel */}
+          <section className="grid gap-10 border-b border-rule py-16 md:grid-cols-[1fr_1.6fr]">
+            <h2 className="text-[30px]">Travelling responsibly</h2>
+            <ul className="divide-y divide-rule border-y border-rule text-[16px] text-ink-2">
+              <li className="py-4">Ask before photographing people, and always before photographing women.</li>
+              <li className="py-4">Carry your rubbish back down. Most valleys have no waste collection.</li>
+              <li className="py-4">Stay in locally run guest houses and hire guides from the village.</li>
+              <li className="py-4">
+                More in <Link href={ROUTES.CULTURE} className="link">culture and etiquette</Link>.
+              </li>
+            </ul>
+          </section>
+        </div>
 
         <HomeCta />
       </main>

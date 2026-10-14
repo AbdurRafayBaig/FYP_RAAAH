@@ -39,7 +39,7 @@ describe('assessConditions', () => {
     const hazards = [{ hazardType: 'Landslide' }, { hazardType: 'Landslide' }, { hazardType: 'Rockfall' }];
     const result = assessConditions({ ...fine, hazards });
     assert.equal(result.unsafe, true);
-    assert.deepEqual(result.reasons, ['3 verified hazard report(s): Landslide, Rockfall.']);
+    assert.deepEqual(result.reasons, ['3 verified hazard reports: Landslide, Rockfall.']);
   });
 
   test('closed access is inaccessible; limited access is only mentioned', () => {

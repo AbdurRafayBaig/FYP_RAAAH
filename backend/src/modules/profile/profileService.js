@@ -2,11 +2,9 @@ import { withTransaction } from '../../data/db.js';
 import * as users from '../../data/repositories/userRepository.js';
 import { INTERESTS } from '../../domain.js';
 import { HttpError } from '../../middleware/errors.js';
-import { isValidEmail, normaliseEmail } from '../auth/authService.js';
+import { NAME_RULE, isValidEmail, isValidFullName, normaliseEmail, normaliseName } from '../auth/authService.js';
 
 // UC-03 Manage Profile and Preferences (Expanded Use Case Table 40, SSD Fig. 22)
-
-const NAME_PATTERN = /^[\p{L}][\p{L} .'-]{1,99}$/u;
 
 export function getProfile(userId) {
   return users.findById(userId);
@@ -15,10 +13,8 @@ export function getProfile(userId) {
 function validate(body) {
   const fields = {};
 
-  const fullName = typeof body.fullName === 'string' ? body.fullName.trim().replace(/\s+/g, ' ') : '';
-  if (!NAME_PATTERN.test(fullName)) {
-    fields.fullName = 'Enter your full name (2-100 letters; spaces, dots, apostrophes and hyphens allowed).';
-  }
+  const fullName = normaliseName(body.fullName);
+  if (!isValidFullName(fullName)) fields.fullName = NAME_RULE;
 
   const email = normaliseEmail(body.email);
   if (!isValidEmail(email)) fields.email = 'Enter a valid email address.';

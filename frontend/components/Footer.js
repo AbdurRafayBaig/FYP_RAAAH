@@ -35,9 +35,11 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <div className="page border-t border-rule py-5 meta">
-        Final Year Project, FAST-NUCES Chiniot-Faisalabad, 2026. Photographs from Wikimedia Commons —{' '}
-        <Link href={`${ROUTES.ABOUT_US}#credits`} className="underline underline-offset-2 hover:text-ink">credits</Link>.
+      <div className="page">
+        <p className="meta border-t border-rule py-5">
+          Final Year Project, FAST-NUCES Chiniot-Faisalabad, 2026. Photographs from Wikimedia Commons —{' '}
+          <Link href={`${ROUTES.ABOUT_US}#credits`} className="underline underline-offset-2 hover:text-ink">credits</Link>.
+        </p>
       </div>
     </footer>
   );

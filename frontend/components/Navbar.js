@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ROUTES } from '@/constants/routes';
-import { DASHBOARD_ROLES, isTouristRole } from '@/constants/roles';
+import { DASHBOARD_ROLES, ROLE_LABELS, isTouristRole } from '@/constants/roles';
 import { useAuth } from '@/context/AuthContext';
 import Icon from '@/components/ui/Icon';
 
@@ -73,7 +73,8 @@ export default function Navbar({ overlay = false }) {
                 href={isTourist ? ROUTES.PROFILE : ROUTES.ANALYTICS_DASHBOARD}
                 className={`text-[14px] ${active(ROUTES.PROFILE) ? tone : quiet}`}
               >
-                {user.fullName.split(' ')[0]}
+                {/* Staff accounts are named after their office, so their role is clearer than a first word */}
+                {isTourist ? user.fullName.split(' ')[0] : ROLE_LABELS[user.role]}
               </Link>
               <button onClick={handleLogout} className={`text-[14px] ${quiet}`}>
                 Sign out
