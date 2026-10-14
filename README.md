@@ -133,6 +133,11 @@ are traced to the use case flows in [docs/TESTING.md](docs/TESTING.md), which al
 checklist. GitHub Actions runs everything on each push (`.github/workflows/ci.yml`).
 
 ## Deployment and maintenance
+Live demonstration (Vercel, PostgreSQL on Neon): web client https://raaah-web.vercel.app,
+API https://raaah-api.vercel.app/api/health, AI engine https://raaah-ai.vercel.app/health.
+Each push to `main` redeploys all three; see "Interim deployment: Vercel" in
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
 ```bash
 cd deploy && copy .env.example .env       # fill in SITE_ADDRESS, POSTGRES_PASSWORD, JWT_SECRET
 docker compose up -d --build
