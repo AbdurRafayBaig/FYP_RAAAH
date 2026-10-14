@@ -1,0 +1,7 @@
+.env
+.env*.local
+.pgdata
+node_modules
+tests
+Dockerfile
+.dockerignore

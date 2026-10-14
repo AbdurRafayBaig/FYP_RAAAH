@@ -94,78 +94,78 @@ with production settings:
 Put a reverse proxy with a certificate in front, routing `/api` to port 5000 and everything else to
 port 3000, as `deploy/Caddyfile` does.
 
-## Interim deployment: web client on Vercel
+## Interim deployment: Vercel
 
-For demonstrating this phase, the web client can be hosted on Vercel. Vercel runs only the Web
-Server node of Fig. 45. The Application Server, the AI Server and the database are separate
-programs that stay running, so they need a host of their own; without them the deployed site opens
-but nobody can log in, because every use case of this phase goes through the API.
+For demonstrating this phase, all three components run on Vercel, each as its own Vercel project
+built from this repository, with the languages and database of the SRS unchanged: the Next.js web
+client, the Node.js + Express.js Application Server, the Python + Scikit-learn AI Server, and
+PostgreSQL (Neon, from the Vercel Marketplace, which offers PostGIS).
 
 ```
-browser ──HTTPS──> Vercel (frontend/)
-   └─────HTTPS──> Application Server (backend/) ──> AI Server (ai-engine/)
-                          └──> PostgreSQL
+browser ──HTTPS──> raaah-web  (frontend/, Next.js)
+   └─────HTTPS──> raaah-api  (backend/, Express as a Vercel Function) ──HTTPS──> raaah-ai (ai-engine/, FastAPI)
+                        ├──> PostgreSQL (Neon)
+                        └──> Redis (Upstash, optional)
 ```
 
-**1. Database** — create a PostgreSQL database with a hosted provider (for example Neon, which has
-a free plan and PostGIS) and copy its connection string. Create the tables and demo data once from
-your own machine (PowerShell):
+| Vercel project | Root Directory | Entry point | Settings file |
+|---|---|---|---|
+| `raaah-ai` | `ai-engine` | `api/index.py` (imports `app.main:app`) | `ai-engine/vercel.json` |
+| `raaah-api` | `backend` | `api/index.js` (wraps `createApp()`) | `backend/vercel.json` |
+| `raaah-web` | `frontend` | Next.js (detected) | — |
+
+`backend/api/index.js` is the serverless counterpart of `src/server.js`. A function cannot keep the
+60-second timer of `startRefreshJob()` alive, so it runs the same refresh cycle (FR-03.02 automatic
+check-out, crowd recalculation) before a request whenever `CROWD_REFRESH_SECONDS` have passed.
+The build command of `raaah-api` is `npm run db:migrate`, so every deployment creates or updates
+the tables in the connected database.
+
+**1. AI Server** — deploy `ai-engine/` and check `https://<raaah-ai>/health`.
+
+**2. Database** — in the `raaah-api` project, Storage → create a Neon Postgres database and connect
+it; this sets `DATABASE_URL`. Optionally add Upstash Redis the same way and set `REDIS_URL` to its
+`rediss://` address (without it, crowd levels and logged-out sessions are kept per function
+instance). Load the demonstration data once from your own machine (PowerShell):
 
 ```powershell
 cd backend
+vercel env pull .env.production.local     # or copy DATABASE_URL from the Vercel dashboard
 $env:DATABASE_URL = "<connection string>"
 npm run db:migrate
 npm run db:seed
 ```
 
-**2. AI Server** — a Python web service (for example on Render or Railway):
+**3. Application Server** — environment variables of `raaah-api`:
 
 | Setting | Value |
 |---|---|
-| Root directory | `ai-engine` |
-| Build command | `pip install -r requirements.txt` |
-| Start command | `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
-
-**3. Application Server** — a Node.js web service on the same provider:
-
-| Setting | Value |
-|---|---|
-| Root directory | `backend` |
-| Build command | `npm ci --omit=optional` |
-| Start command | `npm run db:migrate && npm start` |
 | `NODE_ENV` | `production` |
-| `DATABASE_URL` | the connection string of step 1 |
-| `AI_ENGINE_URL` | address of the AI Server of step 2, without a trailing slash |
+| `DATABASE_URL` | set by the Neon integration |
+| `AI_ENGINE_URL` | `https://<raaah-ai>`, without a trailing slash |
 | `JWT_SECRET` | a long random value |
-| `CORS_ORIGIN` | address of the Vercel site, e.g. `https://raaah.vercel.app` (several allowed, comma separated) |
-| `OPENWEATHER_API_KEY` | optional |
+| `CORS_ORIGIN` | address of `raaah-web`, e.g. `https://raaah-web.vercel.app` (several allowed, comma separated) |
+| `REDIS_URL`, `OPENWEATHER_API_KEY` | optional |
 
-Check `https://<application server>/api/health`: it must answer `"status":"ok"`.
+Check `https://<raaah-api>/api/health`: it must answer `"status":"ok"`.
 
-**4. Web client on Vercel** — import the GitHub repository and set:
+**4. Web client** — environment variables of `raaah-web`:
 
 | Setting | Value |
 |---|---|
-| Root Directory | `frontend` |
-| Framework Preset | Next.js (detected) |
-| `NEXT_PUBLIC_API_URL` | `https://<application server>/api` |
+| `NEXT_PUBLIC_API_URL` | `https://<raaah-api>/api` |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | optional |
 
-`NEXT_PUBLIC_*` values are compiled into the site, so redeploy on Vercel after changing them.
+`NEXT_PUBLIC_*` values are compiled into the site, so redeploy `raaah-web` after changing them.
 
 Things to know for a demonstration:
 
-- Free plans put an idle service to sleep. The first request after a pause can take up to a
-  minute; open the site a few minutes before presenting.
-- Without `REDIS_URL` the Application Server keeps crowd levels and logged-out sessions in memory.
-  That is fine for one server instance; add a hosted Redis when there is more than one.
+- The first request after a quiet period starts the functions and takes a few seconds longer.
 - Demo check-ins close after `CHECKIN_AUTO_CLOSE_HOURS`. Refresh them with `npm run seed:crowd`
-  (with `DATABASE_URL` set as in step 1) before presenting.
-- Check-in needs the device location, which browsers give only to HTTPS sites. Vercel and the
-  hosts above serve HTTPS, so UC-06 works on a phone at the destination or with DevTools sensors.
-
-This interim setup has not been deployed from the development machine; the settings above are the
-ones the code expects (`backend/src/config.js`, `frontend/lib/api.js`).
+  (with `DATABASE_URL` set as in step 2) before presenting.
+- Check-in needs the device location, which browsers give only to HTTPS sites. Vercel serves
+  HTTPS, so UC-06 works on a phone at the destination or with DevTools sensors.
+- The AI Server has a public address on Vercel, unlike in Fig. 45 where only the Application Server
+  reaches it. It only scores the data it is sent and reads no stored data.
 
 ## Status of this setup
 

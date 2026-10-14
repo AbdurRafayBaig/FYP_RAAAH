@@ -47,3 +47,6 @@ AGENT.md
 
 # local backups
 *.zip
+
+# Vercel CLI project links
+.vercel/
