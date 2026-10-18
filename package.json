@@ -11,6 +11,8 @@
     "api": "npm --prefix backend run dev",
     "ai": "cd ai-engine && python -m uvicorn app.main:app --port 8000 --reload",
     "test": "npm --prefix backend test && cd ai-engine && python -m pytest -q",
+    "test:e2e": "npm --prefix frontend run test:e2e",
+    "demo:crowd": "npm --prefix backend run seed:crowd",
     "lint": "npm --prefix frontend run lint",
     "build": "npm --prefix frontend run build"
   },

@@ -8,6 +8,8 @@ frontend/.next/
 frontend/out/
 frontend/build/
 next-env.d.ts
+frontend/test-results/
+frontend/playwright-report/
 
 # backend
 backend/.pgdata/
