@@ -3,6 +3,7 @@ import cors from 'cors';
 import { config } from './config.js';
 import { getCacheKind } from './data/cache.js';
 import { hasPostgis, query } from './data/db.js';
+import { health as aiEngineHealth } from './integrations/aiEngineClient.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 import { requestLog, securityHeaders } from './middleware/http.js';
 import { authRoutes } from './modules/auth/authRoutes.js';
@@ -22,12 +23,14 @@ export function createApp() {
   app.use(express.json({ limit: '100kb' }));
 
   // Used by the container health check and for monitoring (docs/MAINTENANCE.md)
+  // The API stays "ok" while the AI engine is down: only recommendations depend on it (SRS 3.3.5).
   app.get('/api/health', async (req, res) => {
+    const aiEngine = aiEngineHealth();
     try {
       await query('SELECT 1');
-      res.json({ status: 'ok', database: 'up', cache: getCacheKind(), postgis: await hasPostgis() });
+      res.json({ status: 'ok', database: 'up', cache: getCacheKind(), postgis: await hasPostgis(), aiEngine: await aiEngine });
     } catch {
-      res.status(503).json({ status: 'unavailable', database: 'down', cache: getCacheKind() });
+      res.status(503).json({ status: 'unavailable', database: 'down', cache: getCacheKind(), aiEngine: await aiEngine });
     }
   });
 

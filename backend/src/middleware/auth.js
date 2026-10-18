@@ -1,9 +1,18 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config.js';
-import { getCache, cacheKeys } from '../data/cache.js';
+import { getCache, getCacheKind, cacheKeys } from '../data/cache.js';
+import { isTokenRevoked } from '../data/repositories/sessionRepository.js';
 import { HttpError } from './errors.js';
 
 // Role-based access is enforced on the server for every request (SRS 3.3.3).
+
+// FR-01.03 - the cache answers most checks. Without a shared Redis cache every server instance has
+// its own memory, so the database decides whether another instance recorded the logout.
+async function isRevoked(jti) {
+  if (await getCache().get(cacheKeys.revokedToken(jti))) return true;
+  if (getCacheKind() === 'redis') return false;
+  return isTokenRevoked(jti);
+}
 
 export async function authenticate(req, res, next) {
   const header = req.headers.authorization || '';
@@ -16,7 +25,7 @@ export async function authenticate(req, res, next) {
   } catch {
     throw new HttpError(401, 'Your session has expired. Please log in again.');
   }
-  if (await getCache().get(cacheKeys.revokedToken(payload.jti))) {
+  if (await isRevoked(payload.jti)) {
     throw new HttpError(401, 'You have logged out. Please log in again.');
   }
 

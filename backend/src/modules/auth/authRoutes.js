@@ -11,7 +11,7 @@ authRoutes.post('/register', async (req, res) => {
 
 // POST /api/auth/login
 authRoutes.post('/login', async (req, res) => {
-  const { token, user } = await authService.login(req.body || {});
+  const { token, user } = await authService.login(req.body || {}, req.ip || 'unknown');
   res.json({ token, user });
 });
 

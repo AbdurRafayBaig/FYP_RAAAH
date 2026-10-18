@@ -172,7 +172,8 @@ export async function resetData() {
   assertTestDatabase();
   await query(
     `TRUNCATE users, interests, destinations, check_ins, visits, recommendations, hazard_reports,
-              notifications, cultural_info, weather_info, saved_destinations RESTART IDENTITY CASCADE`,
+              notifications, cultural_info, weather_info, saved_destinations, revoked_tokens, login_failures
+       RESTART IDENTITY CASCADE`,
   );
   await insertFixtures();
   await crowdService.recalculate();
@@ -188,6 +189,11 @@ function startAiStub() {
     let raw = '';
     req.on('data', (chunk) => { raw += chunk; });
     req.on('end', () => {
+      if (req.url === '/health') {
+        const ok = stub.mode !== 'error';
+        res.writeHead(ok ? 200 : 500, { 'Content-Type': 'application/json' }).end(ok ? '{"status":"ok"}' : '{}');
+        return;
+      }
       const payload = JSON.parse(raw || '{}');
       stub.requests.push(payload);
       if (stub.mode === 'error') {

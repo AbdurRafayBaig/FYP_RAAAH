@@ -10,6 +10,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 export const config = {
   isProduction,
   isTest: process.env.NODE_ENV === 'test',
+  // Vercel Functions: several short-lived instances that do not share memory (docs/DEPLOYMENT.md)
+  isServerless: Boolean(process.env.VERCEL),
   port: num(process.env.PORT, 5000),
   // One or more web client addresses, separated by commas
   corsOrigins: (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',').map((o) => o.trim().replace(/\/$/, '')).filter(Boolean),
@@ -22,6 +24,9 @@ export const config = {
   weatherRefreshMinutes: num(process.env.WEATHER_REFRESH_MINUTES, 10),
   checkinAutoCloseHours: num(process.env.CHECKIN_AUTO_CLOSE_HOURS, 6),
   crowdRefreshSeconds: num(process.env.CROWD_REFRESH_SECONDS, 60),
+  // SRS 3.3.3 - sign-in is paused for an email and address after this many failed attempts
+  loginMaxFailures: num(process.env.LOGIN_MAX_FAILURES, 5),
+  loginLockMinutes: num(process.env.LOGIN_LOCK_MINUTES, 15),
 };
 
 const PLACEHOLDER_SECRETS = ['change-this-to-a-long-random-string', 'raaah-dev-secret-change-me'];

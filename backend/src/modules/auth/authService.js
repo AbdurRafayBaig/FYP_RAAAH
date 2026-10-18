@@ -5,6 +5,7 @@ import { config } from '../../config.js';
 import { getCache, cacheKeys } from '../../data/cache.js';
 import { withTransaction } from '../../data/db.js';
 import * as users from '../../data/repositories/userRepository.js';
+import * as sessions from '../../data/repositories/sessionRepository.js';
 import { INTERESTS } from '../../domain.js';
 import { HttpError } from '../../middleware/errors.js';
 
@@ -115,20 +116,38 @@ export async function register(body = {}) {
   };
 }
 
+// SRS 3.3.3 - after too many failed attempts from one address, sign-in for that email is paused
+async function assertNotLocked(email, ipAddress) {
+  const { failures, oldest } = await sessions.recentLoginFailures(email, ipAddress, config.loginLockMinutes);
+  if (failures < config.loginMaxFailures) return;
+  const unlockAt = new Date(oldest).getTime() + config.loginLockMinutes * 60_000;
+  const retryAfter = Math.max(1, Math.ceil((unlockAt - Date.now()) / 1000));
+  const minutes = Math.ceil(retryAfter / 60);
+  const err = new HttpError(
+    429,
+    `Too many failed sign-in attempts. Please wait ${minutes} minute${minutes === 1 ? '' : 's'} and try again.`,
+  );
+  err.headers = { 'Retry-After': String(retryAfter) };
+  throw err;
+}
+
 // UC-02 step 4: verify credentials and identify the user's role
-export async function login({ email, password }) {
+export async function login({ email, password }, ipAddress = 'unknown') {
   const normalised = normaliseEmail(email);
   if (!isValidEmail(normalised) || typeof password !== 'string' || password.length === 0) {
     throw new HttpError(400, 'Please enter your email and password.');
   }
+  await assertNotLocked(normalised, ipAddress);
 
   const credentials = await users.findCredentialsByEmail(normalised);
   const passwordOk = await bcrypt.compare(password, credentials?.password_hash || DUMMY_HASH);
   if (!credentials || !passwordOk) {
     // UC-02 alt 4a
+    await sessions.recordLoginFailure(normalised, ipAddress);
     throw new HttpError(401, 'Invalid email or password. Please try again.');
   }
 
+  await sessions.clearLoginFailures(normalised, ipAddress);
   const user = await users.findById(credentials.user_id);
   return { token: issueToken(user), user };
 }
@@ -136,6 +155,7 @@ export async function login({ email, password }) {
 // FR-01.03 - log out: the token is revoked until it would have expired
 export async function logout({ jti, exp }) {
   const ttl = Math.max(1, exp - Math.floor(Date.now() / 1000));
+  await sessions.revokeToken(jti, exp);
   await getCache().set(cacheKeys.revokedToken(jti), true, ttl);
 }
 

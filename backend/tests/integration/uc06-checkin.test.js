@@ -2,6 +2,8 @@
 // FR-01.07, FR-03.01, FR-03.02, FR-03.04 - FR-03.06, FR-04.01, SRS 3.3.4
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, describe, test } from 'node:test';
+import { config } from '../../src/config.js';
+import { getCache } from '../../src/data/cache.js';
 import * as crowdService from '../../src/modules/crowd/crowdService.js';
 import { DEST, FAR_AWAY, USERS, resetData, startTestApp } from '../helpers/testApp.js';
 
@@ -178,5 +180,18 @@ describe('UC-06 crowd monitoring after check-in', () => {
     await app.db.query(`UPDATE check_ins SET checkin_time = NOW() - interval '5 hours' WHERE user_id = $1`, [USERS.tourist.id]);
     assert.equal((await crowdService.runRefreshCycle()).autoClosed, 0);
     assert.equal((await checkInsOf(USERS.tourist.id))[0].status, 'active');
+  });
+
+  test('TC-06-18 on serverless instances without Redis the cached crowd level is kept for 10 seconds only', async () => {
+    const ttlOf = (d) => (getCache().store.get(`crowd:${d.id}`).expiresAt - Date.now()) / 1000;
+    await crowdService.recalculate(DEST.attabad.id);
+    assert.ok(ttlOf(DEST.attabad) > 60);
+    config.isServerless = true;
+    try {
+      await crowdService.recalculate(DEST.attabad.id);
+      assert.ok(ttlOf(DEST.attabad) <= 10 && ttlOf(DEST.attabad) > 8);
+    } finally {
+      config.isServerless = false;
+    }
   });
 });

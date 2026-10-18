@@ -1,15 +1,22 @@
 import { config } from '../../config.js';
 import { classifyCrowd } from '../../domain.js';
 import { withTransaction } from '../../data/db.js';
-import { getCache, cacheKeys } from '../../data/cache.js';
+import { getCache, getCacheKind, cacheKeys } from '../../data/cache.js';
 import * as checkins from '../../data/repositories/checkinRepository.js';
+import * as sessions from '../../data/repositories/sessionRepository.js';
 import * as destinations from '../../data/repositories/destinationRepository.js';
 import * as users from '../../data/repositories/userRepository.js';
 import { HttpError } from '../../middleware/errors.js';
 
 // Crowd Monitoring Service (Component Diagram, Fig. 37; DFD Level 2, Fig. 41)
 
-const cacheTtl = () => Math.max(config.crowdRefreshSeconds * 3, 60);
+// Serverless instances without Redis each keep their own copy, and a check-in recorded by one instance
+// reaches the others only when their copy expires, so the copy is kept short there (SRS 3.3.2).
+const SERVERLESS_MEMORY_TTL_SECONDS = 10;
+const cacheTtl = () =>
+  config.isServerless && getCacheKind() === 'memory'
+    ? SERVERLESS_MEMORY_TTL_SECONDS
+    : Math.max(config.crowdRefreshSeconds * 3, 60);
 
 // DFD 2.4 Calculate Active Visitors + 2.5 Classify Crowd Level
 export async function recalculate(destinationId = null) {
@@ -125,6 +132,7 @@ export async function runRefreshCycle() {
     await withTransaction((client) => checkins.closeAndRecordVisit(client, checkinId, 'auto_closed'));
   }
   await recalculate();
+  await sessions.deleteExpired(config.loginLockMinutes);
   return { autoClosed: expired.length };
 }
 

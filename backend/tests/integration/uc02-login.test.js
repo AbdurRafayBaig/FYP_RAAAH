@@ -2,6 +2,8 @@
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, describe, test } from 'node:test';
 import jwt from 'jsonwebtoken';
+import { getCache } from '../../src/data/cache.js';
+import * as crowdService from '../../src/modules/crowd/crowdService.js';
 import { PASSWORD, USERS, resetData, startTestApp } from '../helpers/testApp.js';
 
 let app;
@@ -91,6 +93,59 @@ describe('UC-02 log out (FR-01.03)', () => {
     await app.request('POST', '/auth/logout', { token: first });
     assert.equal((await app.request('GET', '/auth/me', { token: second })).status, 200);
   });
+
+  test('TC-02-18 a logout holds on another server instance that does not share the cache', async () => {
+    const token = await app.loginAs(USERS.tourist);
+    await app.request('POST', '/auth/logout', { token });
+    // Another instance starts with an empty memory cache (Vercel Functions without Redis)
+    getCache().store.clear();
+    const res = await app.request('GET', '/auth/me', { token });
+    assert.equal(res.status, 401);
+    assert.match(res.body.error, /logged out/);
+  });
+
+  test('TC-02-19 logged-out sessions are removed from the database once they have expired', async () => {
+    await app.db.query(
+      `INSERT INTO revoked_tokens (jti, expires_at) VALUES ('old', NOW() - interval '1 minute'), ('current', NOW() + interval '1 hour')`,
+    );
+    await crowdService.runRefreshCycle();
+    const { rows } = await app.db.query('SELECT jti FROM revoked_tokens');
+    assert.deepEqual(rows.map((r) => r.jti), ['current']);
+  });
+});
+
+describe('UC-02 protection against password guessing (SRS 3.3.3)', () => {
+  const failTimes = async (n, email = USERS.tourist.email) => {
+    for (let i = 0; i < n; i++) assert.equal((await login(email, `wrong-${i}`)).status, 401);
+  };
+
+  test('TC-02-20 after five failed attempts sign-in is paused, even with the right password', async () => {
+    await failTimes(5);
+    const res = await login(USERS.tourist.email, PASSWORD);
+    assert.equal(res.status, 429);
+    assert.match(res.body.error, /Too many failed sign-in attempts\. Please wait 15 minutes/);
+    assert.ok(Number(res.headers.get('retry-after')) > 800);
+    assert.equal(res.body.token, undefined);
+  });
+
+  test('TC-02-21 the pause applies to that email only, and ends after the lock period', async () => {
+    await failTimes(5);
+    assert.equal((await login(USERS.observer.email, PASSWORD)).status, 200);
+    await app.db.query(`UPDATE login_failures SET failed_at = failed_at - interval '16 minutes'`);
+    assert.equal((await login(USERS.tourist.email, PASSWORD)).status, 200);
+  });
+
+  test('TC-02-22 a successful sign-in clears the earlier failures', async () => {
+    await failTimes(4);
+    assert.equal((await login(USERS.tourist.email, PASSWORD)).status, 200);
+    await failTimes(4);
+    assert.equal((await login(USERS.tourist.email, PASSWORD)).status, 200);
+  });
+
+  test('TC-02-23 unknown emails are counted too, so accounts cannot be discovered by the pause', async () => {
+    await failTimes(5, 'nobody@test.pk');
+    assert.equal((await login('nobody@test.pk', PASSWORD)).status, 429);
+  });
 });
 
 describe('UC-02 data security (SRS 3.3.3)', () => {
@@ -133,6 +188,20 @@ describe('UC-02 data security (SRS 3.3.3)', () => {
     assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
     assert.equal(res.headers.get('cache-control'), 'no-store');
     assert.equal(res.headers.get('x-powered-by'), null);
+  });
+
+  test('TC-02-24 the health check reports the AI engine, and stays ok while only the engine is down', async () => {
+    const up = await app.request('GET', '/health');
+    assert.equal(up.body.aiEngine, 'up');
+    app.aiStub.mode = 'error';
+    try {
+      const down = await app.request('GET', '/health');
+      assert.equal(down.status, 200);
+      assert.equal(down.body.status, 'ok');
+      assert.equal(down.body.aiEngine, 'down');
+    } finally {
+      app.aiStub.mode = 'rank';
+    }
   });
 
   test('TC-02-17 only the configured web client addresses may call the API from a browser', async () => {

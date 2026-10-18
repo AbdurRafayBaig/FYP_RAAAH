@@ -132,6 +132,23 @@ CREATE TABLE IF NOT EXISTS cultural_info (
   content        TEXT         NOT NULL
 );
 
+-- ERD extension: FR-01.03 log out. Logged-out sessions are kept here as well as in the cache, so a
+-- logout holds on every instance of the Application Server, also when they do not share a Redis cache.
+CREATE TABLE IF NOT EXISTS revoked_tokens (
+  jti        VARCHAR(64) PRIMARY KEY,
+  expires_at TIMESTAMPTZ NOT NULL
+);
+
+-- ERD extension: SRS 3.3.3 data security. Failed sign-ins per email and network address, so that
+-- passwords cannot be guessed by trying many in a row.
+CREATE TABLE IF NOT EXISTS login_failures (
+  failure_id SERIAL PRIMARY KEY,
+  email      VARCHAR(255) NOT NULL,
+  ip_address VARCHAR(64)  NOT NULL,
+  failed_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_login_failures_email_ip ON login_failures (email, ip_address, failed_at);
+
 -- WeatherInfo from the Domain Model (SRS Figure 46): last available weather per destination,
 -- shown with its update time when the weather service is unavailable (SRS 3.3.5).
 CREATE TABLE IF NOT EXISTS weather_info (
