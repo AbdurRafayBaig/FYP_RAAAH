@@ -2,7 +2,6 @@ import Image from 'next/image';
 import SiteLayout from '@/components/SiteLayout';
 import PageTitle from '@/components/ui/PageTitle';
 import { PHOTOS } from '@/data/photos';
-import { sizedImage } from '@/lib/format';
 
 export const metadata = { title: 'Culture and etiquette — RAAAH' };
 
@@ -52,7 +51,7 @@ export default function CulturePage() {
           {STORIES.map((s) => (
             <article key={s.title}>
               <div className="relative aspect-[4/3] overflow-hidden bg-rule">
-                <Image src={sizedImage(s.photo.src, 960)} alt={s.photo.place} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
+                <Image src={s.photo.src} alt={s.photo.place} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
               </div>
               <p className="meta mt-2 text-[11px]">{s.photo.place}. Photo: {s.photo.author}</p>
               <h2 className="mt-3 text-[24px]">{s.title}</h2>

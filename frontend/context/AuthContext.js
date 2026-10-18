@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { api, getToken, setToken, setUnauthorizedHandler } from '@/lib/api';
+import { api, getToken, setToken, setUnauthorizedHandler, warmUp } from '@/lib/api';
 
 const AuthContext = createContext(null);
 
@@ -26,6 +26,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    warmUp();
     setUnauthorizedHandler(clearSession);
     let cancelled = false;
     restoreSession().then((restored) => {

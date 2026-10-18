@@ -3,7 +3,6 @@ import Image from 'next/image';
 import CrowdLevel from '@/components/ui/CrowdLevel';
 import RiskStatus from '@/components/ui/RiskStatus';
 import WeatherSummary from './WeatherSummary';
-import { sizedImage } from '@/lib/format';
 
 // A destination as returned by the Destination Information Service
 export default function DestinationTile({ destination }) {
@@ -14,7 +13,7 @@ export default function DestinationTile({ destination }) {
       <div className="relative aspect-[4/3] overflow-hidden bg-rule">
         {imageUrl && (
           <Image
-            src={sizedImage(imageUrl, 960)}
+            src={imageUrl}
             alt={name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -60,6 +60,12 @@ async function request(method, path, body) {
   return data;
 }
 
+// On the serverless deployment an idle API and AI engine take a few seconds to start. Asking for the
+// health check when the site opens starts both, so a tourist's first request does not wait (SRS 3.3.2).
+export function warmUp() {
+  fetch(`${API_URL}/health`).catch(() => {});
+}
+
 export const api = {
   // UC-01 Register Account
   register: (details) => request('POST', '/auth/register', details),

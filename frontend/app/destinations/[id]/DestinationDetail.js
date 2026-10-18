@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { isTouristRole } from '@/constants/roles';
 import { ROUTES } from '@/constants/routes';
 import { CROWD_DESCRIPTIONS } from '@/constants/crowdLevels';
-import { sizedImage, timeAgo } from '@/lib/format';
+import { timeAgo } from '@/lib/format';
 import CrowdLevel from '@/components/ui/CrowdLevel';
 import RiskStatus from '@/components/ui/RiskStatus';
 import Notice from '@/components/ui/Notice';
@@ -87,7 +87,7 @@ export default function DestinationDetail({ id, continuedWithOriginal }) {
     <>
       {/* Photo and name */}
       <section className="relative h-[52vh] min-h-[340px] bg-ink text-white">
-        {d.imageUrl && <Image src={sizedImage(d.imageUrl, 1920)} alt={d.name} fill priority sizes="100vw" className="object-cover opacity-90" />}
+        {d.imageUrl && <Image src={d.imageUrl} alt={d.name} fill priority sizes="100vw" className="object-cover opacity-90" />}
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.45),transparent_30%,transparent_55%,rgba(0,0,0,0.7))]" />
         <div className="page relative flex h-full flex-col justify-end pb-8">
           <Link href={ROUTES.DESTINATIONS} className="mb-auto mt-6 flex w-fit items-center gap-1.5 text-[13px] text-white/80 hover:text-white">
@@ -104,7 +104,7 @@ export default function DestinationDetail({ id, continuedWithOriginal }) {
           <Cell label="Crowd">
             <CrowdLevel level={d.crowd.crowdLevel} size="md" />
             <p className="meta mt-2">
-              {CROWD_DESCRIPTIONS[d.crowd.crowdLevel]} <span className="data">{d.crowd.activeVisitors}</span> check-ins
+              {CROWD_DESCRIPTIONS[d.crowd.crowdLevel]} <span className="data">{d.crowd.activeVisitors}</span> check-in{d.crowd.activeVisitors === 1 ? '' : 's'}{' '}
               against a capacity of <span className="data">{d.crowd.capacityThreshold}</span>.
             </p>
           </Cell>
@@ -146,8 +146,10 @@ export default function DestinationDetail({ id, continuedWithOriginal }) {
           </Notice>
         )}
 
-        <div className="mt-12 grid gap-14 lg:grid-cols-[1fr_340px]">
-          <div className="space-y-12">
+        {/* One map per page (each Google Maps load counts towards the free monthly limit), placed by the grid:
+            after the description on a phone, under the check-in on a desktop */}
+        <div className="mt-12 grid gap-14 lg:grid-cols-[1fr_340px] lg:grid-rows-[auto_1fr] lg:gap-y-10">
+          <div className="space-y-12 lg:col-start-1 lg:row-span-2 lg:row-start-1">
             <section>
               <p className="max-w-[62ch] text-[17px] leading-relaxed text-ink-2">{d.description}</p>
               {d.preferenceMatch.length > 0 && (
@@ -217,14 +219,12 @@ export default function DestinationDetail({ id, continuedWithOriginal }) {
               </section>
             )}
 
-            <Location d={d} className="lg:hidden" />
           </div>
 
           {/* On a phone the check-in comes first: the tourist is usually standing at the destination */}
-          <aside className="order-first space-y-10 lg:order-none">
-            {tourist && <CheckInPanel destination={d} onCheckedIn={load} />}
-
-            {tourist && (
+          {tourist && (
+            <aside className="order-first space-y-10 lg:order-none lg:col-start-2 lg:row-start-1">
+              <CheckInPanel destination={d} onCheckedIn={load} />
               <div className="border-t border-ink pt-4">
                 <h3 className="text-[20px]">Somewhere quieter?</h3>
                 <p className="mt-2 text-[14px] text-ink-2">
@@ -234,10 +234,10 @@ export default function DestinationDetail({ id, continuedWithOriginal }) {
                   Show alternatives <Icon name="arrow" size={16} />
                 </Link>
               </div>
-            )}
+            </aside>
+          )}
 
-            <Location d={d} className="hidden lg:block" />
-          </aside>
+          <Location d={d} className={`self-start lg:col-start-2 ${tourist ? 'lg:row-start-2' : 'lg:row-span-2 lg:row-start-1'}`} />
         </div>
       </div>
     </>

@@ -5,7 +5,6 @@ import Footer from '@/components/Footer';
 import Icon from '@/components/ui/Icon';
 import { PHOTOS } from '@/data/photos';
 import { ROUTES } from '@/constants/routes';
-import { sizedImage } from '@/lib/format';
 import HomeCta from './HomeCta';
 
 const PLACES = [
@@ -122,7 +121,7 @@ export default function Home() {
                 >
                   <div className={`relative overflow-hidden bg-rule ${i === 0 ? 'aspect-[4/3] lg:aspect-auto lg:flex-1' : 'aspect-[4/3]'}`}>
                     <Image
-                      src={i === 0 ? p.photo.src : sizedImage(p.photo.src, 960)}
+                      src={p.photo.src}
                       alt={p.photo.place}
                       fill
                       sizes={i === 0 ? '(max-width: 1024px) 100vw, 50vw' : '(max-width: 640px) 100vw, 25vw'}

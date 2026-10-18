@@ -14,12 +14,6 @@ export function formatTime(date) {
   return new Date(date).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
 
-// Wikimedia thumbnails come in fixed widths; ask for one close to the display size so that
-// pages stay light on slow mountain connections (SRS 2.5, 3.3.2).
-export function sizedImage(url, width) {
-  return url ? url.replace(/\/\d+px-/, `/${width}px-`) : url;
-}
-
 export function capitalise(text = '') {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

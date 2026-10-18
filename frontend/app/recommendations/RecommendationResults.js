@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/constants/routes';
-import { sizedImage, timeAgo } from '@/lib/format';
+import { timeAgo } from '@/lib/format';
 import PageTitle from '@/components/ui/PageTitle';
 import Notice from '@/components/ui/Notice';
 import CrowdLevel from '@/components/ui/CrowdLevel';
@@ -32,6 +32,15 @@ async function fetchRecommendations(sourceId, consent) {
     ...(sourceId && { sourceDestinationId: sourceId }),
     ...(location || {}),
   });
+}
+
+// Where distances are measured from, and what the tourist can do to measure them from where they are
+function distanceNote(usedLocation, consent, source) {
+  if (usedLocation) return 'Distances are from your current location.';
+  const from = source ? `Distances are from ${source.name}.` : 'Distance from where you are is not included.';
+  // Consent is given, but the browser did not share the location (permission blocked or no fix)
+  if (consent) return `${from} Your browser did not share your location; allow it for this site to measure from where you are.`;
+  return `${from} Turn on location consent in your profile to measure from where you are.`;
 }
 
 // UC-09 alt 6a - safety information of the selected destination
@@ -137,7 +146,7 @@ export default function RecommendationResults({ sourceId }) {
                     <Link href={`/destinations/${d.destinationId}`} className="group grid gap-5 sm:grid-cols-[48px_200px_1fr_auto] sm:items-start">
                       <span className="font-display text-[36px] leading-none text-muted">{r.rank}</span>
                       <div className="relative aspect-[4/3] overflow-hidden bg-rule">
-                        {d.imageUrl && <Image src={sizedImage(d.imageUrl, 500)} alt={d.name} fill sizes="200px" className="object-cover" />}
+                        {d.imageUrl && <Image src={d.imageUrl} alt={d.name} fill sizes="200px" className="object-cover" />}
                       </div>
                       <div>
                         <h2 className="text-[24px] group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4">{d.name}</h2>
@@ -161,11 +170,7 @@ export default function RecommendationResults({ sourceId }) {
           )}
 
           <p className="meta mt-6">
-            {result.usedLocation
-              ? 'Distances are from your current location.'
-              : source
-                ? `Distances are from ${source.name}. Turn on location consent to measure from where you are.`
-                : 'Turn on location consent to include distance from where you are.'}{' '}
+            {distanceNote(result.usedLocation, consent, source)}{' '}
             <Link href={ROUTES.PROFILE} className="link">Edit your interests</Link>
           </p>
         </>

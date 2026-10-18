@@ -4,7 +4,6 @@ import SiteLayout from '@/components/SiteLayout';
 import { FYP_INFO } from '@/data/teamData';
 import { PHOTOS } from '@/data/photos';
 import { ROUTES } from '@/constants/routes';
-import { sizedImage } from '@/lib/format';
 
 export const metadata = { title: 'About — RAAAH' };
 
@@ -107,7 +106,7 @@ export default function AboutPage() {
     <SiteLayout>
       {/* Header */}
       <section className="relative bg-ink text-white">
-        <Image src={sizedImage(hero.src, 1920)} alt={hero.place} fill priority sizes="100vw" className="object-cover opacity-45" />
+        <Image src={hero.src} alt={hero.place} fill priority sizes="100vw" className="object-cover opacity-45" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
         <div className="page relative py-20 sm:py-28">
           <p className="text-[13px] font-medium uppercase tracking-[0.14em] text-white/75">

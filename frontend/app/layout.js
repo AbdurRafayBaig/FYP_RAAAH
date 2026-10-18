@@ -12,6 +12,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link rel="icon" href="/logo.png" type="image/png" />
+        {/* Destination photos come from Wikimedia Commons; open the connection early */}
+        <link rel="preconnect" href="https://thumb.wikimedia.org" />
       </head>
       <body className="min-h-screen">
         <AuthProvider>{children}</AuthProvider>

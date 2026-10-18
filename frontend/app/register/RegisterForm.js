@@ -18,6 +18,15 @@ const EMPTY = { fullName: '', email: '', password: '', confirmPassword: '', inte
 
 // Step 6: confirmation with the new Tourist ID (FR-01.02)
 function Confirmation({ user }) {
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  // The new tourist is signed in; this page has no navigation bar, so signing out is offered here (FR-01.03)
+  const signOut = async () => {
+    await logout();
+    router.replace(ROUTES.LOGIN);
+  };
+
   return (
     <AuthLayout photo={PHOTOS.passu} title={`Welcome, ${user.fullName.split(' ')[0]}`} intro="Your account has been created.">
 
@@ -33,6 +42,10 @@ function Confirmation({ user }) {
         <Link href={ROUTES.DESTINATIONS} className="btn btn-primary flex-1">Explore destinations</Link>
         <Link href={ROUTES.PROFILE} className="btn btn-secondary flex-1">Go to my profile</Link>
       </div>
+      <p className="meta mt-6">
+        You are signed in as {user.email}.{' '}
+        <button type="button" onClick={signOut} className="link">Sign out</button>
+      </p>
     </AuthLayout>
   );
 }
