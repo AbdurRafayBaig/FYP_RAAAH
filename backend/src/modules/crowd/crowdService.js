@@ -4,6 +4,7 @@ import { withTransaction } from '../../data/db.js';
 import { getCache, getCacheKind, cacheKeys } from '../../data/cache.js';
 import * as checkins from '../../data/repositories/checkinRepository.js';
 import * as sessions from '../../data/repositories/sessionRepository.js';
+import { refreshWeatherAhead } from '../destinations/weatherService.js';
 import * as destinations from '../../data/repositories/destinationRepository.js';
 import * as users from '../../data/repositories/userRepository.js';
 import { HttpError } from '../../middleware/errors.js';
@@ -27,16 +28,15 @@ export async function recalculate(destinationId = null) {
   const results = new Map();
   for (const { destination_id: id, capacity_threshold: capacityThreshold } of capacities) {
     const activeVisitors = counts.get(id) || 0;
-    const crowd = {
+    results.set(id, {
       activeVisitors,
       capacityThreshold,
       crowdLevel: classifyCrowd(activeVisitors, capacityThreshold),
       updatedAt: new Date().toISOString(),
-    };
-    await destinations.updateCrowdLevel(id, crowd.crowdLevel);
-    await getCache().set(cacheKeys.crowd(id), crowd, cacheTtl());
-    results.set(id, crowd);
+    });
   }
+  await destinations.updateCrowdLevels(new Map([...results].map(([id, c]) => [id, c.crowdLevel])));
+  await Promise.all([...results].map(([id, crowd]) => getCache().set(cacheKeys.crowd(id), crowd, cacheTtl())));
   return results;
 }
 
@@ -125,13 +125,16 @@ export function getActiveCheckIn(userId) {
   return checkins.findActiveByUser(userId);
 }
 
-// FR-03.02 - close check-ins automatically after the configured time, then refresh crowd levels
+// FR-03.02 - close check-ins automatically after the configured time, then refresh crowd levels.
+// The same cycle renews the weather before it turns stale, so a tourist's request rarely waits for
+// OpenWeatherMap (SRS 3.3.2), and removes logged-out sessions and failed sign-ins that have expired.
 export async function runRefreshCycle() {
   const expired = await checkins.listExpiredActive(config.checkinAutoCloseHours);
   for (const { checkin_id: checkinId } of expired) {
     await withTransaction((client) => checkins.closeAndRecordVisit(client, checkinId, 'auto_closed'));
   }
   await recalculate();
+  await refreshWeatherAhead(await destinations.listActive(''));
   await sessions.deleteExpired(config.loginLockMinutes);
   return { autoClosed: expired.length };
 }

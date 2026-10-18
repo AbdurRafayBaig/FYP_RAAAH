@@ -128,7 +128,7 @@ live in `frontend/components/ui`. Earlier prototype pages that showed invented d
 
 ## Tests
 ```bash
-npm test                  # backend (156 tests, needs `npm run db` or `npm run dev` running) + AI engine (14 tests)
+npm test                  # backend (159 tests, needs `npm run db` or `npm run dev` running) + AI engine (14 tests)
 npm run lint              # web client
 npm run build             # web client, production build
 npm run test:e2e          # system tests in the browser (33), with the whole system running

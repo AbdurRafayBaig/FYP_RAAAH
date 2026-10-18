@@ -45,11 +45,14 @@ export async function listCapacities() {
   return rows;
 }
 
-export async function updateCrowdLevel(destinationId, crowdLevel) {
+// levels: Map of destination id -> crowd level; one statement for all of them
+export async function updateCrowdLevels(levels) {
+  if (levels.size === 0) return;
   await query(
-    `UPDATE destinations SET crowd_level = $2, updated_at = NOW()
-      WHERE destination_id = $1 AND crowd_level <> $2`,
-    [destinationId, crowdLevel],
+    `UPDATE destinations d SET crowd_level = v.level, updated_at = NOW()
+       FROM unnest($1::int[], $2::text[]) AS v(id, level)
+      WHERE d.destination_id = v.id AND d.crowd_level <> v.level`,
+    [[...levels.keys()], [...levels.values()]],
   );
 }
 

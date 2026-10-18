@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, describe, test } from 'node:test';
 import { config } from '../../src/config.js';
+import * as crowdService from '../../src/modules/crowd/crowdService.js';
 import { DEST, USERS, resetData, startTestApp } from '../helpers/testApp.js';
 
 let app;
@@ -184,6 +185,37 @@ describe('UC-04 step 5 - weather from OpenWeatherMap', () => {
     const { weather } = (await page(DEST.attabad.id)).body.destination;
     assert.equal(weather.stale, true);
     assert.ok(weather.updatedAt);
+  });
+
+  test('TC-04-21 requests arriving together ask the service once per destination (SRS 3.3.2)', async (t) => {
+    const calls = withWeatherService(t, async () => Response.json({ main: { temp: 12 }, weather: [{ id: 800, main: 'Clear' }] }));
+    const pages = await Promise.all(Array.from({ length: 5 }, () => page(DEST.attabad.id)));
+    assert.ok(pages.every((p) => p.status === 200));
+    assert.equal(calls.length, 1);
+  });
+
+  test('TC-04-22 after a failed call the service is not asked again for a minute (alt 5a)', async (t) => {
+    const calls = withWeatherService(t, async () => new Response('{}', { status: 503 }));
+    t.mock.method(console, 'warn', () => {});
+    await page(DEST.attabad.id);
+    await page(DEST.attabad.id);
+    assert.equal(calls.length, 1);
+    await app.db.query(`UPDATE weather_info SET refresh_claimed_at = NOW() - interval '61 seconds'`);
+    await page(DEST.attabad.id);
+    assert.equal(calls.length, 2);
+  });
+
+  test('TC-04-23 the refresh cycle renews weather before it turns stale, so a tourist does not wait', async (t) => {
+    const calls = withWeatherService(t, async () => Response.json({ main: { temp: 15 }, weather: [{ id: 801, main: 'Clouds' }] }));
+    // 9 minutes old: still fresh for a tourist (10 minutes), due for the cycle (2 minutes ahead)
+    await app.db.query(`UPDATE weather_info SET updated_at = NOW() - interval '9 minutes'`);
+    await crowdService.runRefreshCycle();
+    const active = (await list()).body.destinations.length;
+    assert.equal(calls.length, active);
+    const { weather } = (await page(DEST.attabad.id)).body.destination;
+    assert.equal(weather.condition, 'Clouds');
+    assert.equal(weather.stale, false);
+    assert.equal(calls.length, active, 'the page itself did not call the service');
   });
 });
 

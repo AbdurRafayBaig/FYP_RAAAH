@@ -77,7 +77,7 @@ written to it.
 
 | Failure | What users see | Action |
 |---|---|---|
-| OpenWeatherMap unavailable or no key | Last stored weather with its update time | none; it recovers by itself |
+| OpenWeatherMap unavailable or no key | Last stored weather with its update time; the service is asked again a minute later, by one server instance only | none; it recovers by itself |
 | AI Server down | "The recommendation engine is currently unavailable"; everything else works | `docker compose restart ai` |
 | Redis down at start-up | Nothing; an in-memory cache is used | restart `cache`, then `api` |
 | Database down | API answers 503 on `/api/health`, pages show an error | `docker compose restart db`; check disk space |

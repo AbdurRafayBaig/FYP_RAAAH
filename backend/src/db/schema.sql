@@ -160,3 +160,6 @@ CREATE TABLE IF NOT EXISTS weather_info (
   icon           VARCHAR(10),
   updated_at     TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
+-- Which server instance is renewing the weather, so the service is asked once and not by every
+-- instance at the same moment (SRS 3.3.2; the free OpenWeatherMap plan allows 60 calls a minute)
+ALTER TABLE weather_info ADD COLUMN IF NOT EXISTS refresh_claimed_at TIMESTAMPTZ;

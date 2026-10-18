@@ -77,13 +77,13 @@ running system, and the deployment images with `docker compose`.
 | Suite | Tests | Passed | Failed |
 |---|---|---|---|
 | Backend unit | 34 | 34 | 0 |
-| Backend integration | 122 | 122 | 0 |
+| Backend integration | 125 | 125 | 0 |
 | AI engine | 14 | 14 | 0 |
 | System tests (Edge, desktop and phone size) | 33 | 33 | 0 |
 | ESLint | — | clean | — |
 | Production build | — | succeeded | — |
 
-Backend coverage: 95.0 % of lines, 91.0 % of branches. The lines not covered are the Redis client
+Backend coverage: 95.1 % of lines, 90.9 % of branches. The lines not covered are the Redis client
 (the tests use the in-memory cache) and the process start-up code.
 
 Not run on the development machine: the PostGIS branch of the area check (the local database has no
@@ -105,6 +105,7 @@ on 18 October 2026, with the same steps as the system tests.
 | Any number of wrong passwords could be tried in a row. | Test of the live site, TC-02-20 – TC-02-23 | Sign-in is paused for 15 minutes after 5 failures (`login_failures`) |
 | A check-in recorded by one serverless instance reached the others only after up to 3 minutes. | Test of the live site, TC-06-18 | Crowd levels are cached for 10 seconds there |
 | The first recommendation after a quiet period took about 5 seconds (SRS 3.3.2: 3 seconds). | Test of the live site | The site wakes the API and AI engine when it opens (`warmUp`, `/api/health`) |
+| Every 10 minutes the destination list took 1–6 seconds for about half a minute: each request and each instance asked OpenWeatherMap for all 14 destinations at once, beyond the free plan's 60 calls a minute, and retried after every failure. | Timing of the live site, TC-04-21 – TC-04-23 | One instance renews each destination (`weather_info.refresh_claimed_at`), a failure waits a minute, and the refresh cycle renews weather before it turns stale |
 | "1 check-ins" on the destination page. | Browser check | `DestinationDetail` |
 | "Turn on location consent" was shown to tourists who had given consent but whose browser did not share the location. | Browser check, ST-09-04 | `RecommendationResults` |
 | The registration confirmation page had no way to sign out. | Browser check, ST-01-04 | `RegisterForm` |
@@ -155,7 +156,8 @@ TC-… are integration tests in `backend/tests`, ST-… are system tests in `fro
 | Normal flow 4, 6: details, crowd level, risk status, verified hazards | TC-04-08, TC-04-09, TC-04-13, TC-04-14, ST-04-04, ST-04-07 |
 | Alt 6a: crowded or unsafe, warning and alternatives offered | TC-04-10 – TC-04-12, ST-04-05, ST-04-06 |
 | Normal flow 5: weather from OpenWeatherMap | TC-04-15, TC-04-16 |
-| Alt 5a: weather service unavailable, last available weather with update time | TC-04-17, TC-04-18 |
+| Alt 5a: weather service unavailable, last available weather with update time | TC-04-17, TC-04-18, TC-04-22 |
+| SRS 3.3.2: weather renewed once, ahead of time, without making the tourist wait | TC-04-21, TC-04-23 |
 | Pre-condition: user is logged in | TC-04-19, TC-04-20 |
 
 ### UC-06 Check In at Destination — `uc06-checkin.test.js`, `e2e/uc06-checkin.spec.js`
