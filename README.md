@@ -62,6 +62,8 @@ Press Ctrl+C to stop everything. Each part can also be started in its own termin
 
 Useful commands in `backend/`: `npm run db:reset` (recreate everything) and `npm run seed:crowd`
 (refresh demo crowd levels — demo check-ins close automatically after `CHECKIN_AUTO_CLOSE_HOURS`).
+For the live demonstration database: `$env:DATABASE_URL = "<Neon connection string>"; npm run demo:crowd`
+in this folder, shortly before presenting.
 
 Optional keys: `OPENWEATHER_API_KEY` in `backend/.env` for live weather (without it the last stored
 weather is shown with its update time), and `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` in `frontend/.env.local`
@@ -86,7 +88,7 @@ coordinates shown on its page (e.g. Hunza Valley 36.3236, 74.6660).
 | Use case | Requirements | Where |
 |---|---|---|
 | UC-01 Register Account | FR-01.01, FR-01.02, FR-01.04 | `backend/src/modules/auth`, `frontend/app/register` |
-| UC-02 Login | FR-01.03, SRS 3.3.3 (hashed passwords, server-side RBAC) | `backend/src/modules/auth`, `backend/src/middleware/auth.js`, `frontend/app/login`, `frontend/components/RequireAuth.js` |
+| UC-02 Login | FR-01.03, SRS 3.3.3 (hashed passwords, server-side RBAC, pause after 5 failed sign-ins) | `backend/src/modules/auth`, `backend/src/middleware/auth.js`, `frontend/app/login`, `frontend/components/RequireAuth.js` |
 | UC-03 Manage Profile and Preferences | FR-01.02, FR-01.04, FR-01.05, FR-01.07 | `backend/src/modules/profile`, `frontend/app/profile` |
 | UC-04 Explore Destinations | FR-02.01–FR-02.06, FR-03.06, FR-06.03, SRS 3.3.5 | `backend/src/modules/destinations`, `frontend/app/destinations` |
 | UC-06 Check In at Destination | FR-03.01–FR-03.07, SRS 3.3.4, 3.3.7 | `backend/src/modules/crowd`, `frontend/components/destinations/CheckInPanel.js` |
@@ -110,7 +112,8 @@ destinations stay eligible with a 10% lower score (FR-04.03). Every result is st
 ### Additions to the ERD
 `destinations.latitude/longitude` (the ERD "location"; PostGIS is used automatically when installed),
 `area_radius_m` (FR-03.01), `attractions`, `activities` (FR-02.04), `accommodation_available` (FR-05.03),
-`destination_interests` table (FR-05.03) and `weather_info` table (WeatherInfo in the Domain Model).
+`destination_interests` table (FR-05.03), `weather_info` table (WeatherInfo in the Domain Model), and
+`revoked_tokens` / `login_failures` (logged-out sessions and failed sign-ins, FR-01.03 and SRS 3.3.3).
 
 ### Not yet implemented (next phase)
 UC-10 Report Hazard (form only, it says so), UC-05, UC-07 explicit Check Out
@@ -125,13 +128,15 @@ live in `frontend/components/ui`. Earlier prototype pages that showed invented d
 
 ## Tests
 ```bash
-npm test                  # backend (148 tests, needs `npm run db` or `npm run dev` running) + AI engine (14 tests)
+npm test                  # backend (156 tests, needs `npm run db` or `npm run dev` running) + AI engine (14 tests)
 npm run lint              # web client
 npm run build             # web client, production build
+npm run test:e2e          # system tests in the browser (33), with the whole system running
 ```
 The backend tests use their own `raaah_test` database and never touch development data. Test cases
-are traced to the use case flows in [docs/TESTING.md](docs/TESTING.md), which also has the browser
-checklist. GitHub Actions runs everything on each push (`.github/workflows/ci.yml`).
+are traced to the use case flows in [docs/TESTING.md](docs/TESTING.md), which also explains how to
+start the system for the browser tests. GitHub Actions runs everything on each push, including the
+browser tests and a build and start of the Docker images (`.github/workflows/ci.yml`).
 
 ## Deployment and maintenance
 Live demonstration (Vercel, PostgreSQL on Neon): web client https://raaah-web.vercel.app,

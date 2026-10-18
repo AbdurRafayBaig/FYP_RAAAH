@@ -34,7 +34,8 @@ the use case are in `*Service.js`; SQL is only in the repositories.
 1. Change the code in the package it belongs to.
 2. Add or update the test of the affected flow (`docs/TESTING.md` lists them by use case).
 3. In the project root run `npm test` (backend and AI engine), `npm run lint` and `npm run build`
-   (web client). GitHub Actions runs the same on every push.
+   (web client), and for a change a tourist can see, the system tests (`npm run test:e2e`, see
+   `docs/TESTING.md`). GitHub Actions runs all of them, and builds the Docker images, on every push.
 4. Deploy with `docker compose up -d --build` (`docs/DEPLOYMENT.md`).
 
 ### Common changes
@@ -47,6 +48,8 @@ the use case are in `*Service.js`; SQL is only in the repositories.
 | What counts as unfavourable weather | `UNFAVOURABLE_CODES` in `backend/src/modules/destinations/weatherService.js` |
 | Importance of each recommendation factor | `WEIGHTS` in `ai-engine/app/scoring.py` (must add up to 1; a test checks it) |
 | Travel preferences (FR-01.04) | `INTERESTS` in `backend/src/domain.js` and the `interests` table |
+| Sign-in protection | `LOGIN_MAX_FAILURES`, `LOGIN_LOCK_MINUTES` |
+| Photo sizes | `WIKIMEDIA_WIDTHS` in `frontend/lib/imageLoader.mjs` (only widths Wikimedia serves) |
 | A new table or column | `backend/src/db/schema.sql`, written so it can run again on an existing database (`IF NOT EXISTS`, `ALTER TABLE … ADD COLUMN IF NOT EXISTS`) |
 
 ### Replacing the recommendation model
@@ -59,13 +62,14 @@ long as that request and response stay the same; nothing in the backend or the w
 
 | Check | How | Healthy answer |
 |---|---|---|
-| Application Server and database | `GET /api/health` | `{"status":"ok","database":"up","cache":"redis","postgis":true}` |
+| Application Server, database and AI Server | `GET /api/health` | `{"status":"ok","database":"up","cache":"redis","postgis":true,"aiEngine":"up"}` |
 | AI Server | `GET /health` on port 8000 | `{"status":"ok", …}` |
 | Containers | `docker compose ps` | all `running` / `healthy` |
 | Logs | `docker compose logs -f api` | one line per request with status and duration |
 
 `/api/health` answers 503 when the database cannot be reached; the compose file uses it as the
-health check of the `api` container. Requests slower than 3 seconds in the log are worth looking at
+health check of the `api` container. `"aiEngine":"down"` means the AI Server did not answer within
+3 seconds; the API itself stays `ok`, since only recommendations need the engine. Requests slower than 3 seconds in the log are worth looking at
 (SRS 3.3.2). The log has no request bodies or query strings, so no passwords or locations are
 written to it.
 
@@ -78,6 +82,7 @@ written to it.
 | Redis down at start-up | Nothing; an in-memory cache is used | restart `cache`, then `api` |
 | Database down | API answers 503 on `/api/health`, pages show an error | `docker compose restart db`; check disk space |
 | Tourist forgets to leave | Check-in closes after `CHECKIN_AUTO_CLOSE_HOURS` and the visit is recorded | none |
+| Someone tries many passwords | After `LOGIN_MAX_FAILURES` failures that email is paused for `LOGIN_LOCK_MINUTES` from that address | none; it ends by itself |
 
 ## Backup and restore
 
@@ -91,7 +96,9 @@ docker compose exec -T db pg_restore -U raaah -d raaah --clean --if-exists < raa
 
 Redis is not backed up. It holds crowd levels, which are recalculated from the database, and the
 list of logged-out sessions, which it writes to its own volume so that a restart does not make a
-logged-out session valid again. Each entry expires with its session (8 hours at most).
+logged-out session valid again. Each entry expires with its session (8 hours at most). Logged-out
+sessions are also in the database (`revoked_tokens`), together with recent failed sign-ins
+(`login_failures`); the refresh cycle deletes both once they no longer matter.
 
 ## Security upkeep
 
@@ -100,6 +107,9 @@ logged-out session valid again. Each entry expires with its session (8 hours at 
   once a month; update, run the tests, deploy.
 - Restrict the Google Maps key to the site's domain in the Google Cloud console.
 - Passwords are stored only as bcrypt hashes; nobody, including administrators, can read them.
+- The web client sends a content security policy (`frontend/next.config.mjs`) that lists every
+  outside address the browser may load from. A new external service (for example Firebase in
+  UC-13) has to be added there, or the browser blocks it.
 
 ## Development database
 

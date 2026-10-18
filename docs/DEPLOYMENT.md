@@ -63,6 +63,7 @@ Open `https://<SITE_ADDRESS>`. With a real domain the certificate is issued auto
 | `CROWD_REFRESH_SECONDS` | no | How often crowd levels are recalculated, default 60 |
 | `WEATHER_REFRESH_MINUTES` | no | How long fetched weather is reused, default 10 |
 | `JWT_EXPIRES_IN` | no | Session length, default 8h |
+| `LOGIN_MAX_FAILURES`, `LOGIN_LOCK_MINUTES` | no | Sign-in is paused for an email and address after this many failed attempts, for this long; default 5 and 15 (SRS 3.3.3) |
 
 The Google Maps key is compiled into the web client, so changing it needs
 `docker compose up -d --build web`. Other settings take effect with `docker compose up -d`.
@@ -117,15 +118,21 @@ browser ──HTTPS──> raaah-web  (frontend/, Next.js)
 `backend/api/index.js` is the serverless counterpart of `src/server.js`. A function cannot keep the
 60-second timer of `startRefreshJob()` alive, so it runs the same refresh cycle (FR-03.02 automatic
 check-out, crowd recalculation) before a request whenever `CROWD_REFRESH_SECONDS` have passed.
+
+Vercel runs several instances of a function at once, and they do not share memory. So that the
+system behaves the same as on one server, logged-out sessions and failed sign-ins are kept in the
+database, and without Redis each instance keeps crowd levels for 10 seconds only before reading them
+again. Redis (SRS 3.3.7) is still the intended cache: add it as below.
 The build command of `raaah-api` is `npm run db:migrate`, so every deployment creates or updates
 the tables in the connected database.
 
 **1. AI Server** — deploy `ai-engine/` and check `https://<raaah-ai>/health`.
 
 **2. Database** — in the `raaah-api` project, Storage → create a Neon Postgres database and connect
-it; this sets `DATABASE_URL`. Optionally add Upstash Redis the same way and set `REDIS_URL` to its
-`rediss://` address (without it, crowd levels and logged-out sessions are kept per function
-instance). Load the demonstration data once from your own machine (PowerShell):
+it; this sets `DATABASE_URL`. Add Redis the same way: Storage → Upstash for Redis (accept the
+marketplace terms in the browser once), connect it to `raaah-api`, then set `REDIS_URL` to its
+`rediss://` address and redeploy. `https://<raaah-api>/api/health` then shows `"cache":"redis"`.
+Load the demonstration data once from your own machine (PowerShell):
 
 ```powershell
 cd backend
@@ -159,9 +166,13 @@ Check `https://<raaah-api>/api/health`: it must answer `"status":"ok"`.
 
 Things to know for a demonstration:
 
-- The first request after a quiet period starts the functions and takes a few seconds longer.
-- Demo check-ins close after `CHECKIN_AUTO_CLOSE_HOURS`. Refresh them with `npm run seed:crowd`
-  (with `DATABASE_URL` set as in step 2) before presenting.
+- The first request after a quiet period starts the functions and takes a few seconds longer. The
+  web client asks for `/api/health` as soon as a page opens, which also starts the AI engine, so
+  by the time a tourist asks for alternatives both are running. Open the site once a minute before
+  presenting.
+- Demo check-ins close after `CHECKIN_AUTO_CLOSE_HOURS`, after which every destination shows a Low
+  crowd. Refresh them shortly before presenting, from the project root:
+  `$env:DATABASE_URL = "<connection string>"; npm run demo:crowd`.
 - Check-in needs the device location, which browsers give only to HTTPS sites. Vercel serves
   HTTPS, so UC-06 works on a phone at the destination or with DevTools sensors.
 - The AI Server has a public address on Vercel, unlike in Fig. 45 where only the Application Server
@@ -169,8 +180,9 @@ Things to know for a demonstration:
 
 ## Status of this setup
 
-The three images, the compose file and the proxy configuration were written against the diagram
-but have not been built or started yet: Docker is not installed on the development machine. What
-has been verified locally is everything they run — the production build of the web client and its
-standalone server, the Application Server with its test suite, and the AI engine with its tests.
-The first `docker compose up --build` on a machine with Docker is therefore the remaining check.
+Docker is not installed on the development machine, so the images are built and checked by
+GitHub Actions on every push (job `docker` in `.github/workflows/ci.yml`): `docker compose build`,
+`docker compose up --wait` until every service is healthy, the demo data loaded, and then through the
+HTTPS proxy the health check (database, Redis, PostGIS and AI engine up), the home page and a
+sign-in. It also checks that the API and the AI engine cannot be reached from outside, only through
+the proxy.

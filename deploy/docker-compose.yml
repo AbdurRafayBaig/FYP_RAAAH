@@ -73,6 +73,8 @@ services:
       WEATHER_REFRESH_MINUTES: ${WEATHER_REFRESH_MINUTES:-10}
       CHECKIN_AUTO_CLOSE_HOURS: ${CHECKIN_AUTO_CLOSE_HOURS:-6}
       CROWD_REFRESH_SECONDS: ${CROWD_REFRESH_SECONDS:-60}
+      LOGIN_MAX_FAILURES: ${LOGIN_MAX_FAILURES:-5}
+      LOGIN_LOCK_MINUTES: ${LOGIN_LOCK_MINUTES:-15}
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:5000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
       interval: 15s
