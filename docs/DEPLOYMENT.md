@@ -130,8 +130,9 @@ the tables in the connected database.
 
 **2. Database** — in the `raaah-api` project, Storage → create a Neon Postgres database and connect
 it; this sets `DATABASE_URL`. Add Redis the same way: Storage → Upstash for Redis (accept the
-marketplace terms in the browser once), connect it to `raaah-api`, then set `REDIS_URL` to its
-`rediss://` address and redeploy. `https://<raaah-api>/api/health` then shows `"cache":"redis"`.
+marketplace terms in the browser once), choose the region of the functions (Washington, D.C.,
+`iad1`), connect it to `raaah-api` for all environments and redeploy. The integration sets `REDIS_URL`
+or `KV_URL` (a `rediss://` address); the API reads either. `https://<raaah-api>/api/health` then shows `"cache":"redis"`.
 Load the demonstration data once from your own machine (PowerShell):
 
 ```powershell

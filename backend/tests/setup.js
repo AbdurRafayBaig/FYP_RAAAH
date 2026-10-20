@@ -3,6 +3,7 @@
 process.env.NODE_ENV = 'test';
 process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgres://postgres:postgres@localhost:5433/raaah_test';
 process.env.REDIS_URL = '';
+process.env.KV_URL = '';
 process.env.JWT_SECRET = 'raaah-test-secret';
 process.env.JWT_EXPIRES_IN = '1h';
 process.env.OPENWEATHER_API_KEY = '';

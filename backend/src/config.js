@@ -16,7 +16,8 @@ export const config = {
   // One or more web client addresses, separated by commas
   corsOrigins: (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',').map((o) => o.trim().replace(/\/$/, '')).filter(Boolean),
   databaseUrl: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5433/raaah',
-  redisUrl: process.env.REDIS_URL || '',
+  // The Upstash integration on Vercel names it KV_URL in some setups
+  redisUrl: process.env.REDIS_URL || process.env.KV_URL || '',
   jwtSecret: process.env.JWT_SECRET || 'raaah-dev-secret-change-me',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',
   aiEngineUrl: process.env.AI_ENGINE_URL || 'http://localhost:8000',
