@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
+import { useT } from '@/context/LanguageContext';
 import { ROUTES } from '@/constants/routes';
 import { timeAgo } from '@/lib/format';
 import PageTitle from '@/components/ui/PageTitle';
@@ -35,21 +36,22 @@ async function fetchRecommendations(sourceId, consent) {
 }
 
 // Where distances are measured from, and what the tourist can do to measure them from where they are
-function distanceNote(usedLocation, consent, source) {
-  if (usedLocation) return 'Distances are from your current location.';
-  const from = source ? `Distances are from ${source.name}.` : 'Distance from where you are is not included.';
+function distanceNote(t, usedLocation, consent, source) {
+  if (usedLocation) return t('Distances are from your current location.');
+  const from = source ? t('Distances are from {name}.', { name: source.name }) : t('Distance from where you are is not included.');
   // Consent is given, but the browser did not share the location (permission blocked or no fix)
-  if (consent) return `${from} Your browser did not share your location; allow it for this site to measure from where you are.`;
-  return `${from} Turn on location consent in your profile to measure from where you are.`;
+  if (consent) return `${from} ${t('Your browser did not share your location; allow it for this site to measure from where you are.')}`;
+  return `${from} ${t('Turn on location consent in your profile to measure from where you are.')}`;
 }
 
 // UC-09 alt 6a - safety information of the selected destination
 function SourceSafety({ source }) {
+  const t = useT();
   return (
     <div className="mt-6 grid gap-6 border-t border-rule pt-5 sm:grid-cols-3">
-      <div><p className="meta mb-2">Crowd</p><CrowdLevel level={source.crowd.crowdLevel} /></div>
-      <div><p className="meta mb-2">Safety</p><RiskStatus status={source.riskStatus} /></div>
-      <div><p className="meta mb-2">Weather</p><WeatherSummary weather={source.weather} /></div>
+      <div><p className="meta mb-2">{t('Crowd')}</p><CrowdLevel level={source.crowd.crowdLevel} /></div>
+      <div><p className="meta mb-2">{t('Safety')}</p><RiskStatus status={source.riskStatus} /></div>
+      <div><p className="meta mb-2">{t('Weather')}</p><WeatherSummary weather={source.weather} /></div>
       {source.hazards.length > 0 && (
         <ul className="space-y-3 sm:col-span-3">
           {source.hazards.map((h) => (
@@ -76,11 +78,12 @@ const FACTORS = [
 ];
 
 function FactorBars({ factors }) {
+  const t = useT();
   return (
     <dl className="mt-3 grid max-w-md grid-cols-2 gap-x-5 gap-y-1.5 sm:grid-cols-3">
       {FACTORS.filter(([key]) => factors?.[key] !== undefined).map(([key, label]) => (
         <div key={key}>
-          <dt className="text-[12px] text-muted">{label}</dt>
+          <dt className="text-[12px] text-muted">{t(label)}</dt>
           <dd className="mt-0.5 h-1.5 rounded-full bg-rule" title={`${Math.round(factors[key] * 100)}%`}>
             <span className="block h-full rounded-full bg-accent" style={{ width: `${Math.round(factors[key] * 100)}%` }} />
           </dd>
@@ -91,22 +94,21 @@ function FactorBars({ factors }) {
 }
 
 function HowMatchWorks() {
+  const t = useT();
   return (
     <details className="mt-6 border-y border-rule py-3 text-[14px] text-ink-2">
-      <summary className="cursor-pointer font-medium text-ink">How is the match calculated?</summary>
+      <summary className="cursor-pointer font-medium text-ink">{t('How is the match calculated?')}</summary>
       <p className="mt-3 max-w-[70ch]">
-        Each place gets a score from 0 to 1 for every factor below. The match is their weighted average. Places
-        that are closed, at High Risk or over capacity are left out, and places you have visited before are moved
-        slightly down so you discover new ones.
+        {t('Each place gets a score from 0 to 1 for every factor below. The match is their weighted average. Places that are closed, at High Risk or over capacity are left out, and places you have visited before are moved slightly down so you discover new ones.')}
       </p>
       <ul className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-2">
         {FACTORS.map(([key, label, weight]) => (
           <li key={key} className="flex justify-between gap-4 border-b border-rule py-1">
-            <span>{label}</span><span className="data">{weight}%</span>
+            <span>{t(label)}</span><span className="data" dir="ltr">{weight}%</span>
           </li>
         ))}
       </ul>
-      <p className="meta mt-3">Distance only counts when RAAAH knows where you are or which place you started from.</p>
+      <p className="meta mt-3">{t('Distance only counts when RAAAH knows where you are or which place you started from.')}</p>
     </details>
   );
 }
@@ -114,6 +116,7 @@ function HowMatchWorks() {
 // UC-09 Get Alternative Destination Recommendations (Expanded Use Case Table 46, SSD Fig. 28)
 export default function RecommendationResults({ sourceId }) {
   const { user } = useAuth();
+  const t = useT();
   const consent = Boolean(user?.locationConsent);
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState({ loading: true, result: null, error: '' });
@@ -139,17 +142,16 @@ export default function RecommendationResults({ sourceId }) {
 
   return (
     <div className="page pb-20">
-      <PageTitle title={source ? `Instead of ${source.name}` : 'Places that suit you'}>
-        Ranked by your interests and past visits, then by current crowd, safety, weather, distance, road access and
-        places to stay.
+      <PageTitle title={source ? t('Instead of {name}', { name: source.name }) : t('Places that suit you')}>
+        {t('Ranked by your interests and past visits, then by current crowd, safety, weather, distance, road access and places to stay.')}
       </PageTitle>
 
       <HowMatchWorks />
 
-      {loading && <p className="meta py-10">Comparing destinations…</p>}
+      {loading && <p className="meta py-10">{t('Comparing destinations…')}</p>}
 
       {!loading && error && (
-        <Notice tone="error" className="mt-8" action={<button onClick={retry} className="btn btn-secondary shrink-0">Try again</button>}>
+        <Notice tone="error" className="mt-8" action={<button onClick={retry} className="btn btn-secondary shrink-0">{t('Try again')}</button>}>
           {error}
         </Notice>
       )}
@@ -161,19 +163,19 @@ export default function RecommendationResults({ sourceId }) {
             <section className="border-b border-rule py-8">
               <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                 <div className="max-w-xl">
-                  <p className="meta">You picked</p>
+                  <p className="meta">{t('You picked')}</p>
                   <p className="font-display text-[26px]">{source.name}</p>
                   {source.advisory.needsAlternatives ? (
                     <ul className="mt-2 space-y-0.5 text-[14px] text-ink-2">
                       {source.advisory.reasons.map((r) => <li key={r}>{r}</li>)}
                     </ul>
                   ) : (
-                    <p className="mt-2 text-[14px] text-ink-2">Conditions there look fine. These are other places you may like.</p>
+                    <p className="mt-2 text-[14px] text-ink-2">{t('Conditions there look fine. These are other places you may like.')}</p>
                   )}
                 </div>
                 {/* FR-05.06 / alt 7a - continue with the original destination */}
                 <Link href={`/destinations/${source.destinationId}?continue=1`} className="btn btn-secondary shrink-0">
-                  Go to {source.name} anyway
+                  {t('Go to {name} anyway', { name: source.name })}
                 </Link>
               </div>
               {result.noSuitableAlternative && <SourceSafety source={source} />}
@@ -183,7 +185,7 @@ export default function RecommendationResults({ sourceId }) {
           {/* UC-09 alt 6a */}
           {result.noSuitableAlternative ? (
             <div className="py-12">
-              <p className="font-display text-[24px]">No suitable alternative right now</p>
+              <p className="font-display text-[24px]">{t('No suitable alternative right now')}</p>
               <p className="mt-2 max-w-xl text-ink-2">{result.message}</p>
             </div>
           ) : (
@@ -208,14 +210,14 @@ export default function RecommendationResults({ sourceId }) {
                         <p className="mt-3 max-w-[62ch] text-[14px] text-ink-2">{r.reasons.join(' · ')}</p>
                         {source && (
                           <p className="meta mt-1">
-                            Compared with {source.name}: {source.crowd.crowdLevel.toLowerCase()} crowd, {source.riskStatus.toLowerCase()}.
+                            {t('Compared with {name}: {crowd}, {risk}.', { name: source.name, crowd: t(`${source.crowd.crowdLevel} crowd`), risk: t(source.riskStatus.replace(' Risk', ' risk')) })}
                           </p>
                         )}
                         <FactorBars factors={r.factors} />
                       </div>
                       <p className="sm:text-right">
                         <span className="font-mono text-[22px] text-ink">{Math.round(r.score * 100)}%</span>
-                        <span className="meta block">match</span>
+                        <span className="meta block">{t('match')}</span>
                       </p>
                     </Link>
                   </li>
@@ -225,8 +227,8 @@ export default function RecommendationResults({ sourceId }) {
           )}
 
           <p className="meta mt-6">
-            {distanceNote(result.usedLocation, consent, source)}{' '}
-            <Link href={ROUTES.PROFILE} className="link">Edit your interests</Link>
+            {distanceNote(t, result.usedLocation, consent, source)}{' '}
+            <Link href={ROUTES.PROFILE} className="link">{t('Edit your interests')}</Link>
           </p>
         </>
       )}

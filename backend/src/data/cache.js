@@ -74,6 +74,7 @@ export const cacheKeys = {
   crowd: (destinationId) => `crowd:${destinationId}`,
   revokedToken: (jti) => `revoked-token:${jti}`,
   forecast: (destinationId) => `forecast:${destinationId}`,
+  passwordChanged: (userId) => `password-changed:${userId}`,
 };
 
 export function getCache() {

@@ -155,6 +155,18 @@ CREATE TABLE IF NOT EXISTS login_failures (
 );
 CREATE INDEX IF NOT EXISTS idx_login_failures_email_ip ON login_failures (email, ip_address, failed_at);
 
+-- ERD extension: SRS 3.3.3 password reset by email. Only a SHA-256 hash of the emailed token is kept;
+-- a token works once and for a short time. Sessions signed in before a reset are no longer accepted.
+CREATE TABLE IF NOT EXISTS password_resets (
+  token_hash CHAR(64)    PRIMARY KEY,
+  user_id    INTEGER     NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  used_at    TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS idx_password_resets_user ON password_resets (user_id, created_at);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS password_changed_at TIMESTAMPTZ;
+
 -- WeatherInfo from the Domain Model (SRS Figure 46): last available weather per destination,
 -- shown with its update time when the weather service is unavailable (SRS 3.3.5).
 CREATE TABLE IF NOT EXISTS weather_info (

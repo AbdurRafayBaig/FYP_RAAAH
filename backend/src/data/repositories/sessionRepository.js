@@ -34,8 +34,15 @@ export async function clearLoginFailures(email, ipAddress) {
   await query('DELETE FROM login_failures WHERE email = $1 AND ip_address = $2', [email, ipAddress]);
 }
 
-// Removes rows that no longer matter: expired sessions and failures older than the lock period
+// After a password reset the address may sign in again straight away
+export async function clearAllLoginFailures(email) {
+  await query('DELETE FROM login_failures WHERE email = $1', [email]);
+}
+
+// Removes rows that no longer matter: expired sessions, failures older than the lock period and
+// password reset links older than a day
 export async function deleteExpired(lockMinutes) {
   await query('DELETE FROM revoked_tokens WHERE expires_at < NOW()');
   await query('DELETE FROM login_failures WHERE failed_at < NOW() - make_interval(mins => $1)', [lockMinutes]);
+  await query("DELETE FROM password_resets WHERE created_at < NOW() - interval '1 day'");
 }

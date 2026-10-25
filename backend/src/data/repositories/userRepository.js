@@ -52,6 +52,25 @@ export async function updateProfile(client, userId, { fullName, email, locationC
   );
 }
 
+// SRS 3.3.3 password reset; sessions signed in before this moment are no longer accepted
+export async function setPassword(client, userId, passwordHash) {
+  const { rows } = await client.query(
+    `UPDATE users SET password_hash = $2, password_changed_at = NOW() WHERE user_id = $1
+     RETURNING email, password_changed_at`,
+    [userId, passwordHash],
+  );
+  return rows[0];
+}
+
+// Seconds since 1970 of the last password change, or null
+export async function passwordChangedAt(userId) {
+  const { rows } = await query(
+    'SELECT EXTRACT(EPOCH FROM password_changed_at)::bigint AS changed FROM users WHERE user_id = $1',
+    [userId],
+  );
+  return rows[0]?.changed == null ? null : Number(rows[0].changed);
+}
+
 export async function replaceInterests(client, userId, interestNames) {
   await client.query('DELETE FROM user_interests WHERE user_id = $1', [userId]);
   if (interestNames.length === 0) return;

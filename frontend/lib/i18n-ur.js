@@ -270,6 +270,22 @@ export const UR = {
   'For your safety, never send your old password.': 'اپنی حفاظت کے لیے پرانا پاس ورڈ کبھی نہ بھیجیں۔',
   'Email the RAAAH team': 'راہ ٹیم کو ای میل کریں',
   'Back to sign in': 'سائن اِن پر واپس',
+  'Enter the email of your account. We will send you a link to choose a new password.':
+    'اپنے اکاؤنٹ کی ای میل درج کریں۔ ہم آپ کو نیا پاس ورڈ رکھنے کا لنک بھیجیں گے۔',
+  'Send reset link': 'ری سیٹ لنک بھیجیں',
+  'Sending…': 'بھیجا جا رہا ہے…',
+  'If an account exists for this email, a link to choose a new password has been sent to it. The link works once, for 30 minutes.':
+    'اگر اس ای میل کا اکاؤنٹ موجود ہے تو اس پر نیا پاس ورڈ رکھنے کا لنک بھیج دیا گیا ہے۔ یہ لنک ایک بار اور 30 منٹ کے لیے کام کرتا ہے۔',
+  'No email after a few minutes? Check the spam folder, or write to': 'چند منٹ میں ای میل نہ آئے؟ اسپام فولڈر دیکھیں، یا لکھیں:',
+  'Choose a new password': 'نیا پاس ورڈ رکھیں',
+  'After saving it, sessions that were signed in with the old password end.': 'محفوظ کرنے کے بعد پرانے پاس ورڈ والے تمام سیشن ختم ہو جائیں گے۔',
+  'New password': 'نیا پاس ورڈ',
+  'Save new password': 'نیا پاس ورڈ محفوظ کریں',
+  'This link is not complete. Open the link from the email again, or ask for a new one.':
+    'یہ لنک مکمل نہیں۔ ای میل والا لنک دوبارہ کھولیں، یا نیا لنک منگوائیں۔',
+  'Ask for a new link': 'نیا لنک منگوائیں',
+  'Your password has been changed. You can now sign in with the new password.':
+    'آپ کا پاس ورڈ بدل گیا ہے۔ اب آپ نئے پاس ورڈ سے سائن اِن کر سکتے ہیں۔',
 
   // Safety page
   'Hazard reports from local observers appear on each destination page once an administrator has verified them. This page has the numbers to call and what to know before you drive into the mountains.':
@@ -304,4 +320,102 @@ export const UR = {
     'لینڈ سلائیڈ، برف، حادثات یا مرمت کا کام۔ لمبے سفر سے پہلے مقامی لوگوں سے پوچھ لیں۔',
   'Heavy snow, storms and sudden cold at altitude. Passes such as Babusar and Khunjerab close seasonally.':
     'بلندی پر شدید برف باری، طوفان اور اچانک سردی۔ بابوسر اور خنجراب جیسے درّے موسمی طور پر بند ہوتے ہیں۔',
+
+  // Check-in
+  'Check in': 'چیک اِن',
+  'Check-in requires your location. Allow location access in your browser and try again.':
+    'چیک اِن کے لیے آپ کی جگہ درکار ہے۔ براؤزر میں لوکیشن کی اجازت دیں اور دوبارہ کوشش کریں۔',
+  'Your location could not be found. Please try again.': 'آپ کی جگہ معلوم نہیں ہو سکی۔ دوبارہ کوشش کریں۔',
+  'You have been checked in here since': 'آپ یہاں اس وقت سے چیک اِن ہیں:',
+  'Check-in uses your location, so it needs your consent first.': 'چیک اِن آپ کی جگہ استعمال کرتا ہے، اس لیے پہلے آپ کی اجازت ضروری ہے۔',
+  'Turn it on in your profile': 'اپنی پروفائل میں اجازت دیں',
+  'Here now? Checking in keeps the crowd level honest for everyone else. You need to be within {km} km of {name}. Your location is used for this check only and is not stored.':
+    'ابھی یہاں ہیں؟ چیک اِن سے سب کے لیے رش کا درست اندازہ رہتا ہے۔ آپ کو {name} سے {km} کلومیٹر کے اندر ہونا چاہیے۔ آپ کی جگہ صرف اسی جانچ کے لیے استعمال ہوتی ہے اور محفوظ نہیں کی جاتی۔',
+  'This ends your check-in at {name}.': 'اس سے {name} پر آپ کا چیک اِن ختم ہو جائے گا۔',
+  'Finding your location…': 'آپ کی جگہ تلاش ہو رہی ہے…',
+  'Check in at {name}': '{name} پر چیک اِن کریں',
+
+  // Culture page
+  'The people of Gilgit-Baltistan have welcomed travellers for a long time. A little knowledge goes a long way.':
+    'گلگت بلتستان کے لوگ صدیوں سے مسافروں کا خیر مقدم کرتے آئے ہیں۔ تھوڑی سی معلومات بہت کام آتی ہے۔',
+  'The forts of Hunza': 'ہنزہ کے قلعے',
+  'Baltit Fort above Karimabad was the seat of the Mirs of Hunza for centuries. Altit Fort, a short walk away, is thought to be the oldest building in Gilgit-Baltistan. Both were restored by the Aga Khan Trust for Culture and can be visited with a local guide.':
+    'کریم آباد کے اوپر بلتت قلعہ صدیوں تک ہنزہ کے میروں کا مرکز رہا۔ قریب ہی التت قلعہ گلگت بلتستان کی قدیم ترین عمارت مانا جاتا ہے۔ دونوں کو آغا خان ٹرسٹ فار کلچر نے بحال کیا اور انہیں مقامی گائیڈ کے ساتھ دیکھا جا سکتا ہے۔',
+  'Polo at Shandur': 'شندور میں پولو',
+  'Every summer, teams from Chitral and Gilgit meet on the Shandur pass at around 3,700 m for freestyle polo, often called the highest polo ground in the world. The festival brings music, camping and very large crowds — check conditions before you go.':
+    'ہر گرمی میں چترال اور گلگت کی ٹیمیں تقریباً 3,700 میٹر بلند شندور درّے پر فری اسٹائل پولو کھیلتی ہیں، جسے دنیا کا بلند ترین پولو گراؤنڈ کہا جاتا ہے۔ میلے میں موسیقی، کیمپنگ اور بہت زیادہ رش ہوتا ہے — جانے سے پہلے حالات دیکھ لیں۔',
+  'Languages and food': 'زبانیں اور کھانے',
+  'In a single day on the road you can pass through valleys speaking Shina, Burushaski, Wakhi and Balti. Try chapshuro and diram fitti in Hunza, marzan and balay in Baltistan, and the dried apricots and walnuts sold everywhere.':
+    'ایک ہی دن کے سفر میں آپ شینا، بروشسکی، وخی اور بلتی بولنے والی وادیوں سے گزر سکتے ہیں۔ ہنزہ میں چھپ شورو اور دیرم فِٹی، بلتستان میں مرزان اور بلے، اور ہر جگہ ملنے والی خشک خوبانیاں اور اخروٹ ضرور چکھیں۔',
+  'Looking after the mountains': 'پہاڑوں کا خیال',
+  'Dress modestly. Long sleeves and loose clothing are expected in villages for both men and women.':
+    'سادہ لباس پہنیں۔ دیہات میں مرد و خواتین دونوں سے پوری آستین اور ڈھیلے کپڑوں کی توقع کی جاتی ہے۔',
+  'Always ask before photographing people, and do not photograph women without clear permission.':
+    'لوگوں کی تصویر سے پہلے ہمیشہ پوچھیں، اور خواتین کی تصویر واضح اجازت کے بغیر نہ لیں۔',
+  'Remove your shoes before entering a mosque or a home.': 'مسجد یا گھر میں داخل ہونے سے پہلے جوتے اتار دیں۔',
+  'If you are offered tea, accept it if you can. Hospitality matters a great deal here.':
+    'چائے پیش کی جائے تو ہو سکے تو قبول کریں۔ یہاں مہمان نوازی بہت اہم ہے۔',
+  'Avoid public displays of affection, and be discreet about eating in public during Ramadan.':
+    'سرِعام اظہارِ محبت سے گریز کریں، اور رمضان میں سرِعام کھانے پینے میں احتیاط کریں۔',
+  'Carry all rubbish back with you. Most valleys have no waste collection.': 'سارا کچرا واپس ساتھ لائیں۔ اکثر وادیوں میں کچرا اٹھانے کا انتظام نہیں۔',
+  'Keep soap and detergent out of streams and lakes; they are drinking water downstream.':
+    'صابن اور سرف ندی نالوں اور جھیلوں میں نہ ڈالیں؛ نیچے یہی پینے کا پانی ہے۔',
+  'Stay on existing paths in meadows such as Fairy Meadows and Deosai.': 'فیری میڈوز اور دیوسائی جیسی چراگاہوں میں بنے ہوئے راستوں پر ہی چلیں۔',
+  'Do not feed, chase or disturb wildlife, and never buy animal parts.': 'جنگلی جانوروں کو نہ کھلائیں، نہ ان کا پیچھا کریں، اور جانوروں کے اعضا کبھی نہ خریدیں۔',
+  'Spend locally: village guest houses, local guides, handicrafts made in the valley.':
+    'مقامی طور پر خرچ کریں: گاؤں کے گیسٹ ہاؤس، مقامی گائیڈ، اور وادی کی دستکاریاں۔',
+
+  // Profile
+  'Loading your profile…': 'آپ کی پروفائل لوڈ ہو رہی ہے…',
+  'Your details, what you like to travel for, and whether RAAAH may use your location.':
+    'آپ کی معلومات، آپ کس لیے سفر کرنا پسند کرتے ہیں، اور کیا راہ آپ کی جگہ استعمال کر سکتا ہے۔',
+  'Your details': 'آپ کی معلومات',
+  'Travel preferences': 'سفری ترجیحات',
+  'Used to rank alternative destinations for you.': 'آپ کے لیے متبادل مقامات ترتیب دینے میں استعمال ہوتی ہیں۔',
+  'Needed for check-in and for distances.': 'چیک اِن اور فاصلوں کے لیے ضروری ہے۔',
+  'RAAAH may use my current location when I check in or ask for alternatives.':
+    'جب میں چیک اِن کروں یا متبادل مانگوں تو راہ میری موجودہ جگہ استعمال کر سکتا ہے۔',
+  'Your location is read at that moment only. It is never stored and never shown to anyone; crowd levels are published as totals.':
+    'آپ کی جگہ صرف اسی لمحے پڑھی جاتی ہے۔ یہ کبھی محفوظ نہیں ہوتی اور کسی کو نہیں دکھائی جاتی؛ رش صرف مجموعی تعداد میں دکھایا جاتا ہے۔',
+  'Discard changes': 'تبدیلیاں منسوخ کریں',
+  'Save changes': 'تبدیلیاں محفوظ کریں',
+  Tourist: 'سیاح',
+  'Community Safety Observer': 'کمیونٹی سیفٹی مبصر',
+  Administrator: 'ایڈمنسٹریٹر',
+  'Tourism Authority': 'سیاحتی اتھارٹی',
+  'Saved destinations': 'محفوظ مقامات',
+  'Places you saved to plan a visit. Their conditions are shown as they are now.':
+    'وہ جگہیں جو آپ نے سفر کی منصوبہ بندی کے لیے محفوظ کیں۔ ان کے حالات ابھی کے مطابق دکھائے گئے ہیں۔',
+  'Nothing saved yet.': 'ابھی کچھ محفوظ نہیں۔',
+  'Use Save on a': 'کسی',
+  'destination page': 'مقام کے صفحے پر "محفوظ کریں" دبائیں',
+
+  // Alternatives
+  'Places that suit you': 'آپ کے لیے موزوں جگہیں',
+  'Instead of {name}': '{name} کے بجائے',
+  'Ranked by your interests and past visits, then by current crowd, safety, weather, distance, road access and places to stay.':
+    'آپ کی دلچسپی اور پچھلے سفروں کے لحاظ سے، پھر موجودہ رش، حفاظت، موسم، فاصلے، سڑک کی رسائی اور رہائش کے لحاظ سے ترتیب۔',
+  'Comparing destinations…': 'مقامات کا موازنہ ہو رہا ہے…',
+  'Try again': 'دوبارہ کوشش کریں',
+  'You picked': 'آپ کا انتخاب',
+  'Conditions there look fine. These are other places you may like.': 'وہاں حالات ٹھیک ہیں۔ یہ دوسری جگہیں بھی آپ کو پسند آ سکتی ہیں۔',
+  'Go to {name} anyway': 'پھر بھی {name} جائیں',
+  'No suitable alternative right now': 'اس وقت کوئی موزوں متبادل نہیں',
+  'Compared with {name}: {crowd}, {risk}.': '{name} سے موازنہ: {crowd}، {risk}۔',
+  match: 'مطابقت',
+  'Edit your interests': 'اپنی دلچسپیاں بدلیں',
+  'Your interests': 'آپ کی دلچسپی',
+  Distance: 'فاصلہ',
+  'How is the match calculated?': 'مطابقت کیسے نکالی جاتی ہے؟',
+  'Each place gets a score from 0 to 1 for every factor below. The match is their weighted average. Places that are closed, at High Risk or over capacity are left out, and places you have visited before are moved slightly down so you discover new ones.':
+    'ہر جگہ کو نیچے دیے گئے ہر عنصر پر 0 سے 1 تک نمبر ملتے ہیں۔ مطابقت ان کی وزنی اوسط ہے۔ بند، زیادہ خطرے والی یا گنجائش سے زیادہ بھری جگہیں نکال دی جاتی ہیں، اور جہاں آپ پہلے جا چکے ہیں وہ تھوڑا نیچے رکھی جاتی ہیں تاکہ آپ نئی جگہیں دیکھیں۔',
+  'Distance only counts when RAAAH knows where you are or which place you started from.':
+    'فاصلہ صرف تب شمار ہوتا ہے جب راہ کو معلوم ہو کہ آپ کہاں ہیں یا آپ نے کون سی جگہ چنی تھی۔',
+  'Distances are from your current location.': 'فاصلے آپ کی موجودہ جگہ سے ہیں۔',
+  'Distances are from {name}.': 'فاصلے {name} سے ہیں۔',
+  'Distance from where you are is not included.': 'آپ کی جگہ سے فاصلہ شامل نہیں۔',
+  'Your browser did not share your location; allow it for this site to measure from where you are.':
+    'آپ کے براؤزر نے جگہ شیئر نہیں کی؛ اپنی جگہ سے فاصلہ دیکھنے کے لیے اس سائٹ کو اجازت دیں۔',
+  'Turn on location consent in your profile to measure from where you are.':
+    'اپنی جگہ سے فاصلہ دیکھنے کے لیے پروفائل میں لوکیشن کی اجازت دیں۔',
 };

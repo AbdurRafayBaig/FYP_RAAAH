@@ -6,6 +6,8 @@ import { getCache, cacheKeys } from '../../data/cache.js';
 import { withTransaction } from '../../data/db.js';
 import * as users from '../../data/repositories/userRepository.js';
 import * as sessions from '../../data/repositories/sessionRepository.js';
+import * as resets from '../../data/repositories/passwordResetRepository.js';
+import * as mailer from '../../integrations/emailClient.js';
 import { INTERESTS } from '../../domain.js';
 import { HttpError } from '../../middleware/errors.js';
 
@@ -50,6 +52,17 @@ export const touristCodeFor = (userId, createdAt) =>
 // bcrypt only uses the first 72 bytes of a password
 const MAX_PASSWORD_BYTES = 72;
 
+// The password rule of registration, also used when a password is reset
+function validatePassword(password, confirmPassword, fields) {
+  if (typeof password !== 'string' || password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+    fields.password = 'Use at least 8 characters, with at least one letter and one number.';
+  } else if (Buffer.byteLength(password) > MAX_PASSWORD_BYTES) {
+    fields.password = 'Use at most 72 characters.';
+  } else if (confirmPassword !== password) {
+    fields.confirmPassword = 'The two passwords do not match.';
+  }
+}
+
 function validateRegistration(body) {
   const fields = {};
 
@@ -60,13 +73,7 @@ function validateRegistration(body) {
   if (!isValidEmail(email)) fields.email = 'Enter a valid email address.';
 
   const { password, confirmPassword } = body;
-  if (typeof password !== 'string' || password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
-    fields.password = 'Use at least 8 characters, with at least one letter and one number.';
-  } else if (Buffer.byteLength(password) > MAX_PASSWORD_BYTES) {
-    fields.password = 'Use at most 72 characters.';
-  } else if (confirmPassword !== password) {
-    fields.confirmPassword = 'The two passwords do not match.';
-  }
+  validatePassword(password, confirmPassword, fields);
 
   // FR-01.04 - travel preferences are chosen after the first sign-in, so they are optional here
   const interests = Array.isArray(body.interests) ? [...new Set(body.interests)] : [];
@@ -151,6 +158,69 @@ export async function login({ email, password }, ipAddress = 'unknown') {
   await sessions.clearLoginFailures(normalised, ipAddress);
   const user = await users.findById(credentials.user_id);
   return { token: issueToken(user), user };
+}
+
+// SRS 3.3.3 - password reset by email ------------------------------------------------------------
+
+const RESETS_PER_HOUR = 3;
+// Kept in the cache for longer than any session can last (JWT_EXPIRES_IN)
+const PASSWORD_CHANGED_TTL_SECONDS = 30 * 24 * 60 * 60;
+const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
+
+// The same answer whether or not the email has an account, so the form cannot be used to find accounts
+const RESET_REQUESTED = (minutes) =>
+  `If an account exists for this email, a link to choose a new password has been sent to it. The link works once, for ${minutes} minutes.`;
+
+const escapeHtml = (s) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+function resetEmail(fullName, link, minutes) {
+  const first = escapeHtml(fullName.split(' ')[0]);
+  const text = `Hello ${first},\n\nSomeone asked to reset the password of your RAAAH account. To choose a new password, open this link within ${minutes} minutes:\n\n${link}\n\nIf it was not you, ignore this email; your password stays as it is.\n\nRAAAH`;
+  const html = `<p>Hello ${first},</p><p>Someone asked to reset the password of your RAAAH account. To choose a new password, open this link within ${minutes} minutes:</p><p><a href="${link}">Choose a new password</a></p><p>If it was not you, ignore this email; your password stays as it is.</p><p>RAAAH</p>`;
+  return { subject: 'Reset your RAAAH password', text, html };
+}
+
+export async function requestPasswordReset(body = {}) {
+  const email = normaliseEmail(body.email);
+  if (!isValidEmail(email)) {
+    throw new HttpError(400, 'Enter a valid email address.', { email: 'Enter a valid email address.' });
+  }
+  const minutes = config.passwordResetMinutes;
+  const credentials = await users.findCredentialsByEmail(email);
+  if (credentials && (await resets.countRecent(credentials.user_id, 60)) < RESETS_PER_HOUR) {
+    const token = crypto.randomBytes(32).toString('base64url');
+    await resets.create(credentials.user_id, hashToken(token), minutes);
+    const user = await users.findById(credentials.user_id);
+    const link = `${config.webUrl}/reset-password?token=${token}`;
+    try {
+      await mailer.sendEmail({ to: email, ...resetEmail(user.fullName, link, minutes) });
+    } catch (err) {
+      console.error(`[email] Password reset email could not be sent: ${err.message}`);
+    }
+  }
+  return { message: RESET_REQUESTED(minutes) };
+}
+
+export async function resetPassword(body = {}) {
+  const fields = {};
+  validatePassword(body.password, body.confirmPassword, fields);
+  if (Object.keys(fields).length > 0) throw new HttpError(400, 'Please correct the highlighted fields.', fields);
+  const invalid = new HttpError(400, 'This link is not valid any more. Ask for a new one on the sign-in page.');
+  if (typeof body.token !== 'string' || body.token.length < 20 || body.token.length > 200) throw invalid;
+
+  const passwordHash = await bcrypt.hash(body.password, 10);
+  const changed = await withTransaction(async (client) => {
+    const userId = await resets.consume(client, hashToken(body.token));
+    if (!userId) return null;
+    return { userId, ...(await users.setPassword(client, userId, passwordHash)) };
+  });
+  if (!changed) throw invalid;
+
+  // Earlier sessions end, and sign-in is open again for this address
+  const changedSeconds = Math.floor(new Date(changed.password_changed_at).getTime() / 1000);
+  await getCache().set(cacheKeys.passwordChanged(changed.userId), changedSeconds, PASSWORD_CHANGED_TTL_SECONDS);
+  await sessions.clearAllLoginFailures(changed.email);
+  return { message: 'Your password has been changed. You can now sign in with the new password.' };
 }
 
 // FR-01.03 - log out: the token is revoked until it would have expired

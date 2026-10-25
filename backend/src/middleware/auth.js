@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config.js';
 import { getCache, getCacheKind, cacheKeys } from '../data/cache.js';
 import { isTokenRevoked } from '../data/repositories/sessionRepository.js';
+import { passwordChangedAt } from '../data/repositories/userRepository.js';
 import { HttpError } from './errors.js';
 
 // Role-based access is enforced on the server for every request (SRS 3.3.3).
@@ -12,6 +13,14 @@ async function isRevoked(jti) {
   if (await getCache().get(cacheKeys.revokedToken(jti))) return true;
   if (getCacheKind() === 'redis') return false;
   return isTokenRevoked(jti);
+}
+
+// SRS 3.3.3 - a session signed in before the password was reset ends. The reset is noted in the cache
+// for longer than a session lasts; without a shared Redis cache the database is asked.
+async function signedInBeforePasswordChange(userId, issuedAt) {
+  const cached = await getCache().get(cacheKeys.passwordChanged(userId));
+  const changed = cached ?? (getCacheKind() === 'redis' ? null : await passwordChangedAt(userId));
+  return changed !== null && issuedAt < changed;
 }
 
 export async function authenticate(req, res, next) {
@@ -27,6 +36,9 @@ export async function authenticate(req, res, next) {
   }
   if (await isRevoked(payload.jti)) {
     throw new HttpError(401, 'You have logged out. Please log in again.');
+  }
+  if (await signedInBeforePasswordChange(Number(payload.sub), payload.iat)) {
+    throw new HttpError(401, 'Your password has been changed. Please log in again.');
   }
 
   req.auth = { userId: Number(payload.sub), role: payload.role, jti: payload.jti, exp: payload.exp };

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { api } from '@/lib/api';
+import { useT } from '@/context/LanguageContext';
 import { ROUTES } from '@/constants/routes';
 import { formatTime } from '@/lib/format';
 import Notice from '@/components/ui/Notice';
@@ -19,6 +20,7 @@ function getCurrentPosition() {
 
 // UC-06 Check In at Destination (Expanded Use Case Table 43, Activity Fig. 8, SSD Fig. 25)
 export default function CheckInPanel({ destination, onCheckedIn }) {
+  const t = useT();
   const { checkInStatus, name, areaRadiusM } = destination;
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState(null); // { tone, message }
@@ -36,8 +38,8 @@ export default function CheckInPanel({ destination, onCheckedIn }) {
         setFeedback({
           tone: 'error',
           message: err.code === 1
-            ? 'Check-in requires your location. Allow location access in your browser and try again.'
-            : 'Your location could not be found. Please try again.',
+            ? t('Check-in requires your location. Allow location access in your browser and try again.')
+            : t('Your location could not be found. Please try again.'),
         });
         return;
       }
@@ -58,31 +60,33 @@ export default function CheckInPanel({ destination, onCheckedIn }) {
 
   return (
     <div className="border-t border-ink pt-4">
-      <h3 className="text-[20px]">Check in</h3>
+      <h3 className="text-[20px]">{t('Check in')}</h3>
 
       {checkInStatus.checkedInHere ? (
         <p className="mt-2 text-[14px] text-ink-2">
-          You have been checked in here since <span className="data text-ink">{formatTime(checkInStatus.activeCheckIn.checkinTime)}</span>.
+          {t('You have been checked in here since')} <span className="data text-ink" dir="ltr">{formatTime(checkInStatus.activeCheckIn.checkinTime)}</span>.
         </p>
       ) : !checkInStatus.locationConsent ? (
         // UC-06 pre-condition: location consent (FR-01.07)
         <p className="mt-2 text-[14px] text-ink-2">
-          Check-in uses your location, so it needs your consent first.{' '}
-          <Link href={ROUTES.PROFILE} className="link">Turn it on in your profile</Link>.
+          {t('Check-in uses your location, so it needs your consent first.')}{' '}
+          <Link href={ROUTES.PROFILE} className="link">{t('Turn it on in your profile')}</Link>.
         </p>
       ) : (
         <>
           <p className="mt-2 text-[14px] text-ink-2">
-            Here now? Checking in keeps the crowd level honest for everyone else. You need to be within{' '}
-            {(areaRadiusM / 1000).toFixed(1)} km of {name}. Your location is used for this check only and is not stored.
+            {t('Here now? Checking in keeps the crowd level honest for everyone else. You need to be within {km} km of {name}. Your location is used for this check only and is not stored.', {
+              km: (areaRadiusM / 1000).toFixed(1),
+              name,
+            })}
           </p>
           {checkInStatus.activeCheckIn && (
             <p className="mt-2 text-[13px] text-moderate">
-              This ends your check-in at {checkInStatus.activeCheckIn.destinationName}.
+              {t('This ends your check-in at {name}.', { name: checkInStatus.activeCheckIn.destinationName })}
             </p>
           )}
-          <button onClick={handleCheckIn} disabled={busy} className="btn btn-primary mt-4 w-full">
-            {busy ? 'Finding your location…' : `Check in at ${name}`}
+          <button onClick={handleCheckIn} disabled={busy} className="btn btn-primary mt-4 h-11 w-full">
+            {busy ? t('Finding your location…') : t('Check in at {name}', { name })}
           </button>
         </>
       )}

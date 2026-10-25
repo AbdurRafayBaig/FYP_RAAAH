@@ -15,6 +15,16 @@ authRoutes.post('/login', async (req, res) => {
   res.json({ token, user });
 });
 
+// POST /api/auth/forgot-password   { email } - SRS 3.3.3
+authRoutes.post('/forgot-password', async (req, res) => {
+  res.json(await authService.requestPasswordReset(req.body || {}));
+});
+
+// POST /api/auth/reset-password   { token, password, confirmPassword }
+authRoutes.post('/reset-password', async (req, res) => {
+  res.json(await authService.resetPassword(req.body || {}));
+});
+
 // POST /api/auth/logout
 authRoutes.post('/logout', authenticate, async (req, res) => {
   await authService.logout(req.auth);

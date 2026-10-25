@@ -2,6 +2,7 @@ import Image from 'next/image';
 import SiteLayout from '@/components/SiteLayout';
 import PageTitle from '@/components/ui/PageTitle';
 import { PHOTOS } from '@/data/photos';
+import { getT } from '@/lib/i18n-server';
 
 export const metadata = { title: 'Culture and etiquette — RAAAH' };
 
@@ -39,12 +40,13 @@ const ENVIRONMENT = [
   'Spend locally: village guest houses, local guides, handicrafts made in the valley.',
 ];
 
-export default function CulturePage() {
+export default async function CulturePage() {
+  const t = await getT();
   return (
     <SiteLayout>
       <div className="page pb-20">
-        <PageTitle title="Culture and etiquette">
-          The people of Gilgit-Baltistan have welcomed travellers for a long time. A little knowledge goes a long way.
+        <PageTitle title={t('Culture and etiquette')}>
+          {t('The people of Gilgit-Baltistan have welcomed travellers for a long time. A little knowledge goes a long way.')}
         </PageTitle>
 
         <section className="grid gap-x-8 gap-y-12 border-b border-rule py-12 md:grid-cols-3">
@@ -53,24 +55,24 @@ export default function CulturePage() {
               <div className="relative aspect-[4/3] overflow-hidden bg-rule">
                 <Image src={s.photo.src} alt={s.photo.place} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
               </div>
-              <p className="meta mt-2 text-[12px]">{s.photo.place}. Photo: {s.photo.author}</p>
-              <h2 className="mt-3 text-[24px]">{s.title}</h2>
-              <p className="mt-2 text-[15px] text-ink-2">{s.text}</p>
+              <p className="meta mt-2 text-[12px]" dir="ltr">{s.photo.place}. Photo: {s.photo.author}</p>
+              <h2 className="mt-3 text-[24px]">{t(s.title)}</h2>
+              <p className="mt-2 text-[15px] text-ink-2">{t(s.text)}</p>
             </article>
           ))}
         </section>
 
         <section className="grid gap-10 border-b border-rule py-12 md:grid-cols-[1fr_1.4fr]">
-          <h2 className="text-[26px]">Etiquette</h2>
+          <h2 className="text-[26px]">{t('Etiquette')}</h2>
           <ul className="divide-y divide-rule border-y border-rule text-[16px] text-ink-2">
-            {ETIQUETTE.map((t) => <li key={t} className="py-3.5">{t}</li>)}
+            {ETIQUETTE.map((line) => <li key={line} className="py-3.5">{t(line)}</li>)}
           </ul>
         </section>
 
         <section className="grid gap-10 py-12 md:grid-cols-[1fr_1.4fr]">
-          <h2 className="text-[26px]">Looking after the mountains</h2>
+          <h2 className="text-[26px]">{t('Looking after the mountains')}</h2>
           <ul className="divide-y divide-rule border-y border-rule text-[16px] text-ink-2">
-            {ENVIRONMENT.map((t) => <li key={t} className="py-3.5">{t}</li>)}
+            {ENVIRONMENT.map((line) => <li key={line} className="py-3.5">{t(line)}</li>)}
           </ul>
         </section>
       </div>

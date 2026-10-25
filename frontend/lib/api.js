@@ -73,6 +73,9 @@ export const api = {
   // UC-02 Login
   login: (email, password) => request('POST', '/auth/login', { email, password }),
   logout: () => request('POST', '/auth/logout'),
+  forgotPassword: (email) => request('POST', '/auth/forgot-password', { email }),
+  resetPassword: (token, password, confirmPassword) =>
+    request('POST', '/auth/reset-password', { token, password, confirmPassword }),
   me: () => request('GET', '/auth/me'),
 
   // UC-03 Manage Profile and Preferences

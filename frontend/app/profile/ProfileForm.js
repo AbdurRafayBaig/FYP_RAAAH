@@ -7,6 +7,7 @@ import { ROLE_LABELS } from '@/constants/roles';
 import PageTitle from '@/components/ui/PageTitle';
 import Notice from '@/components/ui/Notice';
 import InterestPicker from '@/components/InterestPicker';
+import { useT } from '@/context/LanguageContext';
 import SavedDestinations from './SavedDestinations';
 
 const toForm = (p) => ({
@@ -31,6 +32,7 @@ function Section({ title, description, children }) {
 // UC-03 Manage Profile and Preferences (Expanded Use Case Table 40, SSD Fig. 22)
 export default function ProfileForm() {
   const { setUser } = useAuth();
+  const t = useT();
   const [profile, setProfile] = useState(null);
   const [options, setOptions] = useState([]);
   const [form, setForm] = useState(null);
@@ -51,7 +53,7 @@ export default function ProfileForm() {
   }, []);
 
   if (loadError) return <div className="page py-16"><Notice tone="error">{loadError}</Notice></div>;
-  if (!form) return <p className="page py-24 meta">Loading your profile…</p>;
+  if (!form) return <p className="page py-24 meta">{t('Loading your profile…')}</p>;
 
   const update = (key, value) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -97,27 +99,27 @@ export default function ProfileForm() {
         title={profile.fullName}
         aside={
           <dl className="text-[14px] md:text-right">
-            <dt className="meta">Tourist ID</dt>
-            <dd className="data text-[16px] text-ink">{profile.touristCode}</dd>
-            <dd className="meta mt-1">{ROLE_LABELS[profile.role]}</dd>
+            <dt className="meta">{t('Your Tourist ID')}</dt>
+            <dd className="data text-[16px] text-ink" dir="ltr">{profile.touristCode}</dd>
+            <dd className="meta mt-1">{t(ROLE_LABELS[profile.role])}</dd>
           </dl>
         }
       >
-        Your details, what you like to travel for, and whether RAAAH may use your location.
+        {t('Your details, what you like to travel for, and whether RAAAH may use your location.')}
       </PageTitle>
 
       {status && <Notice tone={status.tone} className="mt-6">{status.message}</Notice>}
 
       <form onSubmit={handleSubmit} noValidate>
-        <Section title="Your details">
+        <Section title={t('Your details')}>
           <div className="space-y-5">
             <div>
-              <label htmlFor="fullName" className="label">Full name</label>
+              <label htmlFor="fullName" className="label">{t('Full name')}</label>
               <input id="fullName" value={form.fullName} onChange={(e) => update('fullName', e.target.value)} className={`field ${fieldErrors.fullName ? 'field-error' : ''}`} />
               {error('fullName')}
             </div>
             <div>
-              <label htmlFor="email" className="label">Email</label>
+              <label htmlFor="email" className="label">{t('Email')}</label>
               <input id="email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} className={`field ${fieldErrors.email ? 'field-error' : ''}`} />
               {error('email')}
             </div>
@@ -125,13 +127,13 @@ export default function ProfileForm() {
         </Section>
 
         {/* FR-01.04 */}
-        <Section title="Travel preferences" description="Used to rank alternative destinations for you.">
+        <Section title={t('Travel preferences')} description={t('Used to rank alternative destinations for you.')}>
           <InterestPicker options={options} selected={form.interests} onToggle={toggleInterest} />
           {error('interests')}
         </Section>
 
         {/* FR-01.07 */}
-        <Section title="Location" description="Needed for check-in and for distances.">
+        <Section title={t('Location')} description={t('Needed for check-in and for distances.')}>
           <label className="flex cursor-pointer items-start gap-3 py-1">
             <input
               type="checkbox"
@@ -140,10 +142,9 @@ export default function ProfileForm() {
               className="mt-1 h-5 w-5 shrink-0 accent-ink"
             />
             <span className="text-[15px]">
-              RAAAH may use my current location when I check in or ask for alternatives.
+              {t('RAAAH may use my current location when I check in or ask for alternatives.')}
               <span className="meta mt-1 block">
-                Your location is read at that moment only. It is never stored and never shown to anyone; crowd levels are
-                published as totals.
+                {t('Your location is read at that moment only. It is never stored and never shown to anyone; crowd levels are published as totals.')}
               </span>
             </span>
           </label>
@@ -151,8 +152,8 @@ export default function ProfileForm() {
         </Section>
 
         <div className="flex justify-end gap-3 pt-6">
-          <button type="button" onClick={resetForm} className="btn btn-quiet h-11">Discard changes</button>
-          <button type="submit" disabled={saving} className="btn btn-primary h-11">{saving ? 'Saving…' : 'Save changes'}</button>
+          <button type="button" onClick={resetForm} className="btn btn-quiet h-11">{t('Discard changes')}</button>
+          <button type="submit" disabled={saving} className="btn btn-primary h-11">{saving ? t('Saving…') : t('Save changes')}</button>
         </div>
       </form>
 

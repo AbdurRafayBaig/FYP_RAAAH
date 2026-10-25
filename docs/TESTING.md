@@ -134,6 +134,7 @@ TC-… are integration tests in `backend/tests`, ST-… are system tests in `fro
 | FR-01.03: log out, also on another server instance | TC-02-10, TC-02-11, TC-02-18, TC-02-19, ST-02-04 |
 | SRS 3.3.3: hashed passwords, role enforced on the server for every request | TC-02-12 – TC-02-17 |
 | SRS 3.3.3: protection against password guessing | TC-02-20 – TC-02-23 |
+| SRS 3.3.3: password reset by email — single-use 30-minute link, only a hash stored, same answer for unknown emails, 3 links an hour, earlier sessions end | TC-02-25 – TC-02-33, ST-02-05, ST-02-06 |
 | SRS 3.3.5: health check reports the AI engine | TC-02-24 |
 
 ### UC-03 Manage Profile and Preferences — `uc03-profile.test.js`, `e2e/uc03-profile.spec.js`

@@ -22,6 +22,11 @@ export const config = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',
   aiEngineUrl: process.env.AI_ENGINE_URL || 'http://localhost:8000',
   openWeatherApiKey: process.env.OPENWEATHER_API_KEY || '',
+  // Password reset emails (Resend). The sender must be on a domain verified in Resend to reach any
+  // address; Resend's test sender onboarding@resend.dev only delivers to the Resend account's own email.
+  resendApiKey: process.env.RESEND_API_KEY || '',
+  emailFrom: process.env.EMAIL_FROM || 'RAAAH <onboarding@resend.dev>',
+  passwordResetMinutes: num(process.env.PASSWORD_RESET_MINUTES, 30),
   weatherRefreshMinutes: num(process.env.WEATHER_REFRESH_MINUTES, 10),
   checkinAutoCloseHours: num(process.env.CHECKIN_AUTO_CLOSE_HOURS, 6),
   crowdRefreshSeconds: num(process.env.CROWD_REFRESH_SECONDS, 60),
@@ -29,6 +34,9 @@ export const config = {
   loginMaxFailures: num(process.env.LOGIN_MAX_FAILURES, 5),
   loginLockMinutes: num(process.env.LOGIN_LOCK_MINUTES, 15),
 };
+
+// Address of the web client, used in links sent by email; the first allowed origin unless set
+config.webUrl = (process.env.WEB_URL || config.corsOrigins[0] || 'http://localhost:3000').replace(/\/$/, '');
 
 const PLACEHOLDER_SECRETS = ['change-this-to-a-long-random-string', 'raaah-dev-secret-change-me'];
 
