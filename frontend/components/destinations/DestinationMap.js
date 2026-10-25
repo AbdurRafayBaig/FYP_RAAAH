@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { APIProvider, AdvancedMarker, InfoWindow, Map, Pin } from '@vis.gl/react-google-maps';
 import { CROWD_COLORS } from '@/constants/crowdLevels';
+import { useT } from '@/context/LanguageContext';
 import CrowdLevel from '@/components/ui/CrowdLevel';
+import Icon from '@/components/ui/Icon';
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
@@ -33,8 +35,34 @@ function EmbedFallback({ destinations, height }) {
   );
 }
 
+// Works even when the map itself cannot load (blocked, slow connection, quota reached)
+function OpenInMaps({ destination }) {
+  const t = useT();
+  const { latitude, longitude } = destination.location;
+  return (
+    <a
+      href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-2 inline-flex items-center gap-1.5 text-[14px] font-medium text-accent hover:underline"
+    >
+      <Icon name="map" size={16} /> {t('Open in Google Maps')}
+    </a>
+  );
+}
+
 // FR-02.02 - destination locations on a map using the Google Maps API
 export default function DestinationMap({ destinations, height = 380 }) {
+  const single = destinations.length === 1 ? destinations[0] : null;
+  return (
+    <div>
+      <MapView destinations={destinations} height={height} />
+      {single && <OpenInMaps destination={single} />}
+    </div>
+  );
+}
+
+function MapView({ destinations, height }) {
   const [selectedId, setSelectedId] = useState(null);
 
   if (!API_KEY) return <EmbedFallback destinations={destinations} height={height} />;

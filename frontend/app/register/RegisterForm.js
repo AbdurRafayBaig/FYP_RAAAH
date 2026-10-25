@@ -9,6 +9,8 @@ import { ROUTES } from '@/constants/routes';
 import { PHOTOS } from '@/data/photos';
 import AuthLayout from '@/components/AuthLayout';
 import Notice from '@/components/ui/Notice';
+import PasswordField from '@/components/PasswordField';
+import { useT } from '@/context/LanguageContext';
 
 const EMPTY = { fullName: '', email: '', password: '', confirmPassword: '' };
 
@@ -16,6 +18,7 @@ const EMPTY = { fullName: '', email: '', password: '', confirmPassword: '' };
 export default function RegisterForm() {
   const router = useRouter();
   const { user, loading, register } = useAuth();
+  const t = useT();
   const [form, setForm] = useState(EMPTY);
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState(null); // { message, alreadyRegistered }
@@ -59,44 +62,38 @@ export default function RegisterForm() {
   return (
     <AuthLayout
       photo={PHOTOS.passu}
-      title="Create an account"
-      intro="You get a Tourist ID. Once you are signed in, you choose what you travel for."
-      footer={<>Already registered? <Link href={ROUTES.LOGIN} className="link">Sign in</Link></>}
+      title={t('Create an account')}
+      intro={t('You get a Tourist ID. Once you are signed in, you choose what you travel for.')}
+      footer={<>{t('Already registered?')} <Link href={ROUTES.LOGIN} className="link">{t('Sign in')}</Link></>}
     >
       {error && (
         <Notice tone="error" className="mb-6">
           {error.message}{' '}
-          {error.alreadyRegistered && <Link href={ROUTES.LOGIN} className="link">Sign in</Link>}
+          {error.alreadyRegistered && <Link href={ROUTES.LOGIN} className="link">{t('Sign in')}</Link>}
         </Notice>
       )}
 
       <form className="space-y-5" onSubmit={handleSubmit} noValidate>
         <div>
-          <label htmlFor="fullName" className="label">Full name</label>
+          <label htmlFor="fullName" className="label">{t('Full name')}</label>
           <input id="fullName" autoComplete="name" value={form.fullName} onChange={(e) => update('fullName', e.target.value)} className={fieldClass('fullName')} {...described('fullName')} />
           {fieldError('fullName')}
         </div>
         <div>
-          <label htmlFor="regEmail" className="label">Email</label>
-          <input id="regEmail" type="email" autoComplete="email" value={form.email} onChange={(e) => update('email', e.target.value)} className={fieldClass('email')} {...described('email')} />
+          <label htmlFor="regEmail" className="label">{t('Email')}</label>
+          <input id="regEmail" type="email" autoComplete="email" dir="ltr" value={form.email} onChange={(e) => update('email', e.target.value)} className={fieldClass('email')} {...described('email')} />
           {fieldError('email')}
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label htmlFor="regPassword" className="label">Password</label>
-            <input id="regPassword" type="password" autoComplete="new-password" value={form.password} onChange={(e) => update('password', e.target.value)} className={fieldClass('password')} {...described('password')} />
-          </div>
-          <div>
-            <label htmlFor="regConfirm" className="label">Confirm password</label>
-            <input id="regConfirm" type="password" autoComplete="new-password" value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className={fieldClass('confirmPassword')} {...described('confirmPassword')} />
-          </div>
+          <PasswordField id="regPassword" label={t('Password')} autoComplete="new-password" dir="ltr" showStrength value={form.password} onChange={(e) => update('password', e.target.value)} className={fieldClass('password')} {...described('password')} />
+          <PasswordField id="regConfirm" label={t('Confirm password')} autoComplete="new-password" dir="ltr" value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className={fieldClass('confirmPassword')} {...described('confirmPassword')} />
         </div>
         {fieldError('password') || fieldError('confirmPassword') || (
-          <p className="meta -mt-2">At least 8 characters, with a letter and a number.</p>
+          <p className="meta -mt-2">{t('At least 8 characters, with a letter and a number.')}</p>
         )}
 
-        <button type="submit" disabled={submitting} className="btn btn-primary w-full">
-          {submitting ? 'Creating your account…' : 'Create account'}
+        <button type="submit" disabled={submitting} className="btn btn-accent h-11 w-full">
+          {submitting ? t('Creating your account…') : t('Create account')}
         </button>
       </form>
     </AuthLayout>

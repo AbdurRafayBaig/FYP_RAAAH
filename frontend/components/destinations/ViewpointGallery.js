@@ -3,9 +3,11 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/ui/Icon';
+import { useT } from '@/context/LanguageContext';
 
 // FR-02.04 - the viewpoints of a destination; a photo opens full screen, with its credit
 export default function ViewpointGallery({ name, photos }) {
+  const t = useT();
   const dialog = useRef(null);
   const [open, setOpen] = useState(null); // index of the photo shown full screen
 
@@ -28,7 +30,7 @@ export default function ViewpointGallery({ name, photos }) {
 
   return (
     <section>
-      <h2 className="text-[24px]">Viewpoints</h2>
+      <h2 className="text-[24px]">{t('Viewpoints')}</h2>
       <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {photos.map((p, i) => (
           <li key={p.src} className={i === 0 ? 'col-span-2 row-span-2' : ''}>
@@ -42,7 +44,7 @@ export default function ViewpointGallery({ name, photos }) {
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
               </span>
-              <span className="mt-1.5 block text-[13px] leading-snug text-ink-2 group-hover:text-ink">{p.caption}</span>
+              <span className="mt-1.5 block text-[13px] leading-snug text-ink-2 group-hover:text-ink" dir="ltr">{p.caption}</span>
             </button>
           </li>
         ))}
@@ -59,7 +61,7 @@ export default function ViewpointGallery({ name, photos }) {
           <div className="flex h-full flex-col px-4 py-4 sm:px-8" onClick={(e) => e.target === e.currentTarget && dialog.current.close()}>
             <div className="flex items-center justify-between gap-4">
               <p className="data text-white/70">{open + 1} / {photos.length}</p>
-              <button type="button" onClick={() => dialog.current.close()} aria-label="Close" className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/15">
+              <button type="button" onClick={() => dialog.current.close()} aria-label={t('Close')} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/15">
                 <Icon name="close" size={20} />
               </button>
             </div>
@@ -67,14 +69,14 @@ export default function ViewpointGallery({ name, photos }) {
               <Image key={photo.src} src={photo.src} alt={`${name}: ${photo.caption}`} fill sizes="100vw" className="object-contain" />
             </div>
             <div className="flex items-center justify-between gap-4">
-              <button type="button" onClick={() => step(-1)} aria-label="Previous photo" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
+              <button type="button" onClick={() => step(-1)} aria-label={t('Previous photo')} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
                 <Icon name="previous" size={18} />
               </button>
-              <div className="min-w-0 text-center">
+              <div className="min-w-0 text-center" dir="ltr">
                 <p className="text-[15px]">{photo.caption}</p>
                 <p className="text-[12px] text-white/60">Photo: {photo.author}, {photo.licence} · Wikimedia Commons</p>
               </div>
-              <button type="button" onClick={() => step(1)} aria-label="Next photo" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
+              <button type="button" onClick={() => step(1)} aria-label={t('Next photo')} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
                 <Icon name="next" size={18} />
               </button>
             </div>

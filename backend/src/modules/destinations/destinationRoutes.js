@@ -32,6 +32,17 @@ destinationRoutes.get('/:id', async (req, res) => {
   res.json({ destination: await destinationService.getDestinationPage(parseId(req.params.id), req.auth.userId) });
 });
 
+// POST /api/destinations/:id/save   (UC-05)
+destinationRoutes.post('/:id/save', authorize(...TOURIST_ROLES), async (req, res) => {
+  const result = await destinationService.saveDestination(req.auth.userId, parseId(req.params.id));
+  res.status(result.alreadySaved ? 200 : 201).json(result);
+});
+
+// DELETE /api/destinations/:id/save   (UC-05 alt 3a - remove a saved destination)
+destinationRoutes.delete('/:id/save', authorize(...TOURIST_ROLES), async (req, res) => {
+  res.json(await destinationService.removeSavedDestination(req.auth.userId, parseId(req.params.id)));
+});
+
 // POST /api/destinations/:id/check-in   (UC-06)
 destinationRoutes.post('/:id/check-in', authorize(...TOURIST_ROLES), async (req, res) => {
   const result = await crowdService.checkIn(req.auth.userId, parseId(req.params.id), req.body);

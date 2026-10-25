@@ -21,5 +21,8 @@ export const PHOTOS = {
   saifulMalook: { src: commons('d/de', 'Lake_SaifulMalook.jpeg', 1280), place: 'Lake Saif-ul-Malook', author: 'Muzaffar Bukhari', licence: 'Free Art Licence' },
   baltit: { src: commons('f/f3', 'Baltit_fort%2C_Hunza_Valley.jpg', 1280), place: 'Baltit Fort, Hunza', author: 'MuhammadUsama25', licence: 'CC BY-SA 4.0' },
   altit: { src: commons('1/10', 'Altit_fort-gb.jpg', 1280), place: 'Altit Fort, Hunza', author: 'Usamashahid433', licence: 'CC BY-SA 4.0' },
+  upperKachura: { src: commons('e/e4', 'Upper_kachura_lake%2C_skardu%2C_baltistan.jpg', 1280), place: 'Upper Kachura Lake', author: 'Uzair889', licence: 'CC BY-SA 4.0' },
+  rakaposhi: { src: commons('9/93', 'Rakaposhi_%26_Autumn.jpg', 1280), place: 'Rakaposhi, Nagar', author: 'mhtoori', licence: 'CC BY-SA 4.0' },
+  arangKel: { src: commons('e/e9', 'Arang_Kel_Neelum.jpg', 1280), place: 'Arang Kel, Neelum Valley', author: 'Fobak', licence: 'CC BY-SA 4.0' },
   shandur: { src: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Shandur-Polo-Festivals_kahtours.jpg', place: 'Shandur Polo Festival', author: 'Addden321', licence: 'CC BY-SA 4.0' },
 };

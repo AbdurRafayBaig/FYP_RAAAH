@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, describe, test } from 'node:test';
 import { config } from '../../src/config.js';
+import { cacheKeys, getCache } from '../../src/data/cache.js';
 import * as crowdService from '../../src/modules/crowd/crowdService.js';
 import { DEST, USERS, resetData, startTestApp } from '../helpers/testApp.js';
 
@@ -94,6 +95,8 @@ describe('UC-04 steps 4-6 - the destination page', () => {
     assert.equal(d.altitudeM, 2438);
     assert.equal(d.bestSeason, 'April to October');
     assert.deepEqual((await page(DEST.attabad.id)).body.destination.gallery, []);
+    // Without an OpenWeatherMap key there is no forecast, and the page still loads
+    assert.deepEqual(d.forecast, []);
   });
 
   test('TC-04-09 only Verified hazard reports are public (FR-07.04)', async () => {
@@ -141,11 +144,42 @@ describe('UC-04 step 5 - weather from OpenWeatherMap', () => {
     const calls = [];
     t.mock.method(globalThis, 'fetch', (url, options) => {
       if (!String(url).includes('api.openweathermap.org')) return realFetch(url, options);
+      // The forecast has its own test below
+      if (String(url).includes('/forecast')) return Promise.resolve(Response.json({ list: [] }));
       calls.push(String(url));
       return respond();
     });
     return calls;
   };
+
+  test('TC-04-24 a 3-day forecast is shown and kept in the cache', async (t) => {
+    config.openWeatherApiKey = 'test-key';
+    t.after(() => { config.openWeatherApiKey = ''; });
+    await getCache().del(cacheKeys.forecast(DEST.skardu.id));
+    // Noon in Pakistan (07:00 UTC) two days from now, always after "today" in Pakistan time
+    const tomorrowNoon = (Math.floor(Date.now() / 86_400_000) + 2) * 86_400 + 7 * 3600;
+    const calls = [];
+    t.mock.method(globalThis, 'fetch', (url, options) => {
+      if (!String(url).includes('/forecast')) {
+        return String(url).includes('api.openweathermap.org')
+          ? Promise.resolve(Response.json({ main: { temp: 10 }, weather: [{ id: 800, main: 'Clear' }] }))
+          : realFetch(url, options);
+      }
+      calls.push(String(url));
+      return Promise.resolve(Response.json({
+        list: [{ dt: tomorrowNoon, main: { temp: 9, temp_min: 4, temp_max: 13 }, weather: [{ id: 211, main: 'Thunderstorm', icon: '11d' }] }],
+      }));
+    });
+    const first = (await page(DEST.skardu.id)).body.destination.forecast;
+    await page(DEST.skardu.id);
+    assert.equal(calls.length, 1);
+    assert.match(calls[0], /forecast\?lat=35\.2971&lon=75\.6333&units=metric/);
+    assert.equal(first.length, 1);
+    assert.deepEqual(
+      { min: first[0].minTemperature, max: first[0].maxTemperature, condition: first[0].condition, unfavourable: first[0].unfavourable },
+      { min: 4, max: 13, condition: 'Thunderstorm', unfavourable: true },
+    );
+  });
 
   test('TC-04-15 current weather is fetched for the coordinates of the destination and stored', async (t) => {
     const calls = withWeatherService(t, async () => Response.json({

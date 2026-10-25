@@ -5,13 +5,22 @@ import { api, getToken, setToken, setUnauthorizedHandler, warmUp } from '@/lib/a
 
 const AuthContext = createContext(null);
 
+// The offline copies of a user's data (public/sw.js) must never be shown to the next user of the device
+function clearOfflineData() {
+  if (typeof window !== 'undefined' && 'caches' in window) caches.delete('raaah-api').catch(() => {});
+}
+
 // Restores the session from a stored token; resolves to the user or null
 async function restoreSession() {
   if (!getToken()) return null;
   try {
     return (await api.me()).user;
-  } catch {
-    setToken(null);
+  } catch (err) {
+    // Without a connection the session is kept for later; only a rejected token is thrown away
+    if (err.status !== 0) {
+      setToken(null);
+      clearOfflineData();
+    }
     return null;
   }
 }
@@ -23,6 +32,7 @@ export function AuthProvider({ children }) {
   const clearSession = useCallback(() => {
     setToken(null);
     setUser(null);
+    clearOfflineData();
   }, []);
 
   useEffect(() => {
@@ -41,6 +51,7 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (email, password) => {
     const { token, user } = await api.login(email, password);
+    clearOfflineData();
     setToken(token);
     setUser(user);
     return user;
@@ -49,6 +60,7 @@ export function AuthProvider({ children }) {
   // UC-01: the new tourist is signed in straight away
   const register = useCallback(async (details) => {
     const { token, user, message } = await api.register(details);
+    clearOfflineData();
     setToken(token);
     setUser(user);
     return { user, message };

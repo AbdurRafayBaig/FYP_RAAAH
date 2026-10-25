@@ -7,25 +7,68 @@ import { useState } from 'react';
 import { ROUTES } from '@/constants/routes';
 import { DASHBOARD_ROLES, ROLE_LABELS, isTouristRole } from '@/constants/roles';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import Icon from '@/components/ui/Icon';
+
+export function Logo({ light = false }) {
+  return (
+    <span className={`flex items-center gap-2 ${light ? 'text-white' : 'text-ink'}`}>
+      <span className={`relative h-9 w-9 shrink-0 ${light ? 'rounded-full bg-white/90 p-1' : ''}`}>
+        <Image src="/logo-mark.png" alt="" fill sizes="36px" className="object-contain" priority />
+      </span>
+      <span className="font-display text-[22px] font-semibold tracking-tight" dir="ltr">RAAAH</span>
+    </span>
+  );
+}
+
+// English / Urdu switch (the interface language; destination descriptions stay in English)
+export function LanguageToggle({ className = '' }) {
+  const { lang, setLang } = useLanguage();
+  return (
+    <button
+      type="button"
+      onClick={() => setLang(lang === 'ur' ? 'en' : 'ur')}
+      lang={lang === 'ur' ? 'en' : 'ur'}
+      aria-label={lang === 'ur' ? 'Switch to English' : 'اردو میں دیکھیں'}
+      className={`flex items-center gap-1.5 text-[14px] ${className}`}
+    >
+      <Icon name="globe" size={16} />
+      {lang === 'ur' ? 'English' : 'اردو'}
+    </button>
+  );
+}
+
+function RescueButton({ className = '' }) {
+  const { t } = useLanguage();
+  return (
+    <a
+      href="tel:1122"
+      title={t('Rescue 1122 emergency helpline')}
+      className={`inline-flex h-9 items-center gap-1.5 rounded-full bg-critical px-3.5 text-[13px] font-medium text-white hover:bg-[#82261e] ${className}`}
+    >
+      <Icon name="phone" size={14} /> <span dir="ltr">1122</span> <span className="sr-only">{t('Rescue')}</span>
+    </a>
+  );
+}
 
 export default function Navbar({ overlay = false }) {
   const pathname = usePathname() || '';
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const { user, loading, logout } = useAuth();
+  const { t } = useLanguage();
 
   const isTourist = user && isTouristRole(user.role);
   const hasDashboard = user && DASHBOARD_ROLES.includes(user.role);
 
   // FR-01.03 - features according to the user's role
   const links = [
-    { name: 'Destinations', href: ROUTES.DESTINATIONS },
-    ...(isTourist ? [{ name: 'Alternatives', href: ROUTES.RECOMMENDATIONS }] : []),
-    ...(hasDashboard ? [{ name: 'Dashboard', href: ROUTES.ANALYTICS_DASHBOARD }] : []),
-    { name: 'Safety', href: ROUTES.SAFETY },
-    { name: 'Culture', href: ROUTES.CULTURE },
-    { name: 'About', href: ROUTES.ABOUT_US },
+    { name: t('Destinations'), href: ROUTES.DESTINATIONS },
+    ...(isTourist ? [{ name: t('Alternatives'), href: ROUTES.RECOMMENDATIONS }] : []),
+    ...(hasDashboard ? [{ name: t('Dashboard'), href: ROUTES.ANALYTICS_DASHBOARD }] : []),
+    { name: t('Safety'), href: ROUTES.SAFETY },
+    { name: t('Culture'), href: ROUTES.CULTURE },
+    { name: t('About'), href: ROUTES.ABOUT_US },
   ];
 
   const handleLogout = async () => {
@@ -37,17 +80,12 @@ export default function Navbar({ overlay = false }) {
 
   const active = (href) => pathname.startsWith(href);
   const tone = overlay ? 'text-white' : 'text-ink';
-  const quiet = overlay ? 'text-white/75 hover:text-white' : 'text-ink-2 hover:text-ink';
+  const quiet = overlay ? 'text-white/80 hover:text-white' : 'text-ink-2 hover:text-ink';
 
   return (
     <header className={overlay ? 'absolute inset-x-0 top-0 z-40' : 'border-b border-rule bg-paper'}>
       <div className="page flex h-16 items-center justify-between gap-6">
-        <Link href={ROUTES.HOME} className={`flex items-center gap-2.5 ${tone}`}>
-          <span className="relative h-8 w-8 overflow-hidden rounded-[3px] bg-white">
-            <Image src="/logo.png" alt="" fill sizes="32px" className="object-contain p-0.5" priority />
-          </span>
-          <span className="font-display text-[22px] font-semibold tracking-tight">RAAAH</span>
-        </Link>
+        <Link href={ROUTES.HOME} aria-label="RAAAH home"><Logo light={overlay} /></Link>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
           {links.map((link) => (
@@ -64,9 +102,8 @@ export default function Navbar({ overlay = false }) {
         </nav>
 
         <div className="hidden items-center gap-5 lg:flex">
-          <a href="tel:1122" className={`data ${quiet}`} title="Rescue 1122 emergency helpline">
-            Rescue 1122
-          </a>
+          <LanguageToggle className={quiet} />
+          <RescueButton />
           {loading ? null : user ? (
             <>
               <Link
@@ -77,32 +114,35 @@ export default function Navbar({ overlay = false }) {
                 {isTourist ? user.fullName.split(' ')[0] : ROLE_LABELS[user.role]}
               </Link>
               <button onClick={handleLogout} className={`text-[14px] ${quiet}`}>
-                Sign out
+                {t('Sign out')}
               </button>
             </>
           ) : (
             <>
               <Link href={ROUTES.LOGIN} className={`text-[14px] ${quiet}`}>
-                Sign in
+                {t('Sign in')}
               </Link>
               <Link
                 href={ROUTES.REGISTER}
                 className={`btn h-9 ${overlay ? 'bg-white text-ink hover:bg-paper' : 'btn-primary'}`}
               >
-                Create account
+                {t('Create account')}
               </Link>
             </>
           )}
         </div>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className={`flex items-center gap-2 text-[14px] lg:hidden ${tone}`}
-          aria-expanded={open}
-          aria-label="Menu"
-        >
-          <Icon name={open ? 'close' : 'menu'} size={20} />
-        </button>
+        <div className="flex items-center gap-3 lg:hidden">
+          <RescueButton />
+          <button
+            onClick={() => setOpen(!open)}
+            className={`flex h-10 w-10 items-center justify-center ${tone}`}
+            aria-expanded={open}
+            aria-label={t('Menu')}
+          >
+            <Icon name={open ? 'close' : 'menu'} size={22} />
+          </button>
+        </div>
       </div>
 
       {open && (
@@ -118,21 +158,21 @@ export default function Navbar({ overlay = false }) {
                 {link.name}
               </Link>
             ))}
-            <a href="tel:1122" className="border-b border-rule py-3 data text-ink-2">Rescue 1122</a>
+            <LanguageToggle className="border-b border-rule py-3 text-ink-2" />
             <div className="flex gap-3 pt-4">
               {user ? (
                 <>
                   {isTourist && (
                     <Link href={ROUTES.PROFILE} onClick={() => setOpen(false)} className="btn btn-secondary flex-1">
-                      Profile
+                      {t('Profile')}
                     </Link>
                   )}
-                  <button onClick={handleLogout} className="btn btn-primary flex-1">Sign out</button>
+                  <button onClick={handleLogout} className="btn btn-primary flex-1">{t('Sign out')}</button>
                 </>
               ) : (
                 <>
-                  <Link href={ROUTES.LOGIN} onClick={() => setOpen(false)} className="btn btn-secondary flex-1">Sign in</Link>
-                  <Link href={ROUTES.REGISTER} onClick={() => setOpen(false)} className="btn btn-primary flex-1">Create account</Link>
+                  <Link href={ROUTES.LOGIN} onClick={() => setOpen(false)} className="btn btn-secondary flex-1">{t('Sign in')}</Link>
+                  <Link href={ROUTES.REGISTER} onClick={() => setOpen(false)} className="btn btn-primary flex-1">{t('Create account')}</Link>
                 </>
               )}
             </div>

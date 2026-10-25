@@ -8,6 +8,7 @@ export const ROUTES = {
   REGISTER: '/register',
   PROFILE: '/profile',
   PREFERENCES: '/preferences',
+  FORGOT_PASSWORD: '/forgot-password',
   DESTINATIONS: '/destinations',
   DESTINATION_DETAIL: (id) => `/destinations/${id}`,
   RECOMMENDATIONS: '/recommendations',

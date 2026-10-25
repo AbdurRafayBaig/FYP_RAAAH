@@ -93,6 +93,7 @@ coordinates shown on its page (e.g. Hunza Valley 36.3236, 74.6660).
 | UC-02 Login | FR-01.03, SRS 3.3.3 (hashed passwords, server-side RBAC, pause after 5 failed sign-ins) | `backend/src/modules/auth`, `backend/src/middleware/auth.js`, `frontend/app/login`, `frontend/components/RequireAuth.js` |
 | UC-03 Manage Profile and Preferences | FR-01.02, FR-01.04, FR-01.05, FR-01.07 | `backend/src/modules/profile`, `frontend/app/profile` |
 | UC-04 Explore Destinations | FR-02.01–FR-02.06, FR-03.06, FR-06.03, SRS 3.3.5 | `backend/src/modules/destinations`, `frontend/app/destinations` |
+| UC-05 Save Destination | FR-02.07 | `backend/src/modules/destinations`, `frontend/app/destinations/[id]`, `frontend/app/profile/SavedDestinations.js` |
 | UC-06 Check In at Destination | FR-03.01–FR-03.07, SRS 3.3.4, 3.3.7 | `backend/src/modules/crowd`, `frontend/components/destinations/CheckInPanel.js` |
 | UC-09 Get Alternative Destination Recommendations | FR-04.03, FR-05.01–FR-05.06 | `backend/src/modules/recommendations`, `ai-engine/`, `frontend/app/recommendations` |
 
@@ -113,15 +114,20 @@ destinations stay eligible with a 10% lower score (FR-04.03). Every result is st
 
 ### Additions to the ERD
 `destinations.latitude/longitude` (the ERD "location"; PostGIS is used automatically when installed),
-`area_radius_m` (FR-03.01), `attractions`, `activities` (FR-02.04), `accommodation_available` (FR-05.03),
+`area_radius_m` (FR-03.01), `attractions`, `activities`, `gallery`, `altitude_m`, `best_season` (FR-02.04), `accommodation_available` (FR-05.03),
 `destination_interests` table (FR-05.03), `weather_info` table (WeatherInfo in the Domain Model), and
 `revoked_tokens` / `login_failures` (logged-out sessions and failed sign-ins, FR-01.03 and SRS 3.3.3).
 
 ### Not yet implemented (next phase)
-UC-10 Report Hazard (form only, it says so), UC-05, UC-07 explicit Check Out
+UC-10 Report Hazard (form only, it says so), UC-07 explicit Check Out
 button, UC-08, UC-11 – UC-17. The dashboard shows live crowd and risk totals; the rest of UC-17 follows.
 
 ### Interface
+The interface can be switched between English and Urdu (right to left; `frontend/lib/i18n-ur.js`), and the
+site can be installed on a phone and keeps the pages, destination data and photos already opened for use without a
+signal (`frontend/public/sw.js`; the signed-in user's copies are deleted at sign-out). Destination descriptions
+stay in English.
+
 Editorial layout: Newsreader for headings, IBM Plex Sans/Mono for text and figures, warm paper
 background, one link colour and four condition colours (tokens in `frontend/app/globals.css`). Shared pieces
 live in `frontend/components/ui`. Earlier prototype pages that showed invented data and features outside the SRS

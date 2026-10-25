@@ -121,6 +121,7 @@ TC-… are integration tests in `backend/tests`, ST-… are system tests in `fro
 | Flow / requirement | Test cases |
 |---|---|
 | Normal flow 3–6: account created, unique Tourist ID (FR-01.02), preferences stored, tourist signed in | TC-01-01 – TC-01-04, ST-01-01, ST-01-04 |
+| FR-01.04: travel preferences chosen right after sign-up, or skipped and asked for again at the next sign-in | TC-01-08, ST-01-01, ST-01-05 |
 | Alt 4a: email already registered, tourist asked to sign in | TC-01-05, ST-01-03 |
 | Alt 4b: missing or invalid information, fields highlighted, nothing saved | TC-01-06, TC-01-07, ST-01-02 |
 
@@ -155,10 +156,20 @@ TC-… are integration tests in `backend/tests`, ST-… are system tests in `fro
 | Alt 3a: "No destinations found" | TC-04-06, ST-04-02 |
 | Normal flow 4, 6: details, crowd level, risk status, verified hazards | TC-04-08, TC-04-09, TC-04-13, TC-04-14, ST-04-04, ST-04-07 |
 | Alt 6a: crowded or unsafe, warning and alternatives offered | TC-04-10 – TC-04-12, ST-04-05, ST-04-06 |
-| Normal flow 5: weather from OpenWeatherMap | TC-04-15, TC-04-16 |
+| Normal flow 5: weather from OpenWeatherMap, and the forecast of the next three days | TC-04-15, TC-04-16, TC-04-24, `unit/forecast.test.js` |
+| FR-02.04: viewpoint photographs with their credits, altitude and best time to visit | TC-04-08 |
 | Alt 5a: weather service unavailable, last available weather with update time | TC-04-17, TC-04-18, TC-04-22 |
 | SRS 3.3.2: weather renewed once, ahead of time, without making the tourist wait | TC-04-21, TC-04-23 |
 | Pre-condition: user is logged in | TC-04-19, TC-04-20 |
+
+### UC-05 Save Destination — `uc05-save.test.js`, `e2e/uc05-save.spec.js`
+
+| Flow / requirement | Test cases |
+|---|---|
+| Normal flow 1–4: destination saved, confirmation shown, listed on the profile | TC-05-01 – TC-05-03, ST-05-01 |
+| Alt 3a: already saved, the tourist is told and can remove it | TC-05-05, TC-05-06, ST-05-01 |
+| Pre-condition and access: logged in, tourist or observer only, one tourist's list only | TC-05-04, TC-05-07, TC-05-08 |
+| Unknown or inactive destination | TC-05-09 |
 
 ### UC-06 Check In at Destination — `uc06-checkin.test.js`, `e2e/uc06-checkin.spec.js`
 
@@ -194,6 +205,7 @@ TC-… are integration tests in `backend/tests`, ST-… are system tests in `fro
 | SRS 3.3.1: phone and desktop, no sideways scrolling | ST-NF-03 |
 | SRS 3.3.2: photos sized for the screen | ST-NF-04 |
 | SRS 3.3.3: security headers and content security policy | ST-NF-01, ST-NF-02, TC-02-16, TC-02-17 |
+| Interface in English and Urdu (right to left) | ST-LANG-01 |
 
 ## Manual checks
 

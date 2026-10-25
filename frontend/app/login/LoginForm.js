@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { homePathForRole, isTouristRole } from '@/constants/roles';
 import { ROUTES } from '@/constants/routes';
+import { safeNextPath } from '@/lib/safePath';
 import { PHOTOS } from '@/data/photos';
 import AuthLayout from '@/components/AuthLayout';
 import Notice from '@/components/ui/Notice';
+import PasswordField from '@/components/PasswordField';
+import { useT } from '@/context/LanguageContext';
 
-// Only same-site paths are accepted as a post-login destination
-const safeNext = (next) => (next && next.startsWith('/') && !next.startsWith('//') ? next : '');
+const safeNext = safeNextPath;
 
 // Step 5: home page or dashboard according to the role; a tourist who has not chosen travel
 // preferences yet is asked for them first (FR-01.04)
@@ -27,6 +29,7 @@ function pathAfterLogin(user, next) {
 export default function LoginForm({ next }) {
   const router = useRouter();
   const { user, loading, login } = useAuth();
+  const t = useT();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -41,7 +44,7 @@ export default function LoginForm({ next }) {
     e.preventDefault();
     setError('');
     if (!email.trim() || !password) {
-      setError('Please enter your email and password.');
+      setError(t('Please enter your email and password.'));
       return;
     }
     setSubmitting(true);
@@ -61,23 +64,23 @@ export default function LoginForm({ next }) {
   return (
     <AuthLayout
       photo={PHOTOS.fairyMeadows}
-      title="Sign in"
-      intro="Check crowd, weather and hazards before you travel."
-      footer={<>No account yet? <Link href={ROUTES.REGISTER} className="link">Create one</Link></>}
+      title={t('Sign in')}
+      intro={t('Check crowd, weather and hazards before you travel.')}
+      footer={<>{t('No account yet?')} <Link href={ROUTES.REGISTER} className="link">{t('Create one')}</Link></>}
     >
       {error && <Notice tone="error" className="mb-6">{error}</Notice>}
 
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         <div>
-          <label htmlFor="email" className="label">Email</label>
-          <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="field" />
+          <label htmlFor="email" className="label">{t('Email')}</label>
+          <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="field" dir="ltr" />
         </div>
         <div>
-          <label htmlFor="password" className="label">Password</label>
-          <input id="password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="field" />
+          <PasswordField id="password" label={t('Password')} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="field" dir="ltr" />
+          <Link href={ROUTES.FORGOT_PASSWORD} className="link mt-2 inline-block text-[13px]">{t('Forgot your password?')}</Link>
         </div>
-        <button type="submit" disabled={submitting} className="btn btn-primary w-full">
-          {submitting ? 'Signing in…' : 'Sign in'}
+        <button type="submit" disabled={submitting} className="btn btn-primary h-11 w-full">
+          {submitting ? t('Signing in…') : t('Sign in')}
         </button>
       </form>
     </AuthLayout>

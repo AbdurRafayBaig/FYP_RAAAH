@@ -21,9 +21,11 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob: https://thumb.wikimedia.org https://upload.wikimedia.org https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.googleusercontent.com",
-  `connect-src 'self' ${apiOrigin()} https://*.googleapis.com https://*.google.com https://*.gstatic.com data: blob:`,
+  // The service worker (public/sw.js) fetches the photos itself to keep them for offline use
+  `connect-src 'self' ${apiOrigin()} https://thumb.wikimedia.org https://*.googleapis.com https://*.google.com https://*.gstatic.com data: blob:`,
   'frame-src https://maps.google.com https://www.google.com',
-  'worker-src blob:',
+  "worker-src 'self' blob:",
+  "manifest-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

@@ -73,6 +73,7 @@ export async function initCache() {
 export const cacheKeys = {
   crowd: (destinationId) => `crowd:${destinationId}`,
   revokedToken: (jti) => `revoked-token:${jti}`,
+  forecast: (destinationId) => `forecast:${destinationId}`,
 };
 
 export function getCache() {

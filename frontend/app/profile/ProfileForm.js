@@ -6,6 +6,8 @@ import { useAuth } from '@/context/AuthContext';
 import { ROLE_LABELS } from '@/constants/roles';
 import PageTitle from '@/components/ui/PageTitle';
 import Notice from '@/components/ui/Notice';
+import InterestPicker from '@/components/InterestPicker';
+import SavedDestinations from './SavedDestinations';
 
 const toForm = (p) => ({
   fullName: p.fullName,
@@ -124,28 +126,18 @@ export default function ProfileForm() {
 
         {/* FR-01.04 */}
         <Section title="Travel preferences" description="Used to rank alternative destinations for you.">
-          <fieldset>
-            <legend className="sr-only">Travel preferences</legend>
-            <div className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-              {options.map((name) => (
-                <label key={name} className="flex items-center gap-3 text-[15px]">
-                  <input type="checkbox" checked={form.interests.includes(name)} onChange={() => toggleInterest(name)} className="h-4 w-4 accent-ink" />
-                  {name}
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <InterestPicker options={options} selected={form.interests} onToggle={toggleInterest} />
           {error('interests')}
         </Section>
 
         {/* FR-01.07 */}
         <Section title="Location" description="Needed for check-in and for distances.">
-          <label className="flex items-start gap-3">
+          <label className="flex cursor-pointer items-start gap-3 py-1">
             <input
               type="checkbox"
               checked={form.locationConsent}
               onChange={(e) => update('locationConsent', e.target.checked)}
-              className="mt-1 h-4 w-4 accent-ink"
+              className="mt-1 h-5 w-5 shrink-0 accent-ink"
             />
             <span className="text-[15px]">
               RAAAH may use my current location when I check in or ask for alternatives.
@@ -159,10 +151,12 @@ export default function ProfileForm() {
         </Section>
 
         <div className="flex justify-end gap-3 pt-6">
-          <button type="button" onClick={resetForm} className="btn btn-quiet">Discard changes</button>
-          <button type="submit" disabled={saving} className="btn btn-primary">{saving ? 'Saving…' : 'Save changes'}</button>
+          <button type="button" onClick={resetForm} className="btn btn-quiet h-11">Discard changes</button>
+          <button type="submit" disabled={saving} className="btn btn-primary h-11">{saving ? 'Saving…' : 'Save changes'}</button>
         </div>
       </form>
+
+      <SavedDestinations />
     </div>
   );
 }

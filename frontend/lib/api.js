@@ -85,6 +85,11 @@ export const api = {
     request('GET', `/destinations${search ? `?search=${encodeURIComponent(search)}` : ''}`),
   getDestination: (id) => request('GET', `/destinations/${encodeURIComponent(id)}`),
 
+  // UC-05 Save Destination
+  saveDestination: (id) => request('POST', `/destinations/${encodeURIComponent(id)}/save`),
+  removeSavedDestination: (id) => request('DELETE', `/destinations/${encodeURIComponent(id)}/save`),
+  getSavedDestinations: () => request('GET', '/profile/saved'),
+
   // UC-06 Check In at Destination
   checkIn: (id, location) => request('POST', `/destinations/${encodeURIComponent(id)}/check-in`, location),
 

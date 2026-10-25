@@ -30,7 +30,8 @@ const MODULES = [
   { name: 'Destination information, map and weather', cases: 'UC-04', status: 'available' },
   { name: 'Check-in and crowd estimation', cases: 'UC-06', status: 'available' },
   { name: 'AI-based alternative recommendations', cases: 'UC-09', status: 'available' },
-  { name: 'Saved destinations, check-out and visit history', cases: 'UC-05, UC-07, UC-08', status: 'development' },
+  { name: 'Saved destinations', cases: 'UC-05', status: 'available' },
+  { name: 'Check-out and visit history', cases: 'UC-07, UC-08', status: 'development' },
   { name: 'Community hazard reporting and review', cases: 'UC-10 – UC-12', status: 'development' },
   { name: 'Safety notifications', cases: 'UC-13', status: 'development' },
   { name: 'Cultural content, administration and analytics', cases: 'UC-14 – UC-17', status: 'development' },
@@ -80,12 +81,19 @@ function Section({ id, title, intro, children }) {
   );
 }
 
-function Person({ name, role, detail, email }) {
+function Person({ name, role, detail, email, photo }) {
   return (
     <div className="flex gap-4 border-t border-rule pt-5">
-      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ink font-display text-[17px] text-paper">
-        {initials(name)}
-      </span>
+      {/* A photo is shown when one is added to data/teamData.js (a file in public/team/) */}
+      {photo ? (
+        <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-rule">
+          <Image src={photo} alt={name} fill sizes="56px" className="object-cover" />
+        </span>
+      ) : (
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-ink font-display text-[18px] text-paper">
+          {initials(name)}
+        </span>
+      )}
       <div className="min-w-0">
         <p className="font-medium text-ink">{name}</p>
         <p className="text-[14px] text-ink-2">{role}</p>
@@ -215,9 +223,9 @@ export default function AboutPage() {
         <Section title="Project team" intro={`${FYP_INFO.department}, FAST-NUCES ${FYP_INFO.campus}.`}>
           <div className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
             {FYP_INFO.teamMembers.map((m) => (
-              <Person key={m.rollNo} name={m.name} role={m.role} detail={m.rollNo} email={m.email} />
+              <Person key={m.rollNo} name={m.name} role={m.role} detail={m.rollNo} email={m.email} photo={m.photo} />
             ))}
-            <Person name={FYP_INFO.supervisor.name} role="Project supervisor" detail={FYP_INFO.department} />
+            <Person name={FYP_INFO.supervisor.name} role="Project supervisor" detail={FYP_INFO.department} photo={FYP_INFO.supervisor.photo} />
           </div>
         </Section>
 

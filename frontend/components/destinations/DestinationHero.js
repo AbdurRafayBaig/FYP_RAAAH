@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ROUTES } from '@/constants/routes';
 import Icon from '@/components/ui/Icon';
+import { useT } from '@/context/LanguageContext';
 
 const SLIDE_MS = 6000;
 const SWIPE_PX = 40;
@@ -16,6 +17,7 @@ const prefersReducedMotion = () =>
 // Photo and name of a destination. With several viewpoint photos they change by themselves (crossfade),
 // can be paused, and can be stepped through with the buttons, the bars or a swipe on a phone.
 export default function DestinationHero({ name, region, photos }) {
+  const t = useT();
   const count = photos.length;
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(prefersReducedMotion);
@@ -71,28 +73,28 @@ export default function DestinationHero({ name, region, photos }) {
 
       <div className="page relative flex h-full flex-col justify-end pb-6">
         <Link href={ROUTES.DESTINATIONS} className="mb-auto mt-6 flex w-fit items-center gap-1.5 text-[13px] text-white/80 hover:text-white">
-          <Icon name="back" size={16} /> All destinations
+          <Icon name="back" size={16} /> {t('All destinations')}
         </Link>
 
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-[14px] text-white/80">{region}</p>
-            <h1 className="mt-1 text-[40px] sm:text-[56px]">{name}</h1>
+            <p className="text-[14px] text-white/80" dir="ltr">{region}</p>
+            <h1 className="mt-1 text-[40px] sm:text-[56px]" dir="ltr">{name}</h1>
           </div>
 
           {count > 1 && (
             <div className="flex items-center gap-2 md:pb-3">
-              <p className="mr-2 min-w-0 flex-1 text-[14px] text-white/90 md:max-w-[280px] md:text-right" aria-live={paused ? 'polite' : 'off'}>
+              <p className="me-2 min-w-0 flex-1 text-[14px] text-white/90 md:max-w-[280px] md:text-end" dir="ltr" aria-live={paused ? 'polite' : 'off'}>
                 <span className="data mr-2 text-white/60">{index + 1}/{count}</span>
                 {current.caption}
               </p>
-              <button type="button" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the photos' : 'Pause the photos'} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
+              <button type="button" onClick={() => setPaused((p) => !p)} aria-label={paused ? t('Play the photos') : t('Pause the photos')} className="flex h-11 w-11 shrink-0 md:h-9 md:w-9 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
                 <Icon name={paused ? 'play' : 'pause'} size={15} />
               </button>
-              <button type="button" onClick={() => go(-1)} aria-label="Previous photo" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
+              <button type="button" onClick={() => go(-1)} aria-label={t('Previous photo')} className="flex h-11 w-11 shrink-0 md:h-9 md:w-9 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
                 <Icon name="previous" size={16} />
               </button>
-              <button type="button" onClick={() => go(1)} aria-label="Next photo" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
+              <button type="button" onClick={() => go(1)} aria-label={t('Next photo')} className="flex h-11 w-11 shrink-0 md:h-9 md:w-9 items-center justify-center rounded-full border border-white/40 hover:bg-white/15">
                 <Icon name="next" size={16} />
               </button>
             </div>
@@ -107,7 +109,7 @@ export default function DestinationHero({ name, region, photos }) {
                   key={p.src}
                   type="button"
                   onClick={() => show(i)}
-                  aria-label={`Show photo ${i + 1}: ${p.caption}`}
+                  aria-label={t('Show photo {n}: {caption}', { n: i + 1, caption: p.caption })}
                   aria-current={i === index}
                   className="group h-5 max-w-14 flex-1"
                 >
@@ -117,7 +119,7 @@ export default function DestinationHero({ name, region, photos }) {
             </div>
           ) : <span />}
           {current?.author && (
-            <p className="shrink-0 text-right text-[11px] text-white/60">Photo: {current.author}, {current.licence}</p>
+            <p className="shrink-0 text-end text-[12px] text-white/60" dir="ltr">Photo: {current.author}, {current.licence}</p>
           )}
         </div>
       </div>

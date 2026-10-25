@@ -1,4 +1,5 @@
 // FYP team and supervisor (SRS title page)
+// photo: optional, e.g. '/team/abdur-rafay.jpg' for a square image in public/team/
 
 export const FYP_INFO = {
   title: 'RAAAH — Intelligent Crowd Management and Smart Tourism Platform for Northern Pakistan',

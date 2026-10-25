@@ -64,6 +64,53 @@ function SourceSafety({ source }) {
   );
 }
 
+// Factors of the AI Recommendation Engine (ai-engine/app/scoring.py) and their weights
+const FACTORS = [
+  ['preference', 'Your interests', 30],
+  ['crowd', 'Crowd', 20],
+  ['safety', 'Safety', 20],
+  ['weather', 'Weather', 10],
+  ['distance', 'Distance', 10],
+  ['accessibility', 'Road access', 5],
+  ['accommodation', 'Places to stay', 5],
+];
+
+function FactorBars({ factors }) {
+  return (
+    <dl className="mt-3 grid max-w-md grid-cols-2 gap-x-5 gap-y-1.5 sm:grid-cols-3">
+      {FACTORS.filter(([key]) => factors?.[key] !== undefined).map(([key, label]) => (
+        <div key={key}>
+          <dt className="text-[12px] text-muted">{label}</dt>
+          <dd className="mt-0.5 h-1.5 rounded-full bg-rule" title={`${Math.round(factors[key] * 100)}%`}>
+            <span className="block h-full rounded-full bg-accent" style={{ width: `${Math.round(factors[key] * 100)}%` }} />
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function HowMatchWorks() {
+  return (
+    <details className="mt-6 border-y border-rule py-3 text-[14px] text-ink-2">
+      <summary className="cursor-pointer font-medium text-ink">How is the match calculated?</summary>
+      <p className="mt-3 max-w-[70ch]">
+        Each place gets a score from 0 to 1 for every factor below. The match is their weighted average. Places
+        that are closed, at High Risk or over capacity are left out, and places you have visited before are moved
+        slightly down so you discover new ones.
+      </p>
+      <ul className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-2">
+        {FACTORS.map(([key, label, weight]) => (
+          <li key={key} className="flex justify-between gap-4 border-b border-rule py-1">
+            <span>{label}</span><span className="data">{weight}%</span>
+          </li>
+        ))}
+      </ul>
+      <p className="meta mt-3">Distance only counts when RAAAH knows where you are or which place you started from.</p>
+    </details>
+  );
+}
+
 // UC-09 Get Alternative Destination Recommendations (Expanded Use Case Table 46, SSD Fig. 28)
 export default function RecommendationResults({ sourceId }) {
   const { user } = useAuth();
@@ -96,6 +143,8 @@ export default function RecommendationResults({ sourceId }) {
         Ranked by your interests and past visits, then by current crowd, safety, weather, distance, road access and
         places to stay.
       </PageTitle>
+
+      <HowMatchWorks />
 
       {loading && <p className="meta py-10">Comparing destinations…</p>}
 
@@ -157,6 +206,12 @@ export default function RecommendationResults({ sourceId }) {
                           {d.weather && <WeatherSummary weather={d.weather} compact />}
                         </div>
                         <p className="mt-3 max-w-[62ch] text-[14px] text-ink-2">{r.reasons.join(' · ')}</p>
+                        {source && (
+                          <p className="meta mt-1">
+                            Compared with {source.name}: {source.crowd.crowdLevel.toLowerCase()} crowd, {source.riskStatus.toLowerCase()}.
+                          </p>
+                        )}
+                        <FactorBars factors={r.factors} />
                       </div>
                       <p className="sm:text-right">
                         <span className="font-mono text-[22px] text-ink">{Math.round(r.score * 100)}%</span>

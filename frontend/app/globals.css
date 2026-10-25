@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap');
 @import "tailwindcss";
 @source not "../_archive";
 
@@ -11,12 +11,14 @@
   --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
   --font-display: 'Newsreader', Georgia, serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-urdu: 'Noto Nastaliq Urdu', 'IBM Plex Sans', serif;
 
   --color-paper: #f4f1ea;
   --color-surface: #fbfaf7;
   --color-ink: #1c1b18;
   --color-ink-2: #45423b;
-  --color-muted: #7a756b;
+  /* 5:1 on paper, so small grey text stays readable (WCAG AA 4.5:1) */
+  --color-muted: #6b665c;
   --color-rule: #ddd7ca;
   --color-accent: #2b4c6f;
 
@@ -50,6 +52,15 @@ h1, h2, h3, .font-display {
   background: #d9cfb6;
 }
 
+/* Urdu: Nastaliq script needs taller lines than Latin text */
+html[lang="ur"] body,
+html[lang="ur"] h1, html[lang="ur"] h2, html[lang="ur"] h3, html[lang="ur"] .font-display {
+  font-family: var(--font-urdu);
+}
+html[lang="ur"] body { line-height: 2.1; }
+html[lang="ur"] h1, html[lang="ur"] h2, html[lang="ur"] h3, html[lang="ur"] .font-display { line-height: 1.75; letter-spacing: 0; }
+html[lang="ur"] .data, html[lang="ur"] .font-mono { font-family: var(--font-mono); }
+
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
@@ -68,6 +79,10 @@ h1, h2, h3, .font-display {
   }
   .btn-secondary {
     @apply border border-ink/70 text-ink hover:bg-ink hover:text-paper;
+  }
+  /* Main call to action of a page */
+  .btn-accent {
+    @apply bg-accent text-white hover:bg-[#223d5a];
   }
   .btn-quiet {
     @apply text-ink-2 hover:text-ink hover:bg-ink/5;

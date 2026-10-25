@@ -53,7 +53,7 @@ export default function CulturePage() {
               <div className="relative aspect-[4/3] overflow-hidden bg-rule">
                 <Image src={s.photo.src} alt={s.photo.place} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
               </div>
-              <p className="meta mt-2 text-[11px]">{s.photo.place}. Photo: {s.photo.author}</p>
+              <p className="meta mt-2 text-[12px]">{s.photo.place}. Photo: {s.photo.author}</p>
               <h2 className="mt-3 text-[24px]">{s.title}</h2>
               <p className="mt-2 text-[15px] text-ink-2">{s.text}</p>
             </article>

@@ -1,4 +1,5 @@
 import { config } from '../../config.js';
+import { cacheKeys, getCache } from '../../data/cache.js';
 import * as weatherRepo from '../../data/repositories/weatherRepository.js';
 import * as owm from '../../integrations/openWeatherMapClient.js';
 
@@ -65,6 +66,26 @@ export async function getWeather(destinationList) {
     }
   }
   return new Map(destinationList.map((d) => [d.destinationId, present(stored.get(d.destinationId) || null)]));
+}
+
+// The forecast changes every few hours; it is kept in the cache so each destination is asked at most
+// once in that time (SRS 3.3.2). Without an API key or when the service fails there is no forecast.
+const FORECAST_TTL_SECONDS = 3 * 60 * 60;
+
+export async function getForecast(destination) {
+  if (!owm.isConfigured()) return [];
+  const key = cacheKeys.forecast(destination.destinationId);
+  const cached = await getCache().get(key);
+  if (cached) return cached;
+  try {
+    const forecast = (await owm.fetchForecast(destination.location.latitude, destination.location.longitude))
+      .map((day) => ({ ...day, unfavourable: isUnfavourable({ weatherCode: day.weatherCode, temperature: day.minTemperature }) }));
+    await getCache().set(key, forecast, FORECAST_TTL_SECONDS);
+    return forecast;
+  } catch (err) {
+    console.warn(`[weather] No forecast for ${destination.name}: ${err.message}`);
+    return [];
+  }
 }
 
 // Refresh cycle: weather is renewed two minutes before it would turn stale, so requests find it fresh
