@@ -50,6 +50,13 @@ describe('UC-01 normal flow', () => {
     assert.notEqual(a.body.user.touristCode, b.body.user.touristCode);
   });
 
+  test('TC-01-08 travel preferences may be left for after the first sign-in', async () => {
+    const { interests, ...withoutInterests } = NEW_TOURIST;
+    const res = await register(withoutInterests);
+    assert.equal(res.status, 201);
+    assert.deepEqual(res.body.user.interests, []);
+  });
+
   test('TC-01-04 a role sent by the client is ignored: registration only creates tourists', async () => {
     const res = await register({ ...NEW_TOURIST, role: 'administrator' });
     assert.equal(res.status, 201);
@@ -77,7 +84,6 @@ describe('UC-01 alternative flow 4b - missing or invalid information', () => {
     ['password', { password: 'onlyletters', confirmPassword: 'onlyletters' }],
     ['password', { password: '12345678', confirmPassword: '12345678' }],
     ['confirmPassword', { confirmPassword: 'Different1' }],
-    ['interests', { interests: [] }],
     ['interests', { interests: ['Shopping'] }],
   ];
   for (const [field, change] of cases) {
@@ -93,6 +99,6 @@ describe('UC-01 alternative flow 4b - missing or invalid information', () => {
   test('TC-01-07 an empty request reports every required field', async () => {
     const res = await register({});
     assert.equal(res.status, 400);
-    for (const field of ['fullName', 'email', 'password', 'interests']) assert.ok(res.body.fields[field], field);
+    for (const field of ['fullName', 'email', 'password']) assert.ok(res.body.fields[field], field);
   });
 });

@@ -60,8 +60,10 @@ npm run dev       # database, tables and demo data, API, AI engine and web clien
 Press Ctrl+C to stop everything. Each part can also be started in its own terminal:
 `npm run db`, `npm run api`, `npm run ai`, `npm run web`.
 
-Useful commands in `backend/`: `npm run db:reset` (recreate everything) and `npm run seed:crowd`
-(refresh demo crowd levels — demo check-ins close automatically after `CHECKIN_AUTO_CLOSE_HOURS`).
+Useful commands in `backend/`: `npm run db:reset` (recreate everything), `npm run db:sync` (bring the
+destinations, their photos and attractions in line with `src/db/seedData.js` without touching accounts or
+check-ins) and `npm run seed:crowd` (refresh demo crowd levels — demo check-ins close automatically after
+`CHECKIN_AUTO_CLOSE_HOURS`).
 For the live demonstration database: `$env:DATABASE_URL = "<Neon connection string>"; npm run demo:crowd`
 in this folder, shortly before presenting.
 

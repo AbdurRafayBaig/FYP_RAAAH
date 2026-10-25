@@ -14,6 +14,10 @@ import DestinationMap from '@/components/destinations/DestinationMap';
 import WeatherSummary from '@/components/destinations/WeatherSummary';
 
 const VIEWS = ['Photos', 'Table', 'Map'];
+const ALL_REGIONS = 'All regions';
+
+// "Gojal, Hunza, Gilgit-Baltistan" -> "Gilgit-Baltistan"
+const provinceOf = (region) => region.split(',').at(-1).trim();
 
 function Segmented({ options, value, onChange, label }) {
   return (
@@ -71,6 +75,7 @@ export default function DestinationExplorer({ initialSearch }) {
   const [search, setSearch] = useState(initialSearch);
   const [query, setQuery] = useState(initialSearch);
   const [crowd, setCrowd] = useState('Any');
+  const [province, setProvince] = useState(ALL_REGIONS);
   const [view, setView] = useState('Photos');
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -97,10 +102,21 @@ export default function DestinationExplorer({ initialSearch }) {
     };
   }, [query]);
 
+  const provinces = useMemo(() => [...new Set(destinations.map((d) => provinceOf(d.region)))].sort(), [destinations]);
+
   const visible = useMemo(
-    () => destinations.filter((d) => crowd === 'Any' || d.crowd.crowdLevel === crowd),
-    [destinations, crowd],
+    () => destinations.filter((d) =>
+      (crowd === 'Any' || d.crowd.crowdLevel === crowd) &&
+      (province === ALL_REGIONS || provinceOf(d.region) === province)),
+    [destinations, crowd, province],
   );
+
+  const filtered = search || crowd !== 'Any' || province !== ALL_REGIONS;
+  const clearFilters = () => {
+    setSearch('');
+    setCrowd('Any');
+    setProvince(ALL_REGIONS);
+  };
 
   return (
     <div className="page pb-20">
@@ -122,6 +138,14 @@ export default function DestinationExplorer({ initialSearch }) {
           />
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <select
+            value={province}
+            onChange={(e) => setProvince(e.target.value)}
+            aria-label="Filter by region"
+            className="h-8 rounded-[3px] border border-rule bg-surface px-2 text-[13px] text-ink-2 focus:border-ink focus:outline-none"
+          >
+            {[ALL_REGIONS, ...provinces].map((p) => <option key={p}>{p}</option>)}
+          </select>
           <div className="flex items-center gap-2">
             <span className="meta">Crowd</span>
             <Segmented options={['Any', ...CROWD_LEVELS]} value={crowd} onChange={setCrowd} label="Filter by crowd level" />
@@ -140,9 +164,9 @@ export default function DestinationExplorer({ initialSearch }) {
         // UC-04 alt 3a
         <div className="py-16">
           <p className="font-display text-[26px]">No destinations found</p>
-          <p className="mt-2 text-ink-2">Try another name, or clear the crowd filter.</p>
-          {(search || crowd !== 'Any') && (
-            <button onClick={() => { setSearch(''); setCrowd('Any'); }} className="btn btn-secondary mt-5">
+          <p className="mt-2 text-ink-2">Try another name, or clear the filters.</p>
+          {filtered && (
+            <button onClick={clearFilters} className="btn btn-secondary mt-5">
               Clear search and filters
             </button>
           )}

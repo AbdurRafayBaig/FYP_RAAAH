@@ -24,8 +24,8 @@ export async function signIn(page, email, password = DEMO_PASSWORD) {
   await expect(page).not.toHaveURL(/\/login/);
 }
 
-// A new tourist account for tests that change a profile or check in (UC-01)
-export async function registerTourist(page, interests = ['Nature']) {
+// UC-01 up to the confirmation with the Tourist ID, where the new tourist chooses travel preferences
+export async function fillRegistration(page) {
   const account = {
     fullName: 'Test Traveller',
     email: `e2e.${Date.now()}.${Math.floor(Math.random() * 1e6)}@example.com`,
@@ -36,9 +36,22 @@ export async function registerTourist(page, interests = ['Nature']) {
   await page.locator('#regEmail').fill(account.email);
   await page.locator('#regPassword').fill(account.password);
   await page.locator('#regConfirm').fill(account.password);
-  for (const name of interests) await page.getByLabel(name, { exact: true }).check();
   await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page).toHaveURL(/\/preferences\?welcome=1/);
   await expect(page.getByText('Your Tourist ID')).toBeVisible();
+  return account;
+}
+
+export async function choosePreferences(page, interests) {
+  for (const name of interests) await page.getByLabel(name, { exact: true }).check();
+  await page.getByRole('button', { name: 'Save and continue' }).click();
+  await expect(page).toHaveURL(/\/destinations/);
+}
+
+// A new tourist account with travel preferences, for tests that change a profile or check in
+export async function registerTourist(page, interests = ['Nature']) {
+  const account = await fillRegistration(page);
+  await choosePreferences(page, interests);
   return account;
 }
 

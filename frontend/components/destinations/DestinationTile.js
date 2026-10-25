@@ -2,11 +2,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import CrowdLevel from '@/components/ui/CrowdLevel';
 import RiskStatus from '@/components/ui/RiskStatus';
+import { formatAltitude } from '@/lib/format';
 import WeatherSummary from './WeatherSummary';
 
 // A destination as returned by the Destination Information Service
 export default function DestinationTile({ destination }) {
-  const { destinationId, name, region, imageUrl, crowd, riskStatus, weather } = destination;
+  const { destinationId, name, region, imageUrl, altitudeM, crowd, riskStatus, weather } = destination;
 
   return (
     <Link href={`/destinations/${destinationId}`} className="group block">
@@ -25,7 +26,7 @@ export default function DestinationTile({ destination }) {
         <h3 className="text-[20px] group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4">{name}</h3>
         {weather && <WeatherSummary weather={weather} compact />}
       </div>
-      <p className="meta">{region}</p>
+      <p className="meta">{region}{altitudeM ? ` · ${formatAltitude(altitudeM)}` : ''}</p>
       <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1">
         <CrowdLevel level={crowd.crowdLevel} />
         <RiskStatus status={riskStatus} />

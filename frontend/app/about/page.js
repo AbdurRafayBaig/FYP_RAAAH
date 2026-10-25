@@ -8,7 +8,7 @@ import { ROUTES } from '@/constants/routes';
 export const metadata = { title: 'About — RAAAH' };
 
 const FACTS = [
-  { value: '14', label: 'registered destinations in Gilgit-Baltistan and Khyber Pakhtunkhwa' },
+  { value: '23', label: 'registered destinations in Gilgit-Baltistan, Khyber Pakhtunkhwa, Azad Kashmir and Murree' },
   { value: '4', label: 'crowd levels, from Low to Critical, estimated from check-ins' },
   { value: '6', label: 'hazard types tracked, from flash floods to road blockages' },
   { value: '4', label: 'user roles with access enforced on the server' },
@@ -223,7 +223,7 @@ export default function AboutPage() {
 
         <Section title="Contact">
           <p className="max-w-[64ch] text-[16px] text-ink-2">
-            For questions about the project, write to the project lead, {lead.name}, at{' '}
+            For questions about the project, write to the team technical lead, {lead.name}, at{' '}
             <a href={`mailto:${lead.email}`} className="link">{lead.email}</a>. To see the platform in use,{' '}
             <Link href={ROUTES.DESTINATIONS} className="link">explore the destinations</Link>.
           </p>
@@ -243,6 +243,7 @@ export default function AboutPage() {
                 </li>
               ))}
             </ul>
+            <p className="meta mt-4">The viewpoint photographs on each destination page are credited under the photo.</p>
           </details>
         </section>
       </div>

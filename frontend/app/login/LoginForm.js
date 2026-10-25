@@ -4,13 +4,24 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { homePathForRole } from '@/constants/roles';
+import { homePathForRole, isTouristRole } from '@/constants/roles';
+import { ROUTES } from '@/constants/routes';
 import { PHOTOS } from '@/data/photos';
 import AuthLayout from '@/components/AuthLayout';
 import Notice from '@/components/ui/Notice';
 
 // Only same-site paths are accepted as a post-login destination
 const safeNext = (next) => (next && next.startsWith('/') && !next.startsWith('//') ? next : '');
+
+// Step 5: home page or dashboard according to the role; a tourist who has not chosen travel
+// preferences yet is asked for them first (FR-01.04)
+function pathAfterLogin(user, next) {
+  const target = safeNext(next) || homePathForRole(user.role);
+  if (isTouristRole(user.role) && user.interests?.length === 0) {
+    return `${ROUTES.PREFERENCES}?next=${encodeURIComponent(target)}`;
+  }
+  return target;
+}
 
 // UC-02 Login (Expanded Use Case Table 39, SSD Fig. 21)
 export default function LoginForm({ next }) {
@@ -23,7 +34,7 @@ export default function LoginForm({ next }) {
 
   // Already logged in: go straight to the role's home page
   useEffect(() => {
-    if (!loading && user) router.replace(safeNext(next) || homePathForRole(user.role));
+    if (!loading && user) router.replace(pathAfterLogin(user, next));
   }, [loading, user, next, router]);
 
   const handleSubmit = async (e) => {
@@ -37,8 +48,7 @@ export default function LoginForm({ next }) {
     try {
       // Step 4: credentials verified and role identified by the server
       const loggedIn = await login(email, password);
-      // Step 5: home page or dashboard according to the role
-      router.replace(safeNext(next) || homePathForRole(loggedIn.role));
+      router.replace(pathAfterLogin(loggedIn, next));
     } catch (err) {
       // Alt 4a: invalid credentials
       setError(err.message);
@@ -53,7 +63,7 @@ export default function LoginForm({ next }) {
       photo={PHOTOS.fairyMeadows}
       title="Sign in"
       intro="Check crowd, weather and hazards before you travel."
-      footer={<>No account yet? <Link href="/register" className="link">Create one</Link></>}
+      footer={<>No account yet? <Link href={ROUTES.REGISTER} className="link">Create one</Link></>}
     >
       {error && <Notice tone="error" className="mb-6">{error}</Notice>}
 

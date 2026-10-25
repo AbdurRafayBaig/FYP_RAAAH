@@ -8,9 +8,9 @@ test.beforeEach(async ({ page }) => {
 
 test('ST-04-01 the destinations are listed with crowd level and safety status', async ({ page }) => {
   await page.goto('/destinations');
-  await expect(page.getByText('14 destinations')).toBeVisible();
+  await expect(page.getByText('23 destinations')).toBeVisible();
   await page.getByRole('button', { name: 'Table' }).click();
-  await expect(page.locator('table tbody tr')).toHaveCount(14);
+  await expect(page.locator('table tbody tr')).toHaveCount(23);
   await expect(page.locator('table tbody tr').first()).toContainText(/Low|Moderate|High|Critical/);
 });
 
@@ -23,7 +23,7 @@ test('ST-04-02 searching narrows the list; alt 3a: no match says so', async ({ p
   await page.getByLabel('Search destinations').fill('no-such-place');
   await expect(page.getByText('No destinations found')).toBeVisible();
   await page.getByRole('button', { name: 'Clear search and filters' }).click();
-  await expect(page.getByText('14 destinations')).toBeVisible();
+  await expect(page.getByText('23 destinations')).toBeVisible();
 });
 
 test('ST-04-03 the map view shows a map (FR-02.02)', async ({ page }) => {

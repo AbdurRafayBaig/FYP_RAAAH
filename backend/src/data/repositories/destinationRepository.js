@@ -4,7 +4,7 @@ import { toCulturalInfo, toDestination, toHazard } from '../models/destination.j
 const DESTINATION_COLUMNS = `
   d.destination_id, d.name, d.description, d.region, d.latitude, d.longitude, d.area_radius_m,
   d.capacity_threshold, d.crowd_level, d.risk_status, d.access_info, d.attractions, d.activities,
-  d.accommodation_available, d.image_url, d.updated_at,
+  d.accommodation_available, d.image_url, d.gallery, d.altitude_m, d.best_season, d.updated_at,
   COALESCE(
     (SELECT array_agg(i.name ORDER BY i.interest_id)
        FROM destination_interests di JOIN interests i ON i.interest_id = di.interest_id

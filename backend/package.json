@@ -13,6 +13,7 @@
     "db:seed": "node src/db/seed.js",
     "db:reset": "node src/db/migrate.js --reset && node src/db/seed.js",
     "seed:crowd": "node src/db/seed.js --crowd-only",
+    "db:sync": "node src/db/migrate.js && node src/db/seed.js --sync",
     "test": "node --import ./tests/setup.js --test --test-concurrency=1 \"tests/**/*.test.js\"",
     "test:unit": "node --import ./tests/setup.js --test \"tests/unit/*.test.js\"",
     "test:integration": "node --import ./tests/setup.js --test --test-concurrency=1 \"tests/integration/*.test.js\"",

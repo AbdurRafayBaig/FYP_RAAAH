@@ -51,6 +51,12 @@ CREATE TABLE IF NOT EXISTS destinations (
   updated_at         TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- ERD extension: FR-02.04 photographs of the destination's viewpoints ([{ src, caption, author, licence }]),
+-- altitude and best time to visit, shown on the destination page
+ALTER TABLE destinations ADD COLUMN IF NOT EXISTS gallery JSONB NOT NULL DEFAULT '[]';
+ALTER TABLE destinations ADD COLUMN IF NOT EXISTS altitude_m INTEGER CHECK (altitude_m > 0);
+ALTER TABLE destinations ADD COLUMN IF NOT EXISTS best_season VARCHAR(120);
+
 -- ERD extension: destination characteristics used by the content-based recommender (FR-05.03)
 CREATE TABLE IF NOT EXISTS destination_interests (
   destination_id INTEGER NOT NULL REFERENCES destinations(destination_id) ON DELETE CASCADE,

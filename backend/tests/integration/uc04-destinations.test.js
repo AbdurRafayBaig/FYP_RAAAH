@@ -89,6 +89,11 @@ describe('UC-04 steps 4-6 - the destination page', () => {
     assert.deepEqual(d.activities, ['Fort tours']);
     assert.deepEqual(d.culturalInfo.map((c) => c.category), ['etiquette', 'history']);
     assert.equal(d.accessInfo.road, 'Karakoram Highway');
+    // Viewpoint photos, each with the credit its licence asks for
+    assert.deepEqual(d.gallery, [{ src: 'https://example.org/karimabad.jpg', caption: 'Karimabad', author: 'A. Photographer', licence: 'CC BY-SA 4.0' }]);
+    assert.equal(d.altitudeM, 2438);
+    assert.equal(d.bestSeason, 'April to October');
+    assert.deepEqual((await page(DEST.attabad.id)).body.destination.gallery, []);
   });
 
   test('TC-04-09 only Verified hazard reports are public (FR-07.04)', async () => {

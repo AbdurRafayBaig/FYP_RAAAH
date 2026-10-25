@@ -1,6 +1,5 @@
 "use client";
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
@@ -8,13 +7,15 @@ import { useAuth } from '@/context/AuthContext';
 import { isTouristRole } from '@/constants/roles';
 import { ROUTES } from '@/constants/routes';
 import { CROWD_DESCRIPTIONS } from '@/constants/crowdLevels';
-import { timeAgo } from '@/lib/format';
+import { formatAltitude, timeAgo } from '@/lib/format';
 import CrowdLevel from '@/components/ui/CrowdLevel';
 import RiskStatus from '@/components/ui/RiskStatus';
 import Notice from '@/components/ui/Notice';
 import Icon from '@/components/ui/Icon';
 import WeatherSummary from '@/components/destinations/WeatherSummary';
 import DestinationMap from '@/components/destinations/DestinationMap';
+import DestinationHero from '@/components/destinations/DestinationHero';
+import ViewpointGallery from '@/components/destinations/ViewpointGallery';
 import CheckInPanel from '@/components/destinations/CheckInPanel';
 
 const CULTURE_LABELS = {
@@ -41,7 +42,6 @@ function Location({ d, className }) {
       <div className="mt-3"><DestinationMap destinations={[d]} height={220} /></div>
       <dl className="mt-3 divide-y divide-rule text-[14px]">
         <div className="flex justify-between py-2"><dt className="text-muted">Coordinates</dt><dd className="data">{d.location.latitude.toFixed(4)}, {d.location.longitude.toFixed(4)}</dd></div>
-        <div className="flex justify-between py-2"><dt className="text-muted">Places to stay</dt><dd className="data">{d.accommodationAvailable}</dd></div>
       </dl>
     </div>
   );
@@ -82,21 +82,16 @@ export default function DestinationDetail({ id, continuedWithOriginal }) {
   const culture = Object.entries(CULTURE_LABELS)
     .map(([category, label]) => ({ label, items: d.culturalInfo.filter((c) => c.category === category) }))
     .filter((g) => g.items.length > 0);
+  const photos = d.gallery?.length ? d.gallery : d.imageUrl ? [{ src: d.imageUrl, caption: d.name }] : [];
+  const facts = [
+    ['Altitude', formatAltitude(d.altitudeM)],
+    ['Best time to visit', d.bestSeason],
+    ['Places to stay', String(d.accommodationAvailable)],
+  ].filter(([, value]) => value);
 
   return (
     <>
-      {/* Photo and name */}
-      <section className="relative h-[52vh] min-h-[340px] bg-ink text-white">
-        {d.imageUrl && <Image src={d.imageUrl} alt={d.name} fill priority sizes="100vw" className="object-cover opacity-90" />}
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.45),transparent_30%,transparent_55%,rgba(0,0,0,0.7))]" />
-        <div className="page relative flex h-full flex-col justify-end pb-8">
-          <Link href={ROUTES.DESTINATIONS} className="mb-auto mt-6 flex w-fit items-center gap-1.5 text-[13px] text-white/80 hover:text-white">
-            <Icon name="back" size={16} /> All destinations
-          </Link>
-          <p className="text-[14px] text-white/80">{d.region}</p>
-          <h1 className="mt-1 text-[40px] sm:text-[56px]">{d.name}</h1>
-        </div>
-      </section>
+      <DestinationHero name={d.name} region={d.region} photos={photos} />
 
       <div className="page pb-20">
         {/* Current conditions - FR-02.05, FR-02.06 */}
@@ -157,7 +152,17 @@ export default function DestinationDetail({ id, continuedWithOriginal }) {
                   Matches your interests in <span className="text-ink">{d.preferenceMatch.join(', ')}</span>.
                 </p>
               )}
+              <dl className="mt-6 grid gap-x-8 gap-y-4 border-y border-rule py-4 sm:grid-cols-3">
+                {facts.map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="meta">{label}</dt>
+                    <dd className="mt-0.5 text-[15px] text-ink">{value}</dd>
+                  </div>
+                ))}
+              </dl>
             </section>
+
+            {photos.length > 1 && <ViewpointGallery name={d.name} photos={photos} />}
 
             {d.hazards.length > 0 && (
               <section>
@@ -185,9 +190,14 @@ export default function DestinationDetail({ id, continuedWithOriginal }) {
                 ))}
               </ol>
               {d.activities.length > 0 && (
-                <p className="mt-4 text-[14px] text-ink-2">
-                  Things people do here: {d.activities.join(', ').toLowerCase()}.
-                </p>
+                <div className="mt-5">
+                  <p className="meta">Things people do here</p>
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {d.activities.map((a) => (
+                      <li key={a} className="rounded-full border border-rule bg-surface px-3 py-1 text-[13px] text-ink-2">{a}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </section>
 

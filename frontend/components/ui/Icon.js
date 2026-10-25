@@ -12,6 +12,10 @@ const PATHS = {
   check: <path d="M5 12.5l4.5 4.5L19 7" />,
   close: <path d="M6 6l12 12M18 6L6 18" />,
   menu: <path d="M4 7h16M4 12h16M4 17h16" />,
+  next: <path d="M9 5l7 7-7 7" />,
+  previous: <path d="M15 5l-7 7 7 7" />,
+  pause: <path d="M9 6v12M15 6v12" />,
+  play: <path d="M8 5.5v13l10.5-6.5L8 5.5z" />,
   pin: (
     <>
       <path d="M12 21s-6.5-6-6.5-11.5a6.5 6.5 0 0113 0C18.5 15 12 21 12 21z" />

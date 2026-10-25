@@ -16,6 +16,9 @@ export function toDestination(row) {
     activities: row.activities,
     accommodationAvailable: row.accommodation_available,
     imageUrl: row.image_url,
+    gallery: row.gallery,
+    altitudeM: row.altitude_m,
+    bestSeason: row.best_season,
     interests: row.interests,
     updatedAt: row.updated_at,
   };

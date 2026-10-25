@@ -116,5 +116,8 @@ sessions are also in the database (`revoked_tokens`), together with recent faile
 `npm run dev` in the project root starts everything; `npm run db` starts only the local PostgreSQL,
 which keeps its data in `backend/.pgdata`. In `backend/`:
 `npm run db:migrate` updates the tables, `npm run db:seed` loads demo data once,
-`npm run db:reset` recreates everything, and `npm run seed:crowd` refreshes the demo crowd (demo
+`npm run db:reset` recreates everything, `npm run db:sync` updates the destinations of an existing
+database (also the deployed one) from `src/db/seedData.js` — descriptions, attractions, viewpoint photos,
+altitude and best season are updated and new destinations added, while accounts, check-ins, hazard
+reports and risk status stay as they are — and `npm run seed:crowd` refreshes the demo crowd (demo
 check-ins close after `CHECKIN_AUTO_CLOSE_HOURS` like any other, so run it before a demonstration).

@@ -14,6 +14,10 @@ export function formatTime(date) {
   return new Date(date).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
 
+export function formatAltitude(metres) {
+  return metres ? `${metres.toLocaleString('en-GB')} m` : '';
+}
+
 export function capitalise(text = '') {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

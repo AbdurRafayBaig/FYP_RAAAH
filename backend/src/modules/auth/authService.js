@@ -68,9 +68,10 @@ function validateRegistration(body) {
     fields.confirmPassword = 'The two passwords do not match.';
   }
 
+  // FR-01.04 - travel preferences are chosen after the first sign-in, so they are optional here
   const interests = Array.isArray(body.interests) ? [...new Set(body.interests)] : [];
-  if (interests.length === 0 || interests.some((i) => !INTERESTS.includes(i))) {
-    fields.interests = 'Choose at least one travel preference.';
+  if (interests.some((i) => !INTERESTS.includes(i))) {
+    fields.interests = `Choose travel preferences from: ${INTERESTS.join(', ')}.`;
   }
 
   return { fields, value: { fullName, email, password, interests } };

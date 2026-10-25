@@ -42,6 +42,75 @@ async function seedDemoCrowd(client) {
   console.log(`[seed] ${needed} demo active check-ins created.`);
 }
 
+// Columns $2-$15 of a destination; $1 is its name or id. The first gallery photo is the cover.
+const contentValues = (d) => [
+  d.description, d.region, d.latitude, d.longitude, d.areaRadiusM, d.capacityThreshold, d.accessInfo,
+  d.attractions, d.activities, d.accommodationAvailable, d.gallery[0]?.src ?? null, JSON.stringify(d.gallery),
+  d.altitudeM, d.bestSeason,
+];
+
+async function insertDestination(client, d) {
+  const { rows } = await client.query(
+    `INSERT INTO destinations (name, description, region, latitude, longitude, area_radius_m, capacity_threshold,
+                               access_info, attractions, activities, accommodation_available, image_url, gallery,
+                               altitude_m, best_season, risk_status)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+     RETURNING destination_id`,
+    [d.name, ...contentValues(d), d.riskStatus],
+  );
+  const id = rows[0].destination_id;
+  // Stored as "last available" weather; refreshed from OpenWeatherMap when an API key is configured
+  await client.query(
+    `INSERT INTO weather_info (destination_id, temperature, condition, description, weather_code, icon, updated_at)
+     VALUES ($1, $2, $3, $4, $5, $6, NOW() - interval '45 minutes')`,
+    [id, d.weather.temperature, d.weather.condition, d.weather.description, d.weather.weatherCode, d.weather.icon],
+  );
+  return id;
+}
+
+// Interests (for the recommender) and cultural information of a destination, replacing any earlier ones
+async function writeDestinationDetails(client, id, d) {
+  await client.query('DELETE FROM destination_interests WHERE destination_id = $1', [id]);
+  await client.query(
+    `INSERT INTO destination_interests (destination_id, interest_id)
+     SELECT $1, interest_id FROM interests WHERE name = ANY($2::text[])`,
+    [id, d.interests],
+  );
+  await client.query('DELETE FROM cultural_info WHERE destination_id = $1', [id]);
+  for (const c of d.culture) {
+    await client.query(
+      'INSERT INTO cultural_info (destination_id, category, title, content) VALUES ($1, $2, $3, $4)',
+      [id, c.category, c.title, c.content],
+    );
+  }
+}
+
+// Brings the destinations of an existing database (such as the deployed one) in line with this file:
+// changed descriptions, attractions and photos are updated and new destinations are added. Accounts,
+// check-ins, hazard reports and the risk status set by verified reports are left as they are.
+async function syncDestinations(client) {
+  let added = 0;
+  for (const d of DESTINATIONS) {
+    const { rows } = await client.query('SELECT destination_id FROM destinations WHERE name = $1', [d.name]);
+    let id = rows[0]?.destination_id;
+    if (id) {
+      await client.query(
+        `UPDATE destinations SET description = $2, region = $3, latitude = $4, longitude = $5, area_radius_m = $6,
+                capacity_threshold = $7, access_info = $8, attractions = $9, activities = $10,
+                accommodation_available = $11, image_url = $12, gallery = $13, altitude_m = $14, best_season = $15,
+                updated_at = NOW()
+          WHERE destination_id = $1`,
+        [id, ...contentValues(d)],
+      );
+    } else {
+      id = await insertDestination(client, d);
+      added += 1;
+    }
+    await writeDestinationDetails(client, id, d);
+  }
+  console.log(`[seed] ${DESTINATIONS.length - added} destinations updated, ${added} added.`);
+}
+
 async function seedAll(client) {
   await client.query(
     `INSERT INTO interests (name) SELECT unnest($1::text[]) ON CONFLICT (name) DO NOTHING`,
@@ -49,32 +118,7 @@ async function seedAll(client) {
   );
 
   for (const d of DESTINATIONS) {
-    const { rows } = await client.query(
-      `INSERT INTO destinations (name, description, region, latitude, longitude, area_radius_m, capacity_threshold,
-                                 risk_status, access_info, attractions, activities, accommodation_available, image_url)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-       RETURNING destination_id`,
-      [d.name, d.description, d.region, d.latitude, d.longitude, d.areaRadiusM, d.capacityThreshold,
-        d.riskStatus, d.accessInfo, d.attractions, d.activities, d.accommodationAvailable, d.imageUrl],
-    );
-    const id = rows[0].destination_id;
-    await client.query(
-      `INSERT INTO destination_interests (destination_id, interest_id)
-       SELECT $1, interest_id FROM interests WHERE name = ANY($2::text[])`,
-      [id, d.interests],
-    );
-    for (const c of d.culture) {
-      await client.query(
-        'INSERT INTO cultural_info (destination_id, category, title, content) VALUES ($1, $2, $3, $4)',
-        [id, c.category, c.title, c.content],
-      );
-    }
-    // Stored as "last available" weather; refreshed from OpenWeatherMap when an API key is configured
-    await client.query(
-      `INSERT INTO weather_info (destination_id, temperature, condition, description, weather_code, icon, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW() - interval '45 minutes')`,
-      [id, d.weather.temperature, d.weather.condition, d.weather.description, d.weather.weatherCode, d.weather.icon],
-    );
+    await writeDestinationDetails(client, await insertDestination(client, d), d);
   }
   console.log(`[seed] ${DESTINATIONS.length} destinations created.`);
 
@@ -132,15 +176,18 @@ async function assignTouristCodes(client) {
 
 async function main() {
   const crowdOnly = process.argv.includes('--crowd-only');
-  if (!crowdOnly) {
+  const sync = process.argv.includes('--sync');
+  if (!crowdOnly && !sync) {
     const { rows } = await pool.query('SELECT COUNT(*)::int AS n FROM destinations');
     if (rows[0].n > 0) {
-      console.log('[seed] Data already exists. Run `npm run db:reset` to recreate it, or `npm run seed:crowd` to refresh demo crowds.');
+      console.log('[seed] Data already exists. Run `npm run db:reset` to recreate it, `npm run db:sync` to update the destinations, or `npm run seed:crowd` to refresh demo crowds.');
       return;
     }
   }
   await withTransaction(async (client) => {
-    await (crowdOnly ? seedDemoCrowd(client) : seedAll(client));
+    if (crowdOnly) await seedDemoCrowd(client);
+    else if (sync) await syncDestinations(client);
+    else await seedAll(client);
     await assignTouristCodes(client);
   });
   console.log('[seed] Done. Restart the API (or wait one refresh cycle) to see updated crowd levels.');

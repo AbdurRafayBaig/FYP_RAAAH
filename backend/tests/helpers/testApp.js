@@ -94,6 +94,11 @@ async function insertFixtures() {
     );
   }
 
+  await query(
+    `UPDATE destinations SET gallery = $2, altitude_m = 2438, best_season = 'April to October' WHERE destination_id = $1`,
+    [DEST.hunza.id, JSON.stringify([{ src: 'https://example.org/karimabad.jpg', caption: 'Karimabad', author: 'A. Photographer', licence: 'CC BY-SA 4.0' }])],
+  );
+
   // Last available weather, 45 minutes old; Fairy Meadows has a thunderstorm (unfavourable)
   await query(
     `INSERT INTO weather_info (destination_id, temperature, condition, description, weather_code, icon, updated_at)

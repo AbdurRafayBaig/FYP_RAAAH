@@ -7,6 +7,7 @@ export const ROUTES = {
   LOGIN: '/login',
   REGISTER: '/register',
   PROFILE: '/profile',
+  PREFERENCES: '/preferences',
   DESTINATIONS: '/destinations',
   DESTINATION_DETAIL: (id) => `/destinations/${id}`,
   RECOMMENDATIONS: '/recommendations',
