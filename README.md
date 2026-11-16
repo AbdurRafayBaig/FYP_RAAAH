@@ -10,7 +10,7 @@ FYP, FAST-NUCES Chiniot-Faisalabad. Implementation follows the SRS, [docs/RAAAH_
 | `backend/` | Backend API Server | Node.js + Express.js, PostgreSQL, Redis cache |
 | `ai-engine/` | AI Recommendation Engine | Python + FastAPI + Scikit-learn |
 | `deploy/` | Application hosting environment | Docker Compose, HTTPS proxy |
-| `docs/` | SRS, testing, deployment and maintenance documents | |
+| `docs/` | SRS, API reference, testing, deployment and maintenance documents | |
 | `scripts/` | Development helper (`npm run dev`) | |
 
 ```
@@ -37,10 +37,11 @@ ai-engine/app/
   ranking.py              Ranking
 ai-engine/tests/          tests of the recommendation engine
 deploy/                   docker-compose.yml and HTTPS proxy (Deployment Diagram, Fig. 45)
-docs/                     RAAAH_SRS.docx, TESTING.md, DEPLOYMENT.md, MAINTENANCE.md
+docs/                     RAAAH_SRS.docx, API.md, TESTING.md, DEPLOYMENT.md, MAINTENANCE.md
 ```
 
 The full mapping of folders to the Package Diagram is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md).
+The REST endpoints, roles, request bodies and error codes are listed in [docs/API.md](docs/API.md).
 
 ## Running locally
 
