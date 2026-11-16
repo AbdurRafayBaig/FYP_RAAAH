@@ -10,7 +10,8 @@ Recommendations. Every test is named after the flow of the expanded use case it 
 |---|---|---|---|
 | Unit | Crowd classification (Table 11), condition analysis, weather rules, email rules | Node.js test runner | `backend/tests/unit` |
 | Integration | REST API with a real PostgreSQL database, one file per use case | Node.js test runner | `backend/tests/integration` |
-| Unit / API | Data preparation, destination scoring and ranking of the AI engine | pytest | `ai-engine/tests` |
+| Unit / API | Data preparation, destination scoring and ranking of the AI engine | pytest | `ai-engine/tests` (`test_units.py` per function, `test_engine.py` through the API) |
+| Unit | Redirect guard after sign-in (`safeNextPath`) and display helpers of the web client | Node.js test runner | `frontend/tests/unit` |
 | Static | Code rules of the web client | ESLint | `frontend/`, `npm run lint` |
 | Build | The web client compiles for production | Next.js | `frontend/`, `npm run build` |
 | System | The use cases in a real browser, with the API, AI engine, database and web client running | Playwright | `frontend/e2e`, one file per use case |
@@ -29,7 +30,7 @@ test check-in inside and outside a destination area.
 
 ```bash
 # Everything, from the project root (needs PostgreSQL: `npm run db` or `npm run dev` running)
-npm test                 # backend + AI engine
+npm test                 # backend + web client unit tests + AI engine
 npm run lint             # web client
 npm run build            # web client, production build
 
@@ -42,6 +43,10 @@ npm run test:coverage    # with a coverage report
 # AI engine only
 cd ai-engine
 python -m pytest -q
+
+# Web client unit tests only (no server or browser needed)
+cd frontend
+npm test
 ```
 
 The backend tests use their own database, `raaah_test`, which is created automatically on the same
@@ -69,7 +74,7 @@ npm run test:e2e
 test accounts and check-ins there.
 
 GitHub Actions runs all of the above on every push (`.github/workflows/ci.yml`): the backend tests
-against PostgreSQL with PostGIS, the AI engine tests, lint and build, the system tests against the
+against PostgreSQL with PostGIS, the AI engine tests, lint, unit tests and build of the web client, the system tests against the
 running system, and the deployment images with `docker compose`.
 
 ## Result of the last run (18 October 2026)
@@ -92,6 +97,15 @@ CI, in the `backend` and `docker` jobs.
 
 The six use cases were also checked by hand on the live deployment (https://raaah-web.vercel.app)
 on 18 October 2026, with the same steps as the system tests.
+
+## Tests added on 16 November 2026
+
+| Suite | Tests | Passed | Failed |
+|---|---|---|---|
+| AI engine (14 through the API + 21 unit tests in `test_units.py`) | 35 | 35 | 0 |
+| Web client unit tests (`frontend/tests/unit`) | 17 | 17 | 0 |
+
+No application code was changed; the new tests describe the behaviour already deployed.
 
 ## Defects found by the tests and fixed
 
