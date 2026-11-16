@@ -89,8 +89,8 @@ when only the AI engine is down. See [MAINTENANCE.md](MAINTENANCE.md).
 {
   "fullName": "Ayesha Khan",
   "email": "ayesha@example.com",
-  "password": "Hunza2026",
-  "confirmPassword": "Hunza2026",
+  "password": "<password>",
+  "confirmPassword": "<password>",
   "interests": ["Nature", "Photography"]
 }
 ```
@@ -105,10 +105,10 @@ when only the AI engine is down. See [MAINTENANCE.md](MAINTENANCE.md).
 **`POST /api/auth/login`** (UC-02)
 
 ```json
-{ "email": "tourist@raaah.pk", "password": "Raaah@2026" }
+{ "email": "<email>", "password": "<password>" }
 ```
 
-`200` → `{ "token", "user" }`. `401` for a wrong email or password. After `LOGIN_MAX_FAILURES` (5)
+`200` → `{ "token", "user" }` (the demo accounts are listed in the README). `401` for a wrong email or password. After `LOGIN_MAX_FAILURES` (5)
 failures from one address within `LOGIN_LOCK_MINUTES` (15), sign-in for that email answers `429`.
 
 **`POST /api/auth/forgot-password`** — `{ "email" }` → `200 { "message" }`
