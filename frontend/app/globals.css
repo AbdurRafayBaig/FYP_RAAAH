@@ -66,6 +66,17 @@ html[lang="ur"] .data, html[lang="ur"] .font-mono { font-family: var(--font-mono
   outline-offset: 2px;
 }
 
+/* Hero search bar: the form clips overflow, so the input's own focus outline
+   showed only as two vertical lines beside it. Draw the keyboard focus
+   indicator around the whole bar instead. */
+.hero-search input:focus-visible {
+  outline: none;
+}
+.hero-search:has(input:focus-visible) {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 @layer components {
   .page {
     @apply mx-auto w-full max-w-[1200px] px-5 sm:px-8;
